@@ -17,14 +17,15 @@ import torchvision.transforms as transforms
 import torchvision.utils as vutils
 import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image
 
 # Root directory for dataset
-dataroot = r'./'
+dataroot = r'../mario-data/14608-Gana64'
 
 # Number of workers for dataloader
 workers = 0
 
-batch_size = 128
+batch_size = 1
 
 # Spatial size of training images. All images will be resized to this
 #   size using a transformer.
@@ -42,7 +43,7 @@ ngf = 64
 # Size of feature maps in discriminator
 ndf = 64
 
-num_epochs = 5
+num_epochs = 1000
 
 # Learning rate
 lr = 0.0002
@@ -51,18 +52,24 @@ lr = 0.0002
 beta1 = 0.5
 
 # Number of GPUs available. Use 0 for CPU mode.
-ngpu = 0
+ngpu = 1
 
 
 # We can use an image folder dataset the way we have it setup.
 # Create the dataset
+#dataset = dset.ImageFolder(root=dataroot,
+#                           transform=transforms.Compose([
+#                               transforms.Resize(image_size),
+#                               transforms.CenterCrop(image_size),
+#                               transforms.ToTensor(),
+#                               transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+#                           ]))
+
 dataset = dset.ImageFolder(root=dataroot,
                            transform=transforms.Compose([
-                               transforms.Resize(image_size),
-                               transforms.CenterCrop(image_size),
-                               transforms.ToTensor(),
-                               transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                               transforms.ToTensor()
                            ]))
+
 # Create the dataloader
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
                                          shuffle=True, num_workers=workers)
@@ -70,6 +77,18 @@ dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
 # Decide which device we want to run on
 device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
 
+print('Is using GPU? ' + str(torch.cuda.is_available()))
+
+#Save training image
+real_batch = next(iter(dataloader))
+img_arr = np.transpose(vutils.make_grid(real_batch[0].to(device)[:64], padding=2, normalize=True).cpu(),(1,2,0)).data.cpu().numpy()
+#img_list = []
+#img_list.append(vutils.make_grid(real_batch[0].to(device)[:64], padding=2, normalize=True).cpu())
+
+#img_arr = np.transpose(img_list[-1],(1,2,0)).data.cpu().numpy()
+im = Image.fromarray(img_arr * 255, 'RGB')
+n_images = len(dataloader) * batch_size
+im.save('reals/' + 'real-' + str(n_images) + '.png')
 
 # custom weights initialization called on netG and netD
 def weights_init(m):
@@ -264,13 +283,28 @@ for epoch in range(num_epochs):
             with torch.no_grad():
                 fake = netG(fixed_noise).detach().cpu()
             img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
-
+            last_epoch_img = np.transpose(img_list[-1],(1,2,0))
+            print('last epoch image')
+            print(last_epoch_img)
+            img_arr = last_epoch_img.data.cpu().numpy()
+            print('image inputting')
+            print(img_arr)
+            print('lengths')
+            print(len(img_arr))
+            print(len(img_arr[0]))
+            print(len(img_arr[0][0]))
+            
+            im = Image.fromarray(img_arr * 255, 'RGB')
+            print('an image')
+            print(im)
+            n_images = len(dataloader) * batch_size
+            im.save('fakes/' + str(epoch) + '-' + str(n_images) + '.png')
         iters += 1
         
 # Plot the fake images from the last epoch
-plt.subplot(1,2,2)
-plt.axis("off")
-plt.title("Fake Images")
-plt.imshow(np.transpose(img_list[-1],(1,2,0)))
-plt.show()
+#plt.subplot(1,2,2)
+#plt.axis("off")
+#plt.title("Fake Images")
+#plt.imshow(np.transpose(img_list[-1],(1,2,0)))
+#plt.show()
 
