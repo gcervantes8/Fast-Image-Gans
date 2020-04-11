@@ -18,14 +18,33 @@ import torchvision.utils as vutils
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
+import random
+import string
+import os
 
-# Root directory for dataset
-dataroot = r'../mario-data/14608-Gana64'
+# Root directory for dataset 
+dataroot = r'mario-data_Copy of 14608-Gana64'
+# Each run will get it's own unique id and folder in the output directory
+output_dir = 'output/'
 
-# Number of workers for dataloader
-workers = 0
+# Each run will be saved with model details, real images, and generated (fake) images
 
-batch_size = 1
+
+if not os.path.isdir(dataroot):
+    print('Path to training data directory doesn\'t exist')
+
+if not os.path.isdir(output_dir):
+    print('Path to output image directory is invalid')
+
+# Creates random combination of ascii and numbers, taken from https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits
+def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+run_id = id_generator()
+print('This runs unique id is ' + run_id)
+
+
+batch_size = 12
 
 # Spatial size of training images. All images will be resized to this
 #   size using a transformer.
@@ -37,11 +56,8 @@ num_channels = 3
 # Size of z latent vector (i.e. size of generator input)
 latent_vector_size = 100
 
-# Size of feature maps in generator
-ngf = 64
-
-# Size of feature maps in discriminator
-ndf = 64
+# Size of feature maps in generator and discriminator
+ngf, ndf = 64, 64
 
 num_epochs = 1000
 
@@ -51,44 +67,46 @@ lr = 0.0002
 # Beta1 hyperparam for Adam optimizers
 beta1 = 0.5
 
+# Number of workers for dataloader
+workers = 0
+
 # Number of GPUs available. Use 0 for CPU mode.
 ngpu = 1
 
 
 # We can use an image folder dataset the way we have it setup.
 # Create the dataset
-#dataset = dset.ImageFolder(root=dataroot,
-#                           transform=transforms.Compose([
-#                               transforms.Resize(image_size),
-#                               transforms.CenterCrop(image_size),
-#                               transforms.ToTensor(),
-#                               transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-#                           ]))
-
 dataset = dset.ImageFolder(root=dataroot,
                            transform=transforms.Compose([
-                               transforms.ToTensor()
+                               transforms.Resize(image_size),
+                               transforms.CenterCrop(image_size),
+                               transforms.ToTensor(),
+                               transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                            ]))
 
+    
 # Create the dataloader
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
                                          shuffle=True, num_workers=workers)
 
 # Decide which device we want to run on
 device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
-
 print('Is using GPU? ' + str(torch.cuda.is_available()))
 
-#Save training image
-real_batch = next(iter(dataloader))
-img_arr = np.transpose(vutils.make_grid(real_batch[0].to(device)[:64], padding=2, normalize=True).cpu(),(1,2,0)).data.cpu().numpy()
-#img_list = []
-#img_list.append(vutils.make_grid(real_batch[0].to(device)[:64], padding=2, normalize=True).cpu())
 
-#img_arr = np.transpose(img_list[-1],(1,2,0)).data.cpu().numpy()
-im = Image.fromarray(img_arr * 255, 'RGB')
+# Tensor should be of shape (batch_size, num_channels, height, width) as outputted by DataLoader
+def save_example_imgs_from_tensor(tensor, output_path):    
+    vutils.save_image(tensor, output_path, normalize=True)
+    
+# Save training images
+real_batch = next(iter(dataloader))
+
+# batch_imgs is of size (batch_size, num_channels, height, width)
+batch_imgs = real_batch[0]
+real_img_output_path = output_dir + '/' + 'trainingImages' + '.png'
+save_example_imgs_from_tensor(batch_imgs, real_img_output_path)
+
 n_images = len(dataloader) * batch_size
-im.save('reals/' + 'real-' + str(n_images) + '.png')
 
 # custom weights initialization called on netG and netD
 def weights_init(m):
@@ -270,6 +288,12 @@ for epoch in range(num_epochs):
 
         # Output training stats
         if i % 50 == 0:
+            print('Saving fake images')
+            with torch.no_grad():
+                fake = netG(fixed_noise).detach().cpu()
+            fake_img_output_path = output_dir + '/' + 'fakes_images_epoch_' + str(i) + '.png'
+            print(fake_img_output_path)
+            save_example_imgs_from_tensor(fake, fake_img_output_path)
             print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
                   % (epoch, num_epochs, i, len(dataloader),
                      errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
@@ -278,33 +302,12 @@ for epoch in range(num_epochs):
         G_losses.append(errG.item())
         D_losses.append(errD.item())
 
-        # Check how the generator is doing by saving G's output on fixed_noise
-        if (iters % 500 == 0) or ((epoch == num_epochs-1) and (i == len(dataloader)-1)):
-            with torch.no_grad():
-                fake = netG(fixed_noise).detach().cpu()
-            img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
-            last_epoch_img = np.transpose(img_list[-1],(1,2,0))
-            print('last epoch image')
-            print(last_epoch_img)
-            img_arr = last_epoch_img.data.cpu().numpy()
-            print('image inputting')
-            print(img_arr)
-            print('lengths')
-            print(len(img_arr))
-            print(len(img_arr[0]))
-            print(len(img_arr[0][0]))
-            
-            im = Image.fromarray(img_arr * 255, 'RGB')
-            print('an image')
-            print(im)
-            n_images = len(dataloader) * batch_size
-            im.save('fakes/' + str(epoch) + '-' + str(n_images) + '.png')
         iters += 1
         
-# Plot the fake images from the last epoch
-#plt.subplot(1,2,2)
-#plt.axis("off")
-#plt.title("Fake Images")
-#plt.imshow(np.transpose(img_list[-1],(1,2,0)))
-#plt.show()
-
+    # Check how the generator is doing by saving G's output on fixed_noise
+    print('Saving fake images')
+    with torch.no_grad():
+        fake = netG(fixed_noise).detach().cpu()
+    fake_img_output_path = output_dir + '/' + 'fakes_images_epoch_' + str(epoch) + '.png'
+    print(fake_img_output_path)
+    save_example_imgs_from_tensor(fake, fake_img_output_path)
