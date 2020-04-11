@@ -1,2 +1,5 @@
 # Mario-GAN
-Learning Pytorch by creating a GAN from Mario 64 data
+This GAN generates images from Mario 64 data, this project is to help me learn Pytorch.
+
+
+
