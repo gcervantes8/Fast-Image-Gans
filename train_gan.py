@@ -17,32 +17,27 @@ import torchvision.transforms as transforms
 import torchvision.utils as vutils
 import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
-import random
-import string
+import save_run_details
+#from torch.utils.tensorboard import SummaryWriter
 import os
+
 
 # Root directory for dataset 
 dataroot = r'mario-data_Copy of 14608-Gana64'
 # Each run will get it's own unique id and folder in the output directory
 output_dir = 'output/'
 
-# Each run will be saved with model details, real images, and generated (fake) images
+save_run_details.is_valid_dir(dataroot, 'Training data directory is invalid' +
+                              '\nPath is not a directory: ' + dataroot)
 
+save_run_details.is_valid_dir(output_dir, 'Output image directory is invalid' +
+                              '\nPath is not a directory: ' + output_dir)
 
-if not os.path.isdir(dataroot):
-    print('Path to training data directory doesn\'t exist')
+# Each run will be saved with model details, real images, and generated (fake) images, and models
+run_id = save_run_details.id_generator()
+print('This run\'s unique id is ' + run_id)
 
-if not os.path.isdir(output_dir):
-    print('Path to output image directory is invalid')
-
-# Creates random combination of ascii and numbers, taken from https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits
-def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
-
-run_id = id_generator()
-print('This runs unique id is ' + run_id)
-
+run_dir = save_run_details.make_run_dir(output_dir, run_id)
 
 batch_size = 12
 
@@ -83,7 +78,6 @@ dataset = dset.ImageFolder(root=dataroot,
                                transforms.ToTensor(),
                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                            ]))
-
     
 # Create the dataloader
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
@@ -91,22 +85,20 @@ dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
 
 # Decide which device we want to run on
 device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
-print('Is using GPU? ' + str(torch.cuda.is_available()))
+print('Is GPU avilable? ' + str(torch.cuda.is_available()))
 
 
 # Tensor should be of shape (batch_size, num_channels, height, width) as outputted by DataLoader
-def save_example_imgs_from_tensor(tensor, output_path):    
-    vutils.save_image(tensor, output_path, normalize=True)
+def save_example_imgs_from_tensor(tensor, save_path):    
+    vutils.save_image(tensor, save_path, normalize=True)
     
 # Save training images
 real_batch = next(iter(dataloader))
 
 # batch_imgs is of size (batch_size, num_channels, height, width)
 batch_imgs = real_batch[0]
-real_img_output_path = output_dir + '/' + 'trainingImages' + '.png'
+real_img_output_path = os.path.join(run_dir, 'trainingImages.png')
 save_example_imgs_from_tensor(batch_imgs, real_img_output_path)
-
-n_images = len(dataloader) * batch_size
 
 # custom weights initialization called on netG and netD
 def weights_init(m):
@@ -119,7 +111,6 @@ def weights_init(m):
 
 
 # Generator Code
-
 class Generator(nn.Module):
     def __init__(self, ngpu):
         super(Generator, self).__init__()
@@ -161,8 +152,6 @@ if (device.type == 'cuda') and (ngpu > 1):
 #  to mean=0, stdev=0.2.
 netG.apply(weights_init)
 
-# Print the model
-print(netG)
 
 class Discriminator(nn.Module):
     def __init__(self, ngpu):
@@ -203,10 +192,6 @@ if (device.type == 'cuda') and (ngpu > 1):
 #  to mean=0, stdev=0.2.
 netD.apply(weights_init)
 
-# Print the model
-print(netD)
-
-
 # Initialize BCELoss function
 criterion = nn.BCELoss()
 
@@ -229,6 +214,19 @@ img_list = []
 G_losses = []
 D_losses = []
 iters = 0
+
+#print('Model architecture saved')
+# default `log_dir` is "runs" - we'll be more specific here
+#writer = SummaryWriter(os.path.join(run_dir, 'tensorboard'))
+
+
+# Print the model
+#print(netG)
+#print(netD)
+
+with open(os.path.join(run_dir, 'modelArchitecture.txt'), "w") as text_file:
+    text_file.write(str(netG))
+    text_file.write(str(netD))
 
 print("Starting Training Loop...")
 # For each epoch
@@ -288,12 +286,6 @@ for epoch in range(num_epochs):
 
         # Output training stats
         if i % 50 == 0:
-            print('Saving fake images')
-            with torch.no_grad():
-                fake = netG(fixed_noise).detach().cpu()
-            fake_img_output_path = output_dir + '/' + 'fakes_images_epoch_' + str(i) + '.png'
-            print(fake_img_output_path)
-            save_example_imgs_from_tensor(fake, fake_img_output_path)
             print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
                   % (epoch, num_epochs, i, len(dataloader),
                      errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
@@ -308,6 +300,10 @@ for epoch in range(num_epochs):
     print('Saving fake images')
     with torch.no_grad():
         fake = netG(fixed_noise).detach().cpu()
-    fake_img_output_path = output_dir + '/' + 'fakes_images_epoch_' + str(epoch) + '.png'
+    fake_img_output_path = run_dir + '/' + 'fakes_images_epoch_' + str(epoch) + '.png'
     print(fake_img_output_path)
     save_example_imgs_from_tensor(fake, fake_img_output_path)
+    
+    # Save to tensorboard
+#    writer.add_graph(output)
+#writer.close()
