@@ -20,6 +20,7 @@ import numpy as np
 import save_run_details
 #from torch.utils.tensorboard import SummaryWriter
 import os
+import time
 
 def main():
     # your complete code
@@ -65,7 +66,7 @@ def main():
     beta1 = 0.5
     
     # Number of workers for dataloader
-    workers = 2
+    workers = 10
     
     # Number of GPUs available. Use 0 for CPU mode.
     ngpu = 1
@@ -233,6 +234,7 @@ def main():
     print("Starting Training Loop...")
     # For each epoch
     for epoch in range(num_epochs):
+        train_seq_start_time = time.time()
         # For each batch in the dataloader
         for i, data in enumerate(dataloader, 0):
     
@@ -288,10 +290,11 @@ def main():
     
             # Output training stats
             if i % 50 == 0:
-                print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
+                
+                print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f\tTime: %.2fs'
                       % (epoch, num_epochs, i, len(dataloader),
-                         errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
-    
+                         errD.item(), errG.item(), D_x, D_G_z1, D_G_z2, time.time()-train_seq_start_time))
+                train_seq_start_time = time.time()
             # Save Losses for plotting later
             G_losses.append(errG.item())
             D_losses.append(errD.item())
