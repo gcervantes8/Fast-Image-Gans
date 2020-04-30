@@ -11,6 +11,7 @@ class AttrDict(dict):
 
 
 def read(config_file_path):
-    config = configparser.ConfigParser(dict_type=AttrDict)
+    config = configparser.ConfigParser()
+    #config = configparser.ConfigParser(dict_type=AttrDict)
     config.read(config_file_path)
     return config

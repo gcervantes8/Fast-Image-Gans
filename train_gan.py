@@ -6,72 +6,73 @@ Created on Thu Feb 20 00:23:38 2020
 """
 
 from __future__ import print_function
-import torch
 import torch.nn as nn
-import torch.nn.parallel
-import torch.backends.cudnn as cudnn
 import torch.optim as optim
 import torch.utils.data
 import torchvision.datasets as dset
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
-import matplotlib.pyplot as plt
-import numpy as np
 import save_run_details
-#from torch.utils.tensorboard import SummaryWriter
+import ini_parser
+# from torch.utils.tensorboard import SummaryWriter
 import os
 import time
 
-def main():
-    # your complete code
-    
-    # Root directory for dataset 
-    dataroot = r'mario-data_Copy of 14608-Gana64'
-    # Each run will get it's own unique id and folder in the output directory
-    output_dir = 'output/'
-    
+if __name__ == '__main__':
+
+    config_file_path = 'model_config.ini'
+    ini_config = ini_parser.read(config_file_path)
+
+#
+# #    # Root directory for dataset
+#     dataroot = r'mario-data_Copy of 14608-Gana64'
+#     # Each run will get it's own unique id and folder in the output directory
+#     output_dir = 'output/'
+#
+    dataroot = ini_config['CONFIGS']['dataroot']
     save_run_details.is_valid_dir(dataroot, 'Training data directory is invalid' +
                                   '\nPath is not a directory: ' + dataroot)
-    
+
+    output_dir = ini_config['CONFIGS']['output_dir']
     save_run_details.is_valid_dir(output_dir, 'Output image directory is invalid' +
                                   '\nPath is not a directory: ' + output_dir)
-    
+#
     # Each run will be saved with model details, real images, and generated (fake) images, and models
     run_id = save_run_details.id_generator()
     print('This run\'s unique id is ' + run_id)
-    
+
     run_dir = save_run_details.make_run_dir(output_dir, run_id)
-    
-    batch_size = 12
-    
-    # Spatial size of training images. All images will be resized to this
-    #   size using a transformer.
-    image_size = 64
-    
-    # Number of channels in the training images. For color images this is 3
-    num_channels = 3
-    
-    # Size of z latent vector (i.e. size of generator input)
-    latent_vector_size = 100
-    
-    # Size of feature maps in generator and discriminator
-    ngf, ndf = 64, 64
-    
-    num_epochs = 1000
-    
-    # Learning rate
-    lr = 0.0002
-    
-    # Beta1 hyperparam for Adam optimizers
-    beta1 = 0.5
-    
-    # Number of workers for dataloader
-    workers = 10
-    
-    # Number of GPUs available. Use 0 for CPU mode.
-    ngpu = 1
-    
-    
+#
+#     batch_size = 12
+#
+#     # Spatial size of training images. All images will be resized to this
+#     #   size using a transformer.
+#     image_size = 64
+#
+#     # Number of channels in the training images. For color images this is 3
+#     num_channels = 3
+#
+#     # Size of z latent vector (i.e. size of generator input)
+#     latent_vector_size = 100
+#
+#     # Size of feature maps in generator and discriminator
+#     ngf, ndf = 64, 64
+#
+#     num_epochs = 1000
+#
+#     # Learning rate
+#     lr = 0.0002
+#
+#     # Beta1 hyperparam for Adam optimizers
+#     beta1 = 0.5
+#
+#     # Number of workers for dataloader
+#     workers = 0
+#
+#     # Number of GPUs available. Use 0 for CPU mode.
+#     ngpu = 1
+#
+    image_size = int(ini_config['CONFIGS']['image_size'])
     # We can use an image folder dataset the way we have it setup.
     # Create the dataset
     dataset = dset.ImageFolder(root=dataroot,
@@ -81,16 +82,18 @@ def main():
                                    transforms.ToTensor(),
                                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                                ]))
-        
+
+    batch_size = int(ini_config['CONFIGS']['batch_size'])
+    n_workers = int(ini_config['CONFIGS']['workers'])
     # Create the dataloader
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
-                                             shuffle=True, num_workers=workers)
-    
+                                             shuffle=True, num_workers=n_workers)
+
+    n_gpu = int(ini_config['CONFIGS']['ngpu'])
     # Decide which device we want to run on
-    device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else "cpu")
+    device = torch.device("cuda:0" if (torch.cuda.is_available() and n_gpu > 0) else "cpu")
     print('Is GPU avilable? ' + str(torch.cuda.is_available()))
-    
-    
+
     # Tensor should be of shape (batch_size, num_channels, height, width) as outputted by DataLoader
     def save_example_imgs_from_tensor(tensor, save_path):    
         vutils.save_image(tensor, save_path, normalize=True)
@@ -111,13 +114,16 @@ def main():
         elif classname.find('BatchNorm') != -1:
             nn.init.normal_(m.weight.data, 1.0, 0.02)
             nn.init.constant_(m.bias.data, 0)
-    
-    
+
+
+    latent_vector_size = int(ini_config['CONFIGS']['latent_vector_size'])
+    ngf = int(ini_config['CONFIGS']['ngf'])
+    num_channels = int(ini_config['CONFIGS']['num_channels'])
     # Generator Code
     class Generator(nn.Module):
-        def __init__(self, ngpu):
+        def __init__(self, n_gpu):
             super(Generator, self).__init__()
-            self.ngpu = ngpu
+            self.n_gpu = n_gpu
             self.main = nn.Sequential(
                 # input is Z, going into a convolution
                 nn.ConvTranspose2d( latent_vector_size, ngf * 8, 4, 1, 0, bias=False),
@@ -145,17 +151,17 @@ def main():
             return self.main(input)
         
     # Create the generator
-    netG = Generator(ngpu).to(device)
+    netG = Generator(n_gpu).to(device)
     
     # Handle multi-gpu if desired
-    if (device.type == 'cuda') and (ngpu > 1):
-        netG = nn.DataParallel(netG, list(range(ngpu)))
+    if (device.type == 'cuda') and (n_gpu > 1):
+        netG = nn.DataParallel(netG, list(range(n_gpu)))
     
     # Apply the weights_init function to randomly initialize all weights
     #  to mean=0, stdev=0.2.
     netG.apply(weights_init)
-    
-    
+
+    ndf = int(ini_config['CONFIGS']['ndf'])
     class Discriminator(nn.Module):
         def __init__(self, ngpu):
             super(Discriminator, self).__init__()
@@ -183,13 +189,16 @@ def main():
     
         def forward(self, input):
             return self.main(input)
-    
+
+
+
+
     # Create the Discriminator
-    netD = Discriminator(ngpu).to(device)
+    netD = Discriminator(n_gpu).to(device)
     
     # Handle multi-gpu if desired
-    if (device.type == 'cuda') and (ngpu > 1):
-        netD = nn.DataParallel(netD, list(range(ngpu)))
+    if (device.type == 'cuda') and (n_gpu > 1):
+        netD = nn.DataParallel(netD, list(range(n_gpu)))
     
     # Apply the weights_init function to randomly initialize all weights
     #  to mean=0, stdev=0.2.
@@ -205,7 +214,10 @@ def main():
     # Establish convention for real and fake labels during training
     real_label = 1
     fake_label = 0
-    
+
+    beta1 = float(ini_config['CONFIGS']['beta1'])
+    lr = float(ini_config['CONFIGS']['lr'])
+
     # Setup Adam optimizers for both G and D
     optimizerD = optim.Adam(netD.parameters(), lr=lr, betas=(beta1, 0.999))
     optimizerG = optim.Adam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
@@ -217,23 +229,16 @@ def main():
     G_losses = []
     D_losses = []
     iters = 0
-    
-    #print('Model architecture saved')
-    # default `log_dir` is "runs" - we'll be more specific here
-    #writer = SummaryWriter(os.path.join(run_dir, 'tensorboard'))
-    
-    
-    # Print the model
-    #print(netG)
-    #print(netD)
-    
+
+    n_epochs = int(ini_config['CONFIGS']['num_epochs'])
+
     with open(os.path.join(run_dir, 'modelArchitecture.txt'), "w") as text_file:
         text_file.write(str(netG))
         text_file.write(str(netD))
     
     print("Starting Training Loop...")
     # For each epoch
-    for epoch in range(num_epochs):
+    for epoch in range(n_epochs):
         train_seq_start_time = time.time()
         # For each batch in the dataloader
         for i, data in enumerate(dataloader, 0):
@@ -241,7 +246,7 @@ def main():
             ############################
             # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
             ###########################
-            ## Train with all-real batch
+            # Train with all-real batch
             netD.zero_grad()
             # Format batch
             real_cpu = data[0].to(device)
@@ -255,7 +260,7 @@ def main():
             errD_real.backward()
             D_x = output.mean().item()
     
-            ## Train with all-fake batch
+            # Train with all-fake batch
             # Generate batch of latent vectors
             noise = torch.randn(b_size, latent_vector_size, 1, 1, device=device)
             # Generate fake image batch with G
@@ -292,7 +297,7 @@ def main():
             if i % 50 == 0:
                 
                 print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f\tTime: %.2fs'
-                      % (epoch, num_epochs, i, len(dataloader),
+                      % (epoch, n_epochs, i, len(dataloader),
                          errD.item(), errG.item(), D_x, D_G_z1, D_G_z2, time.time()-train_seq_start_time))
                 train_seq_start_time = time.time()
             # Save Losses for plotting later
@@ -311,8 +316,5 @@ def main():
         
         # Save to tensorboard
     #    writer.add_graph(output)
-    #writer.close()
+    # writer.close()
 
-
-if __name__=='__main__':
-    main()
