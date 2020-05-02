@@ -24,26 +24,27 @@ if __name__ == '__main__':
     config_file_path = 'model_config.ini'
     ini_config = ini_parser.read(config_file_path)
 
-    dataroot = ini_config['CONFIGS']['dataroot']
-    save_run_details.is_valid_dir(dataroot, 'Training data directory is invalid' +
-                                  '\nPath is not a directory: ' + dataroot)
+    def create_run_dir(directory_path):
+        save_run_details.is_valid_dir(directory_path, 'Output image directory is invalid' +
+                                      '\nPath is not a directory: ' + directory_path)
+
+        # Each run will be saved with model details, real images, and generated (fake) images, and models
+        run_id = save_run_details.id_generator()
+        run_dir = save_run_details.create_run_dir(output_dir, run_id)
+        return run_dir
 
     output_dir = ini_config['CONFIGS']['output_dir']
-    save_run_details.is_valid_dir(output_dir, 'Output image directory is invalid' +
-                                  '\nPath is not a directory: ' + output_dir)
-#
-    # Each run will be saved with model details, real images, and generated (fake) images, and models
-    run_id = save_run_details.id_generator()
-    print('This run\'s unique id is ' + run_id)
+    run_dir = create_run_dir(output_dir)
+    print('Output will be saved to ' + run_dir)
 
-    run_dir = save_run_details.make_run_dir(output_dir, run_id)
-
-    image_size = int(ini_config['CONFIGS']['image_size'])
-    # We can use an image folder dataset the way we have it setup.
-    # Create the dataset
-
+    # Create the data-set using an image folder
     def create_data_loader(config):
-        dataset = dset.ImageFolder(root=dataroot,
+        data_dir = ini_config['CONFIGS']['dataroot']
+        save_run_details.is_valid_dir(data_dir, 'Training data directory is invalid' +
+                                      '\nPath is not a directory: ' + data_dir)
+
+        image_size = int(ini_config['CONFIGS']['image_size'])
+        dataset = dset.ImageFolder(root=data_dir,
                                    transform=transforms.Compose([
                                        transforms.Resize(image_size),
                                        transforms.CenterCrop(image_size),
@@ -59,26 +60,25 @@ if __name__ == '__main__':
         return data_loader
 
     data_loader = create_data_loader(ini_config)
+
     n_gpu = int(ini_config['CONFIGS']['ngpu'])
+    device = torch.device('cuda:0' if (torch.cuda.is_available() and n_gpu > 0) else 'cpu')
+    print('Is GPU available? ' + str(torch.cuda.is_available()))
 
-
-    device = torch.device("cuda:0" if (torch.cuda.is_available() and n_gpu > 0) else "cpu")
-    print('Is GPU avilable? ' + str(torch.cuda.is_available()))
-
-    def save_imgs(tensor, save_path):
-        # batch_imgs tensor should be of shape (batch_size, num_channels, height, width) as outputted by DataLoader
+    def save_images(tensor, save_path):
+        # tensor should be of shape (batch_size, num_channels, height, width) as outputted by DataLoader
         vutils.save_image(tensor, save_path, normalize=True)
 
-    def save_training_imgs(data_loader, save_dir):
+    def save_training_images(loader, save_dir):
         # Save training images
-        real_batch = next(iter(data_loader))
+        real_batch = next(iter(loader))
 
-        # batch_imgs is of size (batch_size, num_channels, height, width)
-        batch_imgs = real_batch[0]
+        # batch_images is of size (batch_size, num_channels, height, width)
+        batch_images = real_batch[0]
         save_path = os.path.join(run_dir, 'trainingImages.png')
-        save_imgs(batch_imgs, save_path)
+        save_images(batch_images, save_path)
 
-    save_training_imgs(data_loader, run_dir)
+    save_training_images(data_loader, run_dir)
 
     # custom weights initialization called on netG and netD
     def weights_init(m):
@@ -93,6 +93,8 @@ if __name__ == '__main__':
     latent_vector_size = int(ini_config['CONFIGS']['latent_vector_size'])
     ngf = int(ini_config['CONFIGS']['ngf'])
     num_channels = int(ini_config['CONFIGS']['num_channels'])
+    ndf = int(ini_config['CONFIGS']['ndf'])
+
     # Generator Code
     class Generator(nn.Module):
         def __init__(self, n_gpu):
@@ -100,7 +102,7 @@ if __name__ == '__main__':
             self.n_gpu = n_gpu
             self.main = nn.Sequential(
                 # input is Z, going into a convolution
-                nn.ConvTranspose2d( latent_vector_size, ngf * 8, 4, 1, 0, bias=False),
+                nn.ConvTranspose2d(latent_vector_size, ngf * 8, 4, 1, 0, bias=False),
                 nn.BatchNorm2d(ngf * 8),
                 nn.ReLU(True),
                 # state size. (ngf*8) x 4 x 4
@@ -108,34 +110,23 @@ if __name__ == '__main__':
                 nn.BatchNorm2d(ngf * 4),
                 nn.ReLU(True),
                 # state size. (ngf*4) x 8 x 8
-                nn.ConvTranspose2d( ngf * 4, ngf * 2, 4, 2, 1, bias=False),
+                nn.ConvTranspose2d(ngf * 4, ngf * 2, 4, 2, 1, bias=False),
                 nn.BatchNorm2d(ngf * 2),
                 nn.ReLU(True),
                 # state size. (ngf*2) x 16 x 16
-                nn.ConvTranspose2d( ngf * 2, ngf, 4, 2, 1, bias=False),
+                nn.ConvTranspose2d(ngf * 2, ngf, 4, 2, 1, bias=False),
                 nn.BatchNorm2d(ngf),
                 nn.ReLU(True),
                 # state size. (ngf) x 32 x 32
-                nn.ConvTranspose2d( ngf, num_channels, 4, 2, 1, bias=False),
+                nn.ConvTranspose2d(ngf, num_channels, 4, 2, 1, bias=False),
                 nn.Tanh()
                 # state size. (nc) x 64 x 64
             )
-    
-        def forward(self, input):
-            return self.main(input)
-        
-    # Create the generator
-    netG = Generator(n_gpu).to(device)
-    
-    # Handle multi-gpu if desired
-    if (device.type == 'cuda') and (n_gpu > 1):
-        netG = nn.DataParallel(netG, list(range(n_gpu)))
-    
-    # Apply the weights_init function to randomly initialize all weights
-    #  to mean=0, stdev=0.2.
-    netG.apply(weights_init)
 
-    ndf = int(ini_config['CONFIGS']['ndf'])
+        def forward(self, generator_input):
+            return self.main(generator_input)
+
+
     class Discriminator(nn.Module):
         def __init__(self, ngpu):
             super(Discriminator, self).__init__()
@@ -160,32 +151,37 @@ if __name__ == '__main__':
                 nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),
                 nn.Sigmoid()
             )
-    
-        def forward(self, input):
-            return self.main(input)
 
+        def forward(self, discriminator_input):
+            return self.main(discriminator_input)
 
-
-
-    # Create the Discriminator
+    # Create the generator and discriminator
+    netG = Generator(n_gpu).to(device)
     netD = Discriminator(n_gpu).to(device)
-    
-    # Handle multi-gpu if desired
-    if (device.type == 'cuda') and (n_gpu > 1):
-        netD = nn.DataParallel(netD, list(range(n_gpu)))
-    
-    # Apply the weights_init function to randomly initialize all weights
-    #  to mean=0, stdev=0.2.
+
+    # Handle multi-gpu if desired, returns the new instance that is multi-gpu capable
+    def handle_multiple_gpus(torch_obj, n_gpu):
+        if (device.type == 'cuda') and (n_gpu > 1):
+            return nn.DataParallel(torch_obj, list(range(n_gpu)))
+
+    netG = handle_multiple_gpus(netG, n_gpu)
+    netD = handle_multiple_gpus(netD, n_gpu)
+
+    # Apply weights_init function to randomly initialize all weights to mean=0, stdev=0.2.
     netD.apply(weights_init)
-    
+    netG.apply(weights_init)
+
+    # Writes architecture details onto file in run directory
+    with open(os.path.join(run_dir, 'architecture.txt'), "w") as text_file:
+        text_file.write(str(netG))
+        text_file.write(str(netD))
+
     # Initialize BCELoss function
     criterion = nn.BCELoss()
-    
-    # Create batch of latent vectors that we will use to visualize
-    #  the progression of the generator
+
+    # Create batch of latent vectors used to visualize the generator
     fixed_noise = torch.randn(64, latent_vector_size, 1, 1, device=device)
-    
-    # Establish convention for real and fake labels during training
+
     real_label = 1
     fake_label = 0
 
@@ -195,9 +191,9 @@ if __name__ == '__main__':
     # Setup Adam optimizers for both G and D
     optimizerD = optim.Adam(netD.parameters(), lr=lr, betas=(beta1, 0.999))
     optimizerG = optim.Adam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
-    
+
     # Training Loop
-    
+
     # Lists to keep track of progress
     img_list = []
     G_losses = []
@@ -206,17 +202,13 @@ if __name__ == '__main__':
 
     n_epochs = int(ini_config['CONFIGS']['num_epochs'])
 
-    with open(os.path.join(run_dir, 'modelArchitecture.txt'), "w") as text_file:
-        text_file.write(str(netG))
-        text_file.write(str(netD))
-    
     print("Starting Training Loop...")
-    # For each epoch
+
     for epoch in range(n_epochs):
         train_seq_start_time = time.time()
         # For each batch in the dataloader
         for i, data in enumerate(data_loader, 0):
-    
+
             ############################
             # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
             ###########################
@@ -233,7 +225,7 @@ if __name__ == '__main__':
             # Calculate gradients for D in backward pass
             errD_real.backward()
             D_x = output.mean().item()
-    
+
             # Train with all-fake batch
             # Generate batch of latent vectors
             noise = torch.randn(b_size, latent_vector_size, 1, 1, device=device)
@@ -251,7 +243,7 @@ if __name__ == '__main__':
             errD = errD_real + errD_fake
             # Update D
             optimizerD.step()
-    
+
             ############################
             # (2) Update G network: maximize log(D(G(z)))
             ###########################
@@ -266,10 +258,10 @@ if __name__ == '__main__':
             D_G_z2 = output.mean().item()
             # Update G
             optimizerG.step()
-    
+
             # Output training stats
             if i % 50 == 0:
-                
+
                 print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f\tTime: %.2fs'
                       % (epoch, n_epochs, i, len(data_loader),
                          errD.item(), errG.item(), D_x, D_G_z1, D_G_z2, time.time()-train_seq_start_time))
@@ -277,17 +269,17 @@ if __name__ == '__main__':
             # Save Losses for plotting later
             G_losses.append(errG.item())
             D_losses.append(errD.item())
-    
+
             iters += 1
-            
+
         # Check how the generator is doing by saving G's output on fixed_noise
         print('Saving fake images')
         with torch.no_grad():
             fake = netG(fixed_noise).detach().cpu()
         fake_img_output_path = run_dir + '/' + 'fakes_images_epoch_' + str(epoch) + '.png'
         print(fake_img_output_path)
-        save_imgs(fake, fake_img_output_path)
-        
+        save_images(fake, fake_img_output_path)
+
         # Save to tensorboard
     #    writer.add_graph(output)
     # writer.close()
