@@ -12,9 +12,10 @@ import torch.utils.data
 import torchvision.datasets as dset
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
+
 import save_run_details
 import ini_parser
-# from torch.utils.tensorboard import SummaryWriter
+
 import os
 import time
 
@@ -23,12 +24,6 @@ if __name__ == '__main__':
     config_file_path = 'model_config.ini'
     ini_config = ini_parser.read(config_file_path)
 
-#
-# #    # Root directory for dataset
-#     dataroot = r'mario-data_Copy of 14608-Gana64'
-#     # Each run will get it's own unique id and folder in the output directory
-#     output_dir = 'output/'
-#
     dataroot = ini_config['CONFIGS']['dataroot']
     save_run_details.is_valid_dir(dataroot, 'Training data directory is invalid' +
                                   '\nPath is not a directory: ' + dataroot)
@@ -42,70 +37,49 @@ if __name__ == '__main__':
     print('This run\'s unique id is ' + run_id)
 
     run_dir = save_run_details.make_run_dir(output_dir, run_id)
-#
-#     batch_size = 12
-#
-#     # Spatial size of training images. All images will be resized to this
-#     #   size using a transformer.
-#     image_size = 64
-#
-#     # Number of channels in the training images. For color images this is 3
-#     num_channels = 3
-#
-#     # Size of z latent vector (i.e. size of generator input)
-#     latent_vector_size = 100
-#
-#     # Size of feature maps in generator and discriminator
-#     ngf, ndf = 64, 64
-#
-#     num_epochs = 1000
-#
-#     # Learning rate
-#     lr = 0.0002
-#
-#     # Beta1 hyperparam for Adam optimizers
-#     beta1 = 0.5
-#
-#     # Number of workers for dataloader
-#     workers = 0
-#
-#     # Number of GPUs available. Use 0 for CPU mode.
-#     ngpu = 1
-#
+
     image_size = int(ini_config['CONFIGS']['image_size'])
     # We can use an image folder dataset the way we have it setup.
     # Create the dataset
-    dataset = dset.ImageFolder(root=dataroot,
-                               transform=transforms.Compose([
-                                   transforms.Resize(image_size),
-                                   transforms.CenterCrop(image_size),
-                                   transforms.ToTensor(),
-                                   transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-                               ]))
 
-    batch_size = int(ini_config['CONFIGS']['batch_size'])
-    n_workers = int(ini_config['CONFIGS']['workers'])
-    # Create the dataloader
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
-                                             shuffle=True, num_workers=n_workers)
+    def create_data_loader(config):
+        dataset = dset.ImageFolder(root=dataroot,
+                                   transform=transforms.Compose([
+                                       transforms.Resize(image_size),
+                                       transforms.CenterCrop(image_size),
+                                       transforms.ToTensor(),
+                                       transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                                   ]))
 
+        batch_size = int(config['CONFIGS']['batch_size'])
+        n_workers = int(config['CONFIGS']['workers'])
+        # Create the dataloader
+        data_loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
+                                                 shuffle=True, num_workers=n_workers)
+        return data_loader
+
+    data_loader = create_data_loader(ini_config)
     n_gpu = int(ini_config['CONFIGS']['ngpu'])
-    # Decide which device we want to run on
+
+
     device = torch.device("cuda:0" if (torch.cuda.is_available() and n_gpu > 0) else "cpu")
     print('Is GPU avilable? ' + str(torch.cuda.is_available()))
 
-    # Tensor should be of shape (batch_size, num_channels, height, width) as outputted by DataLoader
-    def save_example_imgs_from_tensor(tensor, save_path):    
+    def save_imgs(tensor, save_path):
+        # batch_imgs tensor should be of shape (batch_size, num_channels, height, width) as outputted by DataLoader
         vutils.save_image(tensor, save_path, normalize=True)
-        
-    # Save training images
-    real_batch = next(iter(dataloader))
-    
-    # batch_imgs is of size (batch_size, num_channels, height, width)
-    batch_imgs = real_batch[0]
-    real_img_output_path = os.path.join(run_dir, 'trainingImages.png')
-    save_example_imgs_from_tensor(batch_imgs, real_img_output_path)
-    
+
+    def save_training_imgs(data_loader, save_dir):
+        # Save training images
+        real_batch = next(iter(data_loader))
+
+        # batch_imgs is of size (batch_size, num_channels, height, width)
+        batch_imgs = real_batch[0]
+        save_path = os.path.join(run_dir, 'trainingImages.png')
+        save_imgs(batch_imgs, save_path)
+
+    save_training_imgs(data_loader, run_dir)
+
     # custom weights initialization called on netG and netD
     def weights_init(m):
         classname = m.__class__.__name__
@@ -241,7 +215,7 @@ if __name__ == '__main__':
     for epoch in range(n_epochs):
         train_seq_start_time = time.time()
         # For each batch in the dataloader
-        for i, data in enumerate(dataloader, 0):
+        for i, data in enumerate(data_loader, 0):
     
             ############################
             # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
@@ -297,7 +271,7 @@ if __name__ == '__main__':
             if i % 50 == 0:
                 
                 print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f\tTime: %.2fs'
-                      % (epoch, n_epochs, i, len(dataloader),
+                      % (epoch, n_epochs, i, len(data_loader),
                          errD.item(), errG.item(), D_x, D_G_z1, D_G_z2, time.time()-train_seq_start_time))
                 train_seq_start_time = time.time()
             # Save Losses for plotting later
@@ -312,7 +286,7 @@ if __name__ == '__main__':
             fake = netG(fixed_noise).detach().cpu()
         fake_img_output_path = run_dir + '/' + 'fakes_images_epoch_' + str(epoch) + '.png'
         print(fake_img_output_path)
-        save_example_imgs_from_tensor(fake, fake_img_output_path)
+        save_imgs(fake, fake_img_output_path)
         
         # Save to tensorboard
     #    writer.add_graph(output)
