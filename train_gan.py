@@ -16,6 +16,7 @@ import torchvision.utils as torch_utils
 import save_train_output
 import ini_parser
 
+import shutil
 import os
 import time
 
@@ -60,27 +61,14 @@ if __name__ == '__main__':
                                                    shuffle=True, num_workers=n_workers)
         return torch_loader
 
+    shutil.copy(config_file_path, os.path.abspath(run_dir))
+    print('Copied config file!')
+    save_train_output.save_gan_files(run_dir)
+    print('Copies the Generator and Discriminator files')
 
     data_loader = create_data_loader(ini_config)
 
-    n_gpu = int(ini_config['CONFIGS']['ngpu'])
-    device = torch.device('cuda:0' if (torch.cuda.is_available() and n_gpu > 0) else 'cpu')
-    print('Is GPU available? ' + str(torch.cuda.is_available()))
-
-    def save_images(tensor, save_path):
-        # tensor should be of shape (batch_size, num_channels, height, width) as outputted by DataLoader
-        torch_utils.save_image(tensor, save_path, normalize=True)
-
-    def save_training_images(loader, save_dir):
-        # Save training images
-        real_batch = next(iter(loader))
-
-        # batch_images is of size (batch_size, num_channels, height, width)
-        batch_images = real_batch[0]
-        save_path = os.path.join(save_dir, 'trainingImages.png')
-        save_images(batch_images, save_path)
-
-    save_training_images(data_loader, run_dir)
+    save_train_output.save_training_images(data_loader, run_dir)
 
     # custom weights initialization called on netG and netD
     def weights_init(m):
@@ -91,93 +79,16 @@ if __name__ == '__main__':
             nn.init.normal_(m.weight.data, 1.0, 0.02)
             nn.init.constant_(m.bias.data, 0)
 
-
     latent_vector_size = int(ini_config['CONFIGS']['latent_vector_size'])
-    ngf = int(ini_config['CONFIGS']['ngf'])
-    num_channels = int(ini_config['CONFIGS']['num_channels'])
-    ndf = int(ini_config['CONFIGS']['ndf'])
 
-
-    class Generator(nn.Module):
-        def __init__(self, num_gpu):
-            super(Generator, self).__init__()
-            self.n_gpu = num_gpu
-            self.main = nn.Sequential(
-                # input is Z, going into a convolution
-                nn.ConvTranspose2d(latent_vector_size, ngf * 8, 4, 1, 0, bias=False),
-                nn.BatchNorm2d(ngf * 8),
-                nn.ReLU(True),
-                # state size. (ngf*8) x 4 x 4
-                nn.ConvTranspose2d(ngf * 8, ngf * 4, 4, 2, 1, bias=False),
-                nn.BatchNorm2d(ngf * 4),
-                nn.ReLU(True),
-                # state size. (ngf*4) x 8 x 8
-                nn.ConvTranspose2d(ngf * 4, ngf * 2, 4, 2, 1, bias=False),
-                nn.BatchNorm2d(ngf * 2),
-                nn.ReLU(True),
-                # state size. (ngf*2) x 16 x 16
-                nn.ConvTranspose2d(ngf * 2, ngf, 4, 2, 1, bias=False),
-                nn.BatchNorm2d(ngf),
-                nn.ReLU(True),
-                # state size. (ngf) x 32 x 32
-                nn.ConvTranspose2d(ngf, num_channels, 4, 2, 1, bias=False),
-                nn.Tanh()
-                # state size. (nc) x 64 x 64
-            )
-
-        def forward(self, generator_input):
-            return self.main(generator_input)
-
-
-    class Discriminator(nn.Module):
-        def __init__(self, num_gpu):
-            super(Discriminator, self).__init__()
-            self.ngpu = num_gpu
-            self.main = nn.Sequential(
-                # input is (num_channels) x 64 x 64
-                nn.Conv2d(num_channels, ndf, 4, 2, 1, bias=False),
-                nn.LeakyReLU(0.2, inplace=True),
-                # state size. (ndf) x 32 x 32
-                nn.Conv2d(ndf, ndf * 2, 4, 2, 1, bias=False),
-                nn.BatchNorm2d(ndf * 2),
-                nn.LeakyReLU(0.2, inplace=True),
-                # state size. (ndf*2) x 16 x 16
-                nn.Conv2d(ndf * 2, ndf * 4, 4, 2, 1, bias=False),
-                nn.BatchNorm2d(ndf * 4),
-                nn.LeakyReLU(0.2, inplace=True),
-                # state size. (ndf*4) x 8 x 8
-                nn.Conv2d(ndf * 4, ndf * 8, 4, 2, 1, bias=False),
-                nn.BatchNorm2d(ndf * 8),
-                nn.LeakyReLU(0.2, inplace=True),
-                # state size. (ndf*8) x 4 x 4
-                nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),
-                nn.Sigmoid()
-            )
-
-        def forward(self, discriminator_input):
-            return self.main(discriminator_input)
-
-    # Create the generator and discriminator
-    netG = Generator(n_gpu).to(device)
-    netD = Discriminator(n_gpu).to(device)
-
-    # Handle multi-gpu if desired, returns the new instance that is multi-gpu capable
-    def handle_multiple_gpus(torch_obj, num_gpu):
-        if (device.type == 'cuda') and (num_gpu > 1):
-            return nn.DataParallel(torch_obj, list(range(num_gpu)))
-
-
-    netG = handle_multiple_gpus(netG, n_gpu)
-    netD = handle_multiple_gpus(netD, n_gpu)
+    netG, netD, device = save_train_output.create_gan_instances(ini_config)
+    print('Is GPU available? ' + str(torch.cuda.is_available()))
 
     # Apply weights_init function to randomly initialize all weights to mean=0, stdev=0.2.
     netD.apply(weights_init)
     netG.apply(weights_init)
 
-    # Writes architecture details onto file in run directory
-    with open(os.path.join(run_dir, 'architecture.txt'), "w") as text_file:
-        text_file.write(str(netG))
-        text_file.write(str(netD))
+    save_train_output.save_architecture(netG, netD, run_dir)
 
     # Initialize BCELoss function
     criterion = nn.BCELoss()
@@ -277,6 +188,12 @@ if __name__ == '__main__':
         print('Saving fake images')
         with torch.no_grad():
             fake = netG(fixed_noise).detach().cpu()
-        fake_img_output_path = run_dir + '/' + 'fakes_images_epoch_' + str(epoch) + '.png'
+        fake_img_output_path = run_dir + '/' + 'fake_images_epoch_' + str(epoch) + '.png'
         print(fake_img_output_path)
-        save_images(fake, fake_img_output_path)
+        save_train_output.save_images(fake, fake_img_output_path)
+
+        generator_path = run_dir + '/' + 'generator_epoch_' + str(epoch) + '.pt'
+        discriminator_path = run_dir + '/' + 'discriminator_epoch_' + str(epoch) + '.pt'
+        save_train_output.save_model(netG, netD, generator_path, discriminator_path)
+print('Training complete! Models and output saved in the output directory:')
+print(run_dir)
