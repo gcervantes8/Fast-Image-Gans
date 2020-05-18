@@ -9,12 +9,12 @@ from __future__ import print_function
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.data
-import torchvision.datasets as torch_data_set
-import torchvision.transforms as transforms
 import torchvision.utils as torch_utils
 
-import save_train_output
 import ini_parser
+import os_helper
+import saver_and_loader
+import create_model
 
 import shutil
 import os
@@ -25,70 +25,34 @@ if __name__ == '__main__':
     config_file_path = 'model_config.ini'
     ini_config = ini_parser.read(config_file_path)
 
-    def create_run_dir(directory_path):
-        save_train_output.is_valid_dir(directory_path, 'Output image directory is invalid' +
-                                      '\nPath is not a directory: ' + directory_path)
-
-        # Each run will be saved with model details, real images, and generated (fake) images, and models
-        run_id = save_train_output.id_generator()
-        run_path_dir = save_train_output.create_run_dir(output_dir, run_id)
-        return run_path_dir
-
-
     output_dir = ini_config['CONFIGS']['output_dir']
-    run_dir = create_run_dir(output_dir)
+    os_helper.is_valid_dir(output_dir, 'Output image directory is invalid' +
+                                        '\nPath is not a directory: ' + output_dir)
+    # Each run will be saved with model details, real images, and generated (fake) images, and models
+    run_dir, run_id = os_helper.create_run_dir(output_dir)
     print('Output will be saved to ' + run_dir)
-
-    # Create the data-set using an image folder
-    def create_data_loader(config):
-        data_dir = ini_config['CONFIGS']['dataroot']
-        save_train_output.is_valid_dir(data_dir, 'Training data directory is invalid' +
-                                      '\nPath is not a directory: ' + data_dir)
-
-        image_size = int(ini_config['CONFIGS']['image_size'])
-        data_set = torch_data_set.ImageFolder(root=data_dir,
-                                              transform=transforms.Compose([
-                                                  transforms.Resize(image_size),
-                                                  transforms.CenterCrop(image_size),
-                                                  transforms.ToTensor(),
-                                                  transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-                                              ]))
-
-        batch_size = int(config['CONFIGS']['batch_size'])
-        n_workers = int(config['CONFIGS']['workers'])
-        # Create the data-loader
-        torch_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size,
-                                                   shuffle=True, num_workers=n_workers)
-        return torch_loader
 
     shutil.copy(config_file_path, os.path.abspath(run_dir))
     print('Copied config file!')
-    save_train_output.save_gan_files(run_dir)
+    saver_and_loader.save_gan_files(run_dir)
     print('Copies the Generator and Discriminator files')
 
-    data_loader = create_data_loader(ini_config)
-
-    save_train_output.save_training_images(data_loader, run_dir)
-
-    # custom weights initialization called on netG and netD
-    def weights_init(m):
-        class_name = m.__class__.__name__
-        if class_name.find('Conv') != -1:
-            nn.init.normal_(m.weight.data, 0.0, 0.02)
-        elif class_name.find('BatchNorm') != -1:
-            nn.init.normal_(m.weight.data, 1.0, 0.02)
-            nn.init.constant_(m.bias.data, 0)
+    data_dir = ini_config['CONFIGS']['dataroot']
+    os_helper.is_valid_dir(data_dir, 'Invalid training data directory' +
+                                  '\nPath is an invalid directory: ' + data_dir)
+    data_loader = create_model.create_data_loader(ini_config, data_dir)
+    saver_and_loader.save_training_images(data_loader, run_dir)
 
     latent_vector_size = int(ini_config['CONFIGS']['latent_vector_size'])
 
-    netG, netD, device = save_train_output.create_gan_instances(ini_config)
+    netG, netD, device = create_model.create_gan_instances(ini_config)
     print('Is GPU available? ' + str(torch.cuda.is_available()))
 
     # Apply weights_init function to randomly initialize all weights to mean=0, stdev=0.2.
-    netD.apply(weights_init)
-    netG.apply(weights_init)
+    netD.apply(create_model.weights_init)
+    netG.apply(create_model.weights_init)
 
-    save_train_output.save_architecture(netG, netD, run_dir)
+    saver_and_loader.save_architecture(netG, netD, run_dir)
 
     # Initialize BCELoss function
     criterion = nn.BCELoss()
@@ -190,10 +154,10 @@ if __name__ == '__main__':
             fake = netG(fixed_noise).detach().cpu()
         fake_img_output_path = run_dir + '/' + 'fake_images_epoch_' + str(epoch) + '.png'
         print(fake_img_output_path)
-        save_train_output.save_images(fake, fake_img_output_path)
+        saver_and_loader.save_images(fake, fake_img_output_path)
 
         generator_path = run_dir + '/' + 'generator_epoch_' + str(epoch) + '.pt'
         discriminator_path = run_dir + '/' + 'discriminator_epoch_' + str(epoch) + '.pt'
-        save_train_output.save_model(netG, netD, generator_path, discriminator_path)
+        saver_and_loader.save_model(netG, netD, generator_path, discriminator_path)
 print('Training complete! Models and output saved in the output directory:')
 print(run_dir)
