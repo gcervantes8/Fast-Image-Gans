@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu May 17
+
+@author: Gerardo Cervantes
+
+Purpose: Functions that are used to create/init the GAN model
+"""
+
 import torch
 import torch.nn as nn
 import torchvision.datasets as torch_data_set
@@ -6,7 +15,7 @@ import torchvision.transforms as transforms
 from src import Generator, Discriminator
 
 
-# Create the data-set using an image folder
+# Create the data-set using an image folder and fits the format given in config
 def create_data_loader(config, data_dir):
 
     image_size = int(config['CONFIGS']['image_size'])
@@ -26,6 +35,7 @@ def create_data_loader(config, data_dir):
     return torch_loader
 
 
+# Creates the generator and discriminator using the configuration file
 def create_gan_instances(config):
 
     n_gpu = int(config['CONFIGS']['ngpu'])
@@ -53,7 +63,7 @@ def _handle_multiple_gpus(torch_obj, num_gpu, device):
         return torch_obj
 
 
-# custom weights initialization called on netG and netD
+# custom weights initialization, used by the generator and discriminator
 def weights_init(m):
     class_name = m.__class__.__name__
     if class_name.find('Conv') != -1:

@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu April 30 2020
+
+@author: Gerardo Cervantes
+
+Purpose: For reading the configuration file
+"""
+
+
 import configparser
 
 
@@ -12,6 +22,5 @@ class AttrDict(dict):
 
 def read(config_file_path):
     config = configparser.ConfigParser()
-    #config = configparser.ConfigParser(dict_type=AttrDict)
     config.read(config_file_path)
     return config

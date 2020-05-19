@@ -3,6 +3,8 @@
 Created on Sun Apr 12 12:12:31 2020
 
 @author: Gerardo Cervantes
+
+Purpose: Additional functions for dealing directories and paths
 """
 
 import os
@@ -32,7 +34,7 @@ def create_run_dir(output_dir):
                       '\nIt\'s possible one exists already in the ' + output_dir)
 
 
-# Creates random combination of ascii and numbers
+# Creates random combination of ascii and numbers of given size
 # taken from https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits
 def _id_generator(size=4, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))

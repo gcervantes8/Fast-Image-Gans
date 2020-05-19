@@ -3,6 +3,8 @@
 Created on Thu Feb 20 00:23:38 2020
 
 @author: Gerardo Cervantes
+
+Purpose: Used to train the GAN (Generative Adversarial Network) model
 """
 
 from __future__ import print_function

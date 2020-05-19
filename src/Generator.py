@@ -1,3 +1,13 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu May 11 00:23:38 2020
+
+@author: Gerardo Cervantes
+
+Purpose: The Generator class part of the GAN.  Customizable in the creation.
+The class takes in a latent vector to generate new images (in the forward pass)
+"""
+
 import torch.nn as nn
 
 
