@@ -50,11 +50,10 @@ def save_images(tensor, save_path):
     torch_utils.save_image(tensor, save_path, normalize=True)
 
 
-# Creates the generator and discriminator models and loads the given values from the model files
-def load_model(config, generator_path, discriminator_path):
+# Creates the generator and loads the given values from the model file
+# Returns 2-tuple (loaded generator instance, device loaded with), device can be GPU or CPU
+def load_generator(config, generator_path):
     generator, discriminator, device = create_model.create_gan_instances(config)
     generator.load_state_dict(torch.load(generator_path))
     generator.eval()
-    discriminator.load_state_dict(torch.load(discriminator_path))
-    discriminator.eval()
-    return generator, discriminator, device
+    return generator, device
