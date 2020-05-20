@@ -29,7 +29,6 @@ def create_run_dir(output_dir):
         run_dir_path = os.path.join(output_dir, run_id)
         
         os.mkdir(run_dir_path)
-        print('Directory ', run_dir_path,  ' Created ')
         return run_dir_path, run_id
     except FileExistsError:
         raise OSError('Could create new directory with identifier: ' + run_id +
