@@ -25,41 +25,39 @@ if __name__ == '__main__':
     config_file_path = 'model_config.ini'
     config = ini_parser.read(config_file_path)
 
+    # Creates the run directory in the output folder specified in the configuration file
     output_dir = config['CONFIGS']['output_dir']
-    os_helper.is_valid_dir(output_dir, 'Output image directory is invalid' +
-                                       '\nPath is not a directory: ' + output_dir)
-    # Each trained model will have it's own directory
-    # saved with the architecture, config file, trained and generated images, trained models, and training information
+    os_helper.is_valid_dir(output_dir, 'Output image directory is invalid\nPath is not a directory: ' + output_dir)
     run_dir, run_id = os_helper.create_run_dir(output_dir)
+    img_dir = os_helper.create_dir(run_dir, 'images')
+    model_dir = os_helper.create_dir(run_dir, 'models')
 
+    # Logs training information, everything logged will also be outputted to stdout (printed)
     log_path = os.path.join(run_dir, 'train.log')
     logging.basicConfig(filename=log_path, level=logging.INFO)
-    # Everything logged will also be outputted to stdout (printed)
     logging.getLogger().addHandler(logging.StreamHandler())
     logging.info('Directory ' + run_dir + ' created, training output will be saved here')
 
+    # Copies config and python model files
     shutil.copy(config_file_path, os.path.abspath(run_dir))
     logging.info('Copied config file!')
     saver_and_loader.save_gan_files(run_dir)
     logging.info('Copied the Generator and Discriminator files')
 
+    # Creates data-loader
     data_dir = config['CONFIGS']['dataroot']
-    os_helper.is_valid_dir(data_dir, 'Invalid training data directory' +
-                                     '\nPath is an invalid directory: ' + data_dir)
-
+    os_helper.is_valid_dir(data_dir, 'Invalid training data directory\nPath is an invalid directory: ' + data_dir)
     data_loader = create_model.create_data_loader(config, data_dir)
-    saver_and_loader.save_training_images(data_loader, run_dir)
+
+    # Save training images
+    saver_and_loader.save_training_images(data_loader, img_dir, 'train_batch.png')
 
     # Create model
     netG, netD, device = create_model.create_gan_instances(config)
     saver_and_loader.save_architecture(netG, netD, run_dir)
     logging.info('Is GPU available? ' + str(torch.cuda.is_available()))
-
-    # Apply weights_init function to randomly initialize all weights to mean=0, stdev=0.2.
     netD.apply(create_model.weights_init)
     netG.apply(create_model.weights_init)
-
-    # Initialize BCELoss function
     criterion = nn.BCELoss()
 
     # Create batch of latent vectors to visualize the generator
@@ -141,13 +139,13 @@ if __name__ == '__main__':
         logging.info('Saving fake images')
         with torch.no_grad():
             fake = netG(fixed_noise).detach().cpu()
-        fake_img_output_path = run_dir + '/' + 'fake_images_epoch_' + str(epoch) + '.png'
+        fake_img_output_path = os.path.join(img_dir, 'fake_epoch_' + str(epoch) + '.png')
         logging.info(fake_img_output_path)
         saver_and_loader.save_images(fake, fake_img_output_path)
 
         # Saves models
-        generator_path = run_dir + '/' + 'generator_epoch_' + str(epoch) + '.pt'
-        discriminator_path = run_dir + '/' + 'discriminator_epoch_' + str(epoch) + '.pt'
+        generator_path = os.path.join(model_dir, 'gen_epoch_' + str(epoch) + '.pt')
+        discriminator_path = os.path.join(model_dir, 'discrim_epoch_' + str(epoch) + '.pt')
         saver_and_loader.save_model(netG, netD, generator_path, discriminator_path)
     logging.info('Training complete! Models and output saved in the output directory:')
     logging.info(run_dir)

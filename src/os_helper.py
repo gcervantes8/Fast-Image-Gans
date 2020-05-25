@@ -35,6 +35,14 @@ def create_run_dir(output_dir):
                       '\nIt\'s possible one exists already in the ' + output_dir)
 
 
+# Creates a directory with name of dir_nam in the given path, returns the path to the created directory
+def create_dir(path, dir_name):
+    dir_path = os.path.join(path, dir_name)
+    if not os.path.exists(dir_path):
+        os.mkdir(dir_path)
+    return dir_path
+
+
 # Creates random combination of ascii and numbers of given size
 # taken from https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits
 def _id_generator(size=4, chars=string.ascii_uppercase + string.digits):
