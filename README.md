@@ -11,43 +11,57 @@ With this project, you can train an Generative Adversarial Network to learn how 
 
 Train models using **/src/train_gan.py**
 
-### Configuration File
+and by modifying the configuration file
+
+## Configuration File
 
 Configure model training: **/model_config.ini**
 
-Modifiable is
+Modifiable parameters are
 
-#### Loading and Saving
+#### Loading and saving
 - Path to training image directory
 - Path to directory to save all output
+
+#### Image details
+
+- Size image width, images will be resized to this
+- Size image height, images will be resized to this
+- Number of channels, black and white (1), or color (3)
+
+#### Machine-specific parameters
+
+- Number of GPUs
+- Number of workers
 
 #### Hyper-parameters - 1
 
 - Number of epochs
 - Batch size
 - Learning rate
-- Optimizer parameters
 
 #### Hyper-parameters - 2
 
-- Size image width, images will be resized to this
-- Size image height, images will be resized to this
-- Number of channels, black and white (1), or color (3)
+- Optimizer parameters
 - Latent vector size (Given to the generator)
 - Size of feature maps in the generator and discriminator
 
-### Images Generated and Training
+## Images Generated with Training Details
 
 
 #### Super Mario 64
 
 Images are collected from people speedrunning the game
 
-#### Trained model results
+### Trained model results
 
 Results at **/output/Y8Q8**
 
-Images are 64 by 64
+- 64 by 64 Images
+- 150 epochs
+
+
+
 
 | Training batch  |
 |---|
