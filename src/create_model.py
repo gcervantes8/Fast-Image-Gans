@@ -18,12 +18,14 @@ from src import Generator, Discriminator
 # Create the data-set using an image folder and fits the format given in config
 def create_data_loader(config, data_dir):
 
-    image_size = int(config['CONFIGS']['image_size'])
+    image_height = int(config['CONFIGS']['image_height'])
+    image_width = int(config['CONFIGS']['image_width'])
     data_set = torch_data_set.ImageFolder(root=data_dir,
                                           transform=transforms.Compose([
-                                              transforms.Resize(image_size),
-                                              transforms.CenterCrop(image_size),
-                                              transforms.ColorJitter(brightness=0.1, contrast=0.05, saturation=0.1, hue=0.05),
+                                              transforms.Resize((image_height+2, image_width+2)),
+                                              transforms.RandomCrop((image_height, image_width)),
+                                              transforms.ColorJitter(brightness=0.1, contrast=0.05,
+                                                                     saturation=0.1, hue=0.05),
                                               transforms.ToTensor(),
                                               transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
                                           ]))
