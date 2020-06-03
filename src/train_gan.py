@@ -23,8 +23,10 @@ if __name__ == '__main__':
 
     # Config file
     config_file_path = 'model_config.ini'
-    config = ini_parser.read(config_file_path)
+    if not os.path.exists(config_file_path):
+        raise OSError('Invalid configuration file path: ' +  config_file_path + ' \ndoesn\'t exist')
 
+    config = ini_parser.read(config_file_path)
     # Creates the run directory in the output folder specified in the configuration file
     output_dir = config['CONFIGS']['output_dir']
     os_helper.is_valid_dir(output_dir, 'Output image directory is invalid\nPath is not a directory: ' + output_dir)
@@ -48,6 +50,7 @@ if __name__ == '__main__':
     data_dir = config['CONFIGS']['dataroot']
     os_helper.is_valid_dir(data_dir, 'Invalid training data directory\nPath is an invalid directory: ' + data_dir)
     data_loader = create_model.create_data_loader(config, data_dir)
+    logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
 
     # Save training images
     saver_and_loader.save_training_images(data_loader, img_dir, 'train_batch.png')
