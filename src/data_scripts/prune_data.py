@@ -16,7 +16,8 @@ import shutil
 import os
 from PIL import Image
 from keras.preprocessing.image import img_to_array
-import pathlib
+from threading import Thread
+
 
 def open_image(path):
     pil_img = Image.open(path).convert('RGB')
@@ -43,10 +44,29 @@ def crop_and_resize_image(pil_img):
     return pil_img
 
 
+# Images with white or black screen or low prediction values will be moved from src location to dest location
+def move_uncertain_images(src_image_paths, dst_path, model):
+    resized_images = []
+    for src_image_path in src_image_paths:
+        image = open_image(src_image_path)
+        image = crop_and_resize_image(image)
+        resized_images.append(image)
+
+    np_images = np.array(img_to_array(resized_images)).astype(np.float32) / 255
+    nn_outputs = model.predict(np_images)
+    # Can be optimized
+    for i, img_prediction in enumerate(nn_outputs):
+        pred = np.argmax(img_prediction)
+        pred_prob = np.max(img_prediction)
+        is_bad_img = pred == 121 or pred == 122 or pred_prob < 0.5
+        if is_bad_img:
+            shutil.move(src_image_paths[i], dst_path)
+
+
 if __name__ == "__main__":
 
-    image_directory = r'D:\mario_data\pruned_mario-cam'
-    pruned_img_dir = r'D:\mario_data\pruned_pruned_mario-cam'
+    image_directory = r'D:\mario_data\test-delete'
+    pruned_img_dir = r'D:\mario_data\pruned_test-delete'
     model_file_path = 'sm64Model7.hdf5'
     if not os.path.isdir(image_directory):
         raise OSError('Invalid image dir')
@@ -66,13 +86,21 @@ if __name__ == "__main__":
     from keras import backend as K
     K.clear_session()
     from keras.models import load_model
-    model = load_model(model_file_path)
+    nn_model = load_model(model_file_path)
 
-    for img_path in img_paths:
-        image = open_image(img_path)
-        resized_img = crop_and_resize_image(image)
-        np_img = np.array(img_to_array(resized_img)).astype(np.float32)/255
-        nn_output = model.predict(np.array([np_img]))
-        is_bad_img = np.argmax(nn_output) == 121 or np.argmax(nn_output) == 122 or np.max(nn_output) < 0.5
-        if is_bad_img:
-            shutil.move(img_path, pruned_img_dir)
+    batch_size = 64
+    is_finished = False
+    threads = []
+    while not is_finished:
+
+        if len(img_paths) <= batch_size:
+            # call with this thread
+            move_uncertain_images(img_paths, pruned_img_dir, nn_model)
+            is_finished = True
+        batch_img_paths = img_paths[:batch_size]
+        thread = Thread(target=move_uncertain_images, args=(batch_img_paths,pruned_img_dir,nn_model,))
+        threads.append(thread)
+        img_paths = img_paths[batch_size:]
+
+    for thread in threads:
+        thread.join()
