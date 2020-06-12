@@ -13,6 +13,11 @@ Train models using **/src/train_gan.py**
 
 and by modifying the configuration file
 
+From the parent folder, run
+'''
+python3 -m src.train_gan
+'''
+
 ## Configuration File
 
 Configure model training: **/model_config.ini**
@@ -61,7 +66,7 @@ Results at **/output/Y8Q8**
 - 150 epochs
 
 
-
+Training batch is 6.6 Gigabytes, of 120 star speedruns of 8 different players
 
 | Training batch  |
 |---|
