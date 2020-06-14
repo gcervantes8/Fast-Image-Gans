@@ -16,26 +16,27 @@ class Generator(nn.Module):
         super(Generator, self).__init__()
         self.n_gpu = num_gpu
         self.main = nn.Sequential(
-            # input is Z, going into a convolution
-            nn.ConvTranspose2d(latent_vector_size, ngf * 8, 4, 1, 0, bias=False),
+            # (in-1) * s - 2 * p + (1 * (k - 1) + 1
+            # input is latent vector of given size (n_channels, 1, 1)
+            nn.ConvTranspose2d(latent_vector_size, ngf * 8, kernel_size=(4, 5), stride=1, padding=0),
             nn.BatchNorm2d(ngf * 8),
             nn.ReLU(True),
-            # state size. (ngf*8) x 4 x 4
-            nn.ConvTranspose2d(ngf * 8, ngf * 4, 4, 2, 1, bias=False),
+            # state size: (ngf*8) x 4 x 5
+            nn.ConvTranspose2d(ngf * 8, ngf * 4, kernel_size=(4, 5), stride=2, padding=1),
             nn.BatchNorm2d(ngf * 4),
             nn.ReLU(True),
-            # state size. (ngf*4) x 8 x 8
-            nn.ConvTranspose2d(ngf * 4, ngf * 2, 4, 2, 1, bias=False),
+            # state size: (ngf*4) x 8 x 11
+            nn.ConvTranspose2d(ngf * 4, ngf * 2, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(ngf * 2),
             nn.ReLU(True),
-            # state size. (ngf*2) x 16 x 16
-            nn.ConvTranspose2d(ngf * 2, ngf, 4, 2, 1, bias=False),
+            # state size: (ngf*2) x 16 x 22
+            nn.ConvTranspose2d(ngf * 2, ngf, kernel_size=(5, 4), stride=2, padding=1),
             nn.BatchNorm2d(ngf),
             nn.ReLU(True),
-            # state size. (ngf) x 32 x 32
-            nn.ConvTranspose2d(ngf, num_channels, 4, 2, 1, bias=False),
+            # state size: (ngf) x 33 x 44
+            nn.ConvTranspose2d(ngf, num_channels, kernel_size=4, stride=2, padding=1),
             nn.Tanh()
-            # state size. (nc) x 64 x 64
+            # state size: (nc) x 66 x 88
         )
 
     def forward(self, generator_input):

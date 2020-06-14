@@ -16,23 +16,27 @@ class Discriminator(nn.Module):
         super(Discriminator, self).__init__()
         self.ngpu = num_gpu
         self.main = nn.Sequential(
-            # input is (num_channels) x 64 x 64
-            nn.Conv2d(num_channels, ndf, 4, 2, 1, bias=False),
+
+            # input is (num_channels) x 66 x 88 (height goes first, when specifying tuples)
+            nn.Conv2d(num_channels, ndf, kernel_size=4, stride=2, padding=1),
             nn.LeakyReLU(0.2, inplace=True),
-            # state size. (ndf) x 32 x 32
-            nn.Conv2d(ndf, ndf * 2, 4, 2, 1, bias=False),
+            # When dilation and padding is 1: ((in + 2p - (k - 1) - 1) / s) + 1
+
+            # state: (ndf*2) x 33 x 44
+            nn.Conv2d(ndf, ndf * 2, kernel_size=(3, 4), stride=2, padding=1),
             nn.BatchNorm2d(ndf * 2),
             nn.LeakyReLU(0.2, inplace=True),
-            # state size. (ndf*2) x 16 x 16
-            nn.Conv2d(ndf * 2, ndf * 4, 4, 2, 1, bias=False),
+            # state: (ndf*4) x 17 x 22
+            nn.Conv2d(ndf * 2, ndf * 4, kernel_size=(3, 4), stride=2, padding=1),
             nn.BatchNorm2d(ndf * 4),
             nn.LeakyReLU(0.2, inplace=True),
-            # state size. (ndf*4) x 8 x 8
-            nn.Conv2d(ndf * 4, ndf * 8, 4, 2, 1, bias=False),
+            # state:  (ndf*4) x 9 x 11
+            nn.Conv2d(ndf * 4, ndf * 8, kernel_size=5, stride=2, padding=1),
             nn.BatchNorm2d(ndf * 8),
             nn.LeakyReLU(0.2, inplace=True),
-            # state size. (ndf*8) x 4 x 4
-            nn.Conv2d(ndf * 8, 1, 4, 1, 0, bias=False),
+            # state:  (ndf*8) x 4 x 5
+            nn.Conv2d(ndf * 8, 1, kernel_size=(4, 5), stride=1),
+            # Output is 1 x 1 x 1
             nn.Sigmoid()
         )
 

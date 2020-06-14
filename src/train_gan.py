@@ -94,8 +94,8 @@ if __name__ == '__main__':
             b_size = real_cpu.size(0)
             label = torch.full((b_size,), real_label, device=device)
 
+            # Note discriminator output must be 1 integer, or else criterion will throw an error
             output = netD(real_cpu).view(-1)
-
             errD_real = criterion(output, label)
             # Calculate gradients for D in backward pass
             errD_real.backward()
