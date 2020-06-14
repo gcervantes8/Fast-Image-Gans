@@ -1,5 +1,5 @@
 # Game Image Generation
-
+0;256;0c
 With this project, you can train an Generative Adversarial Network to learn how a game looks like, and create (fake) images that look like the game
 
 ## Requirements
@@ -14,9 +14,9 @@ Train models using **/src/train_gan.py**
 and by modifying the configuration file
 
 From the parent folder, run
-'''
+```
 python3 -m src.train_gan
-'''
+```
 
 ## Configuration File
 
