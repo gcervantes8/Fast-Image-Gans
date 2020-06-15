@@ -18,24 +18,24 @@ class Discriminator(nn.Module):
         self.main = nn.Sequential(
 
             # input is (num_channels) x 66 x 88 (height goes first, when specifying tuples)
-            nn.Conv2d(num_channels, ndf, kernel_size=4, stride=2, padding=1),
+            nn.Conv2d(num_channels, ndf, kernel_size=4, stride=2, padding=1, bias=False),
             nn.LeakyReLU(0.2, inplace=True),
             # When dilation and padding is 1: ((in + 2p - (k - 1) - 1) / s) + 1
 
             # state: (ndf*2) x 33 x 44
-            nn.Conv2d(ndf, ndf * 2, kernel_size=(3, 4), stride=2, padding=1),
+            nn.Conv2d(ndf, ndf * 2, kernel_size=(3, 4), stride=2, padding=1, bias=False),
             nn.BatchNorm2d(ndf * 2),
             nn.LeakyReLU(0.2, inplace=True),
             # state: (ndf*4) x 17 x 22
-            nn.Conv2d(ndf * 2, ndf * 4, kernel_size=(3, 4), stride=2, padding=1),
+            nn.Conv2d(ndf * 2, ndf * 4, kernel_size=(3, 4), stride=2, padding=1, bias=False),
             nn.BatchNorm2d(ndf * 4),
             nn.LeakyReLU(0.2, inplace=True),
             # state:  (ndf*4) x 9 x 11
-            nn.Conv2d(ndf * 4, ndf * 8, kernel_size=5, stride=2, padding=1),
+            nn.Conv2d(ndf * 4, ndf * 8, kernel_size=5, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(ndf * 8),
             nn.LeakyReLU(0.2, inplace=True),
             # state:  (ndf*8) x 4 x 5
-            nn.Conv2d(ndf * 8, 1, kernel_size=(4, 5), stride=1),
+            nn.Conv2d(ndf * 8, 1, kernel_size=(4, 5), stride=1, bias=False),
             # Output is 1 x 1 x 1
             nn.Sigmoid()
         )
