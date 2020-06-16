@@ -11,15 +11,30 @@ import os
 import shutil
 import torch
 import torchvision.utils as torch_utils
+from torchsummary import summary
 
 from src import Generator, Discriminator, create_model
 
 
 # Writes text file with information of the generator and discriminator instances
-def save_architecture(generator, discriminator, save_dir):
-    with open(os.path.join(save_dir, 'architecture.txt'), "w") as text_file:
+def save_architecture(generator, discriminator, save_dir, config):
+
+    image_height = int(config['CONFIGS']['image_height'])
+    image_width = int(config['CONFIGS']['image_width'])
+    latent_vector_size = int(config['CONFIGS']['latent_vector_size'])
+
+    gen_model_stats = summary(generator, input_data=(latent_vector_size, 1, 1), verbose=0)
+    gen_summary_str = str(gen_model_stats)
+    discrim_model_stats = summary(discriminator, input_data=(3, image_height, image_width), verbose=0)
+    discrim_summary_str = str(discrim_model_stats)
+
+    with open(os.path.join(save_dir, 'architecture.txt'), 'w', encoding='utf-8') as text_file:
         text_file.write(str(generator))
         text_file.write(str(discriminator))
+        text_file.write(str(gen_summary_str))
+        text_file.write(str(discrim_summary_str))
+
+
 
 
 # Saves the python files Generator.py, and Discriminator.py to given directory

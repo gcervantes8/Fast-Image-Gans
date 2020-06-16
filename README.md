@@ -1,11 +1,11 @@
 # Game Image Generation
-0;256;0c
 With this project, you can train an Generative Adversarial Network to learn how a game looks like, and create (fake) images that look like the game
 
 ## Requirements
 - Python 3.6
-- Pytorch
 - Numpy
+- [Pytorch](https://github.com/pytorch/pytorch)
+- [Torch-Summary](https://github.com/TylerYep/torch-summary)
 
 ## Running
 
@@ -16,6 +16,13 @@ and by modifying the configuration file
 From the parent folder, run
 ```
 python3 -m src.train_gan
+```
+
+Or
+
+You could run the bash script **train_gan.sh** to start training
+```
+bash train_gan.sh
 ```
 
 ## Configuration File

@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
     # Create model
     netG, netD, device = create_model.create_gan_instances(config)
-    saver_and_loader.save_architecture(netG, netD, run_dir)
+    saver_and_loader.save_architecture(netG, netD, run_dir, config)
     logging.info('Is GPU available? ' + str(torch.cuda.is_available()))
     netD.apply(create_model.weights_init)
     netG.apply(create_model.weights_init)
