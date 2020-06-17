@@ -58,36 +58,62 @@ Modifiable parameters are
 - Latent vector size (Given to the generator)
 - Size of feature maps in the generator and discriminator
 
-## Images Generated with Training Details
+## Images Generated
 
 
-#### Super Mario 64
+These models are trained from images that are collected from people speedrunning the game Super Mario 64
 
-Images are collected from people speedrunning the game
 
-### Trained model results
+### 1st Trained Model
 
-Results at **/output/Y8Q8**
+Results are at **/output/Y8Q8**
 
-- 64 by 64 Images
+- 47,000 images (6.6 GB)
+- 120 star speedruns of 8 different players
+- images are 64 by 64
 - 150 epochs
 
+<table>
+  <thead><th colspan="3">Training Batch</th></thead>
+  <td colspan="3" align="center"><img src="output/Y8Q8/images/training_batch.png" alt="Images of training batch"></td>
+  <thead> <th colspan="3"> Generated Images </th> </thead>
+  <tr>
+      <th>Epoch 50</th>
+      <th>Epoch 70</th>
+      <th>Epoch 90</th>
+  </tr>
+  <tr>
+      <td align="center"> <img src="output/Y8Q8/images/fake_images_epoch_50.png" alt="Generated images at epoch 50"> </td>
+      <td align="center"> <img src="output/Y8Q8/images/fake_images_epoch_70.png" alt="Generated images at epoch 70"> </td>
+      <td align="center"> <img src="output/Y8Q8/images/fake_images_epoch_90.png" alt="Generated images at epoch 90"> </td>
+  </tr>
+</table>
 
-Training batch is 6.6 Gigabytes, of 120 star speedruns of 8 different players
+### 2nd Trained Model
 
-| Training batch  |
-|---|
-| ![Image of a training batch](output/Y8Q8/images/training_batch.png)  |
+Results are at **/output/GC7M**
 
-
-
-
-##### Generated Images
-| Epoch 50  | Epoch 70 | Epoch 90|
-|---| ---| --- |
-| ![Generated images at epoch 50](output/Y8Q8/images/fake_images_epoch_50.png)  | ![Generated images at epoch 70](output/Y8Q8/images/fake_images_epoch_70.png) | ![Generated images at epoch 90](output/Y8Q8/images/fake_images_epoch_90.png) |
+- 1 million images (279 GB)
+- 3 different players (images without star count removed)
+- images are 88 by 66
+- 8 epochs
 
 
+<table>
+  <thead><th colspan="3">Training Batch</th></thead>
+  <td colspan="3" align="center"> <img src="output/GC7M/images/train_batch.png" alt="Images of training batch"> </td>
+  <thead> <th colspan="3"> Generated Images </th> </thead>
+  <tr>
+    <th>Epoch 1</th>
+    <th>Epoch 4</th>
+    <th>Epoch 8</th>
+  </tr>
+  <tr>
+    <td align="center"> <img src="output/GC7M/images/fake_epoch_0.png" alt="Generated images at epoch 1"> </td>
+    <td align="center"> <img src="output/GC7M/images/fake_epoch_3.png" alt="Generated images at epoch 4"> </td>
+    <td align="center"> <img src="output/GC7M/images/fake_epoch_7.png" alt="Generated images at epoch 8"> </td>
+  </tr>
+</table>
 
 
 
