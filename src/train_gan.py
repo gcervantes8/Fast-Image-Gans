@@ -142,7 +142,7 @@ if __name__ == '__main__':
         logging.info('Saving fake images')
         with torch.no_grad():
             fake = netG(fixed_noise).detach().cpu()
-        fake_img_output_path = os.path.join(img_dir, 'fake_epoch_' + str(epoch) + '.png')
+        fake_img_output_path = os.path.join(img_dir, 'fake_epoch_' + str(epoch+1) + '.png')
         logging.info(fake_img_output_path)
         saver_and_loader.save_images(fake, fake_img_output_path)
 

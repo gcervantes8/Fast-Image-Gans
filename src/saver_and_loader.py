@@ -29,12 +29,12 @@ def save_architecture(generator, discriminator, save_dir, config):
     discrim_summary_str = str(discrim_model_stats)
 
     with open(os.path.join(save_dir, 'architecture.txt'), 'w', encoding='utf-8') as text_file:
+        text_file.write('Generator\n\n')
         text_file.write(str(generator))
-        text_file.write(str(discriminator))
         text_file.write(str(gen_summary_str))
+        text_file.write('\n\nDiscriminator\n\n')
+        text_file.write(str(discriminator))
         text_file.write(str(discrim_summary_str))
-
-
 
 
 # Saves the python files Generator.py, and Discriminator.py to given directory
