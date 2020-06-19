@@ -1,0 +1,89 @@
+Generator(
+  (main): Sequential(
+    (0): ConvTranspose2d(100, 840, kernel_size=(4, 5), stride=(1, 1), bias=False)
+    (1): BatchNorm2d(840, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (2): ReLU(inplace=True)
+    (3): ConvTranspose2d(840, 420, kernel_size=(4, 5), stride=(2, 2), padding=(1, 1), bias=False)
+    (4): BatchNorm2d(420, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (5): ReLU(inplace=True)
+    (6): ConvTranspose2d(420, 210, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+    (7): BatchNorm2d(210, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (8): ReLU(inplace=True)
+    (9): ConvTranspose2d(210, 105, kernel_size=(5, 4), stride=(2, 2), padding=(1, 1), bias=False)
+    (10): BatchNorm2d(105, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (11): ReLU(inplace=True)
+    (12): ConvTranspose2d(105, 3, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+    (13): Tanh()
+  )
+)Discriminator(
+  (main): Sequential(
+    (0): Conv2d(3, 80, kernel_size=(4, 4), stride=(2, 2), padding=(1, 1), bias=False)
+    (1): LeakyReLU(negative_slope=0.2, inplace=True)
+    (2): Conv2d(80, 160, kernel_size=(3, 4), stride=(2, 2), padding=(1, 1), bias=False)
+    (3): BatchNorm2d(160, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (4): LeakyReLU(negative_slope=0.2, inplace=True)
+    (5): Conv2d(160, 320, kernel_size=(3, 4), stride=(2, 2), padding=(1, 1), bias=False)
+    (6): BatchNorm2d(320, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (7): LeakyReLU(negative_slope=0.2, inplace=True)
+    (8): Conv2d(320, 640, kernel_size=(5, 5), stride=(2, 2), padding=(1, 1), bias=False)
+    (9): BatchNorm2d(640, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (10): LeakyReLU(negative_slope=0.2, inplace=True)
+    (11): Conv2d(640, 1, kernel_size=(4, 5), stride=(1, 1), bias=False)
+    (12): Sigmoid()
+  )
+)------------------------------------------------------------------------------------------
+Layer (type:depth-idx)                   Output Shape              Param #
+==========================================================================================
+├─Sequential: 1-1                        [-1, 3, 66, 88]           --
+|    └─ConvTranspose2d: 2-1              [-1, 840, 4, 5]           1,680,000
+|    └─BatchNorm2d: 2-2                  [-1, 840, 4, 5]           1,680
+|    └─ReLU: 2-3                         [-1, 840, 4, 5]           --
+|    └─ConvTranspose2d: 2-4              [-1, 420, 8, 11]          7,056,000
+|    └─BatchNorm2d: 2-5                  [-1, 420, 8, 11]          840
+|    └─ReLU: 2-6                         [-1, 420, 8, 11]          --
+|    └─ConvTranspose2d: 2-7              [-1, 210, 16, 22]         1,411,200
+|    └─BatchNorm2d: 2-8                  [-1, 210, 16, 22]         420
+|    └─ReLU: 2-9                         [-1, 210, 16, 22]         --
+|    └─ConvTranspose2d: 2-10             [-1, 105, 33, 44]         441,000
+|    └─BatchNorm2d: 2-11                 [-1, 105, 33, 44]         210
+|    └─ReLU: 2-12                        [-1, 105, 33, 44]         --
+|    └─ConvTranspose2d: 2-13             [-1, 3, 66, 88]           5,040
+|    └─Tanh: 2-14                        [-1, 3, 66, 88]           --
+==========================================================================================
+Total params: 10,596,390
+Trainable params: 10,596,390
+Non-trainable params: 0
+Total mult-adds (G): 1.83
+------------------------------------------------------------------------------------------
+Input size (MB): 0.00
+Forward/backward pass size (MB): 4.41
+Params size (MB): 40.42
+Estimated Total Size (MB): 44.83
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Layer (type:depth-idx)                   Output Shape              Param #
+==========================================================================================
+├─Sequential: 1-1                        [-1, 1, 1, 1]             --
+|    └─Conv2d: 2-1                       [-1, 80, 33, 44]          3,840
+|    └─LeakyReLU: 2-2                    [-1, 80, 33, 44]          --
+|    └─Conv2d: 2-3                       [-1, 160, 17, 22]         153,600
+|    └─BatchNorm2d: 2-4                  [-1, 160, 17, 22]         320
+|    └─LeakyReLU: 2-5                    [-1, 160, 17, 22]         --
+|    └─Conv2d: 2-6                       [-1, 320, 9, 11]          614,400
+|    └─BatchNorm2d: 2-7                  [-1, 320, 9, 11]          640
+|    └─LeakyReLU: 2-8                    [-1, 320, 9, 11]          --
+|    └─Conv2d: 2-9                       [-1, 640, 4, 5]           5,120,000
+|    └─BatchNorm2d: 2-10                 [-1, 640, 4, 5]           1,280
+|    └─LeakyReLU: 2-11                   [-1, 640, 4, 5]           --
+|    └─Conv2d: 2-12                      [-1, 1, 1, 1]             12,800
+|    └─Sigmoid: 2-13                     [-1, 1, 1, 1]             --
+==========================================================================================
+Total params: 5,906,880
+Trainable params: 5,906,880
+Non-trainable params: 0
+Total mult-adds (M): 232.17
+------------------------------------------------------------------------------------------
+Input size (MB): 0.07
+Forward/backward pass size (MB): 2.48
+Params size (MB): 22.53
+Estimated Total Size (MB): 25.08
+------------------------------------------------------------------------------------------
