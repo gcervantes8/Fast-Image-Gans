@@ -60,7 +60,6 @@ Modifiable parameters are
 
 ## Images Generated
 
-
 These models are trained from images that are collected from people speedrunning the game Super Mario 64
 
 
@@ -97,6 +96,7 @@ Results are at **/output/GC7M**
 - 3 different players (images without star count removed)
 - images are 88 by 66
 - 8 epochs
+- Generator 4.3m trainable parameters, Discriminator 3.8m trainable parameters
 
 
 <table>
@@ -115,7 +115,29 @@ Results are at **/output/GC7M**
   </tr>
 </table>
 
+### 3rd Trained Model
 
+Results are at **/output/3CK2**
 
+- 1 million images (279 GB)
+- 3 different players (images without star count removed)
+- images are 88 by 66
+- 9 epochs
+- Generator 10.6m trainable parameters, Discriminator 5.9m trainable parameters
 
+<table>
+  <thead><th colspan="3">Training Batch</th></thead>
+  <td colspan="3" align="center"> <img src="output/3CK2/images/train_batch.png" alt="Images of training batch"> </td>
+  <thead> <th colspan="3"> Generated Images </th> </thead>
+  <tr>
+    <th>Epoch 1</th>
+    <th>Epoch 5</th>
+    <th>Epoch 9</th>
+  </tr>
+  <tr>
+    <td align="center"> <img src="output/3CK2/images/fake_epoch_0.png" alt="Generated images at epoch 1"> </td>
+    <td align="center"> <img src="output/3CK2/images/fake_epoch_4.png" alt="Generated images at epoch 5"> </td>
+    <td align="center"> <img src="output/3CK2/images/fake_epoch_8.png" alt="Generated images at epoch 9"> </td>
+  </tr>
+</table>
 
