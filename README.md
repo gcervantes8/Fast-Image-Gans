@@ -65,7 +65,8 @@ These models are trained from images that are collected from people speedrunning
 
 ### 1st Trained Model
 
-Results are at **/output/Y8Q8**
+More results are at [**output/Y8Q8**](output/Y8Q8)
+
 
 - 47,000 images (6.6 GB)
 - 120 star speedruns of 8 different players
@@ -90,7 +91,8 @@ Results are at **/output/Y8Q8**
 
 ### 2nd Trained Model
 
-Results are at **/output/GC7M**
+More results are at [**output/GC7M**](output/GC7M)
+
 
 - 1 million images (279 GB)
 - 3 different players (images without star count removed)
@@ -117,7 +119,7 @@ Results are at **/output/GC7M**
 
 ### 3rd Trained Model
 
-Results are at **/output/3CK2**
+More results are at [**output/3CK2**](output/3CK2)
 
 - 1 million images (279 GB)
 - 3 different players (images without star count removed)
@@ -138,6 +140,32 @@ Results are at **/output/3CK2**
     <td align="center"> <img src="output/3CK2/images/fake_epoch_0.png" alt="Generated images at epoch 1"> </td>
     <td align="center"> <img src="output/3CK2/images/fake_epoch_4.png" alt="Generated images at epoch 5"> </td>
     <td align="center"> <img src="output/3CK2/images/fake_epoch_8.png" alt="Generated images at epoch 9"> </td>
+  </tr>
+</table>
+
+### 4th Trained Model
+
+More results are at [**output/KDTI**](output/KDTI)
+
+- 1 million images (279 GB)
+- 3 different players (images without star count removed)
+- images are 128 by 96
+- 7 epochs
+- Generator 3.4m trainable parameters, Discriminator 2.8m trainable parameters
+
+<table>
+  <thead><th colspan="3">Training Batch</th></thead>
+  <td colspan="3" align="center"> <img src="output/KDTI/images/train_batch.png" alt="Images of training batch"> </td>
+  <thead> <th colspan="3"> Generated Images </th> </thead>
+  <tr>
+    <th>Epoch 1</th>
+    <th>Epoch 5</th>
+    <th>Epoch 7</th>
+  </tr>
+  <tr>
+    <td align="center"> <img src="output/KDTI/images/fake_epoch_1.png" alt="Generated images at epoch 1"> </td>
+    <td align="center"> <img src="output/KDTI/images/fake_epoch_5.png" alt="Generated images at epoch 5"> </td>
+    <td align="center"> <img src="output/KDTI/images/fake_epoch_7.png" alt="Generated images at epoch 7"> </td>
   </tr>
 </table>
 
