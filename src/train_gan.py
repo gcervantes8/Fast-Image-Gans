@@ -8,11 +8,10 @@ Purpose: Train the GAN (Generative Adversarial Network) model
 """
 
 from __future__ import print_function
-import torch.nn as nn
-import torch.optim as optim
 import torch
 
 from src import ini_parser, saver_and_loader, os_helper, create_model
+from src.gan_model import GanModel
 
 import shutil
 import logging
@@ -61,20 +60,10 @@ if __name__ == '__main__':
     logging.info('Is GPU available? ' + str(torch.cuda.is_available()))
     netD.apply(create_model.weights_init)
     netG.apply(create_model.weights_init)
-    criterion = nn.BCELoss()
 
-    # Create batch of latent vectors to visualize the generator
+    gan_model = GanModel(netG, netD, device, config)
     latent_vector_size = int(config['CONFIGS']['latent_vector_size'])
     fixed_noise = torch.randn(64, latent_vector_size, 1, 1, device=device)
-
-    fake_label, real_label = 0, 1
-
-    beta1 = float(config['CONFIGS']['beta1'])
-    lr = float(config['CONFIGS']['lr'])
-
-    # Setup Adam optimizers for both G and D
-    optimizerD = optim.Adam(netD.parameters(), lr=lr, betas=(beta1, 0.999))
-    optimizerG = optim.Adam(netG.parameters(), lr=lr, betas=(beta1, 0.999))
 
     n_epochs = int(config['CONFIGS']['num_epochs'])
     logging.info("Starting Training Loop...")
@@ -82,73 +71,42 @@ if __name__ == '__main__':
     for epoch in range(n_epochs):
         train_seq_start_time = time.time()
         # For each batch in the data-loader
+        data_get_time = 0
+        model_update_time = 0
+        data_start_time = time.time()
         for i, data in enumerate(data_loader, 0):
 
-            ############################
-            # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
-            ###########################
-            # Train with all-real batch
-            netD.zero_grad()
+            real_data = data[0].to(device)
+            data_get_time += time.time() - data_start_time
 
-            real_cpu = data[0].to(device)
-            b_size = real_cpu.size(0)
-            label = torch.full((b_size,), real_label, device=device)
-
-            # Note discriminator output must be 1 integer, or else criterion will throw an error
-            output = netD(real_cpu).view(-1)
-            errD_real = criterion(output, label)
-            # Calculate gradients for D in backward pass
-            errD_real.backward()
-            D_x = output.mean().item()
-
-            # Train with all-fake batch
-            noise = torch.randn(b_size, latent_vector_size, 1, 1, device=device)
-            # Generate fake image batch with G
-            fake = netG(noise)
-            label.fill_(fake_label)
-            # Classify all fake batch with D
-            output = netD(fake.detach()).view(-1)
-            # Calculate D's loss on the all-fake batch
-            errD_fake = criterion(output, label)
-            # Calculate the gradients for this batch
-            errD_fake.backward()
-            D_G_z1 = output.mean().item()
-            # Add the gradients from the all-real and all-fake batches
-            errD = errD_real + errD_fake
-            # Update D
-            optimizerD.step()
-
-            ############################
-            # (2) Update G network: maximize log(D(G(z)))
-            ###########################
-            netG.zero_grad()
-            label.fill_(real_label)  # fake labels are real for generator cost
-            # Since we just updated D, perform another forward pass of all-fake batch through D
-            output = netD(fake).view(-1)
-            errG = criterion(output, label)
-            # Calculate gradients for G
-            errG.backward()
-            D_G_z2 = output.mean().item()
-            # Update G
-            optimizerG.step()
+            model_start_time = time.time()
+            errD, errG, D_x, D_G_z1, D_G_z2 = gan_model.update_minimax(real_data)
+            model_update_time += time.time() - model_start_time
 
             # Output training stats
-            if i % 50 == 0:
+            if i % 150 == 0:
                 logging.info('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f\tTime: %.2fs'
                              % (epoch, n_epochs, i, len(data_loader), errD.item(), errG.item(), D_x, D_G_z1, D_G_z2,
                                 time.time() - train_seq_start_time))
+                logging.info('Data retrieve time: %.2fs Model updating time: %.2fs' % (data_get_time, model_update_time))
+                data_get_time = 0
+                model_update_time = 0
                 train_seq_start_time = time.time()
 
-        logging.info('Saving fake images')
-        with torch.no_grad():
-            fake = netG(fixed_noise).detach().cpu()
-        fake_img_output_path = os.path.join(img_dir, 'fake_epoch_' + str(epoch+1) + '.png')
-        logging.info(fake_img_output_path)
-        saver_and_loader.save_images(fake, fake_img_output_path)
+            data_start_time = time.time()
+
+        save_imgs_start_time = time.time()
+        fake_img_output_path = os.path.join(img_dir, 'fake_epoch_' + str(epoch + 1) + '.png')
+        logging.info('Saving fake images: ' + fake_img_output_path)
+        fake_images = gan_model.generate_images(fixed_noise)
+        saver_and_loader.save_images(fake_images, fake_img_output_path)
+        print('Time to save images: %.2fs ' % (time.time() - save_imgs_start_time))
 
         # Saves models
+        save_models_start_time = time.time()
         generator_path = os.path.join(model_dir, 'gen_epoch_' + str(epoch) + '.pt')
         discriminator_path = os.path.join(model_dir, 'discrim_epoch_' + str(epoch) + '.pt')
         saver_and_loader.save_model(netG, netD, generator_path, discriminator_path)
+        print('Time to save models: %.2fs ' % (time.time() - save_models_start_time))
     logging.info('Training complete! Models and output saved in the output directory:')
     logging.info(run_dir)
