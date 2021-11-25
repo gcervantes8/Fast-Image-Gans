@@ -5,7 +5,7 @@ With this project, you can train an Generative Adversarial Network to learn how 
 - Python 3.6
 - Numpy
 - [Pytorch](https://github.com/pytorch/pytorch)
-- [Torch-Summary](https://github.com/TylerYep/torch-summary)
+- [Torch-Summary](https://pypi.org/project/torch-summary/) Tested with version 1.4.5
 
 ## Running
 
