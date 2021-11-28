@@ -15,7 +15,7 @@ from torch.nn.utils import spectral_norm
 class Discriminator(nn.Module):
     def __init__(self, num_gpu, ndf, num_channels):
         super(Discriminator, self).__init__()
-        self.ngpu = num_gpu
+        self.n_gpu = num_gpu
         self.main = nn.Sequential(
 
             # input is (num_channels) x 65 x 87 (height goes first, when specifying tuples)
@@ -42,4 +42,9 @@ class Discriminator(nn.Module):
         )
 
     def forward(self, discriminator_input):
-        return self.main(discriminator_input)
+        if discriminator_input.is_cuda and self.n_gpu > 1:
+            output = nn.parallel.data_parallel(self.main, discriminator_input, range(self.n_gpu))
+        else:
+            output = self.main(discriminator_input)
+
+        return output.view(-1, 1).squeeze(1)

@@ -45,5 +45,8 @@ class Generator(nn.Module):
         )
 
     def forward(self, generator_input):
-        return self.main(generator_input)
-
+        if generator_input.is_cuda and self.n_gpu > 1:
+            output = nn.parallel.data_parallel(self.main, generator_input, range(self.n_gpu))
+        else:
+            output = self.main(generator_input)
+        return output
