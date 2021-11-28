@@ -26,8 +26,8 @@ class GanModel:
         lr = float(config['CONFIGS']['lr'])
 
         # Setup Adam optimizers for both G and D
-        self.optimizerD = optim.Adam(generator.parameters(), lr=lr, betas=(beta1, 0.999))
-        self.optimizerG = optim.Adam(discriminator.parameters(), lr=lr, betas=(beta1, 0.999))
+        self.optimizerD = optim.Adam(discriminator.parameters(), lr=lr, betas=(beta1, 0.999))
+        self.optimizerG = optim.Adam(generator.parameters(), lr=lr, betas=(beta1, 0.999))
 
     def update_minimax(self, real_data):
 
@@ -38,27 +38,27 @@ class GanModel:
         self.netD.zero_grad()
 
         b_size = real_data.size(0)
-        label = torch.full((b_size,), self.real_label, device=self.device)
+        real_label = torch.full((b_size,), GanModel.real_label, dtype=real_data.dtype, device=self.device)
 
         # Note discriminator output must be 1 integer, or else criterion will throw an error
-        output = self.netD(real_data).view(-1)
-        errD_real = GanModel.criterion(output, label)
+        discrim_output = self.netD(real_data)
+        errD_real = GanModel.criterion(discrim_output, real_label)
         # Calculate gradients for D in backward pass
         errD_real.backward()
-        D_x = output.mean().item()
+        D_x = discrim_output.mean().item()
 
         # Train with all-fake batch
         noise = torch.randn(b_size, self.latent_vector_size, 1, 1, device=self.device)
         # Generate fake image batch with G
         fake = self.netG(noise)
-        label.fill_(GanModel.fake_label)
+        fake_label = torch.full((b_size,), GanModel.fake_label, dtype=real_data.dtype, device=self.device)
         # Classify all fake batch with D
-        output = self.netD(fake.detach()).view(-1)
+        fake_output = self.netD(fake.detach())
         # Calculate D's loss on the all-fake batch
-        errD_fake = GanModel.criterion(output, label)
+        errD_fake = GanModel.criterion(fake_output, fake_label.reshape_as(fake_output))
         # Calculate the gradients for this batch
         errD_fake.backward()
-        D_G_z1 = output.mean().item()
+        D_G_z1 = fake_output.mean().item()
         # Add the gradients from the all-real and all-fake batches
         errD = errD_real + errD_fake
         # Update D
@@ -68,13 +68,12 @@ class GanModel:
         # (2) Update G network: maximize log(D(G(z)))
         ###########################
         self.netG.zero_grad()
-        label.fill_(GanModel.real_label)  # fake labels are real for generator cost
         # Since we just updated D, perform another forward pass of all-fake batch through D
-        output = self.netD(fake).view(-1)
-        errG = GanModel.criterion(output, label)
+        output_update = self.netD(fake)
+        errG = GanModel.criterion(output_update, real_label)
         # Calculate gradients for G
         errG.backward()
-        D_G_z2 = output.mean().item()
+        D_G_z2 = output_update.mean().item()
         # Update G
         self.optimizerG.step()
         return errD, errG, D_x, D_G_z1, D_G_z2
