@@ -17,33 +17,49 @@ import shutil
 import logging
 import os
 import time
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 if __name__ == '__main__':
 
     # Config file
     config_file_path = 'model_config.ini'
     if not os.path.exists(config_file_path):
-        raise OSError('Invalid configuration file path: ' +  config_file_path + ' \ndoesn\'t exist')
+        raise OSError('Invalid configuration file path: ' + config_file_path + ' \ndoesn\'t exist')
 
     config = ini_parser.read(config_file_path)
     # Creates the run directory in the output folder specified in the configuration file
     output_dir = config['CONFIGS']['output_dir']
-    os_helper.is_valid_dir(output_dir, 'Output image directory is invalid\nPath is not a directory: ' + output_dir)
-    run_dir, run_id = os_helper.create_run_dir(output_dir)
-    img_dir = os_helper.create_dir(run_dir, 'images')
-    model_dir = os_helper.create_dir(run_dir, 'models')
+    os_helper.is_valid_dir(output_dir, 'Model directory is invalid\nPath is not a directory: ' + output_dir)
 
-    # Logs training information, everything logged will also be outputted to stdout (printed)
-    log_path = os.path.join(run_dir, 'train.log')
+    model_dir_name = 'models'
+    images_dir_name = 'images'
+    existing_model_dir = os.path.join(output_dir, model_dir_name)
+    loading_existing_model = os.path.isdir(existing_model_dir)
+    if not loading_existing_model:
+        run_dir, run_id = os_helper.create_run_dir(output_dir)
+        img_dir = os_helper.create_dir(run_dir, images_dir_name)
+        model_dir = os_helper.create_dir(run_dir, model_dir_name)
+
+        # Logs training information, everything logged will also be outputted to stdout (printed)
+        log_path = os.path.join(run_dir, 'train.log')
+    else:
+        run_dir = output_dir
+        img_dir = os.path.join(output_dir, images_dir_name)
+        model_dir = existing_model_dir
+        log_path = os.path.join(run_dir, 'train.log')
+
     logging.basicConfig(filename=log_path, level=logging.INFO)
     logging.getLogger().addHandler(logging.StreamHandler())
-    logging.info('Directory ' + run_dir + ' created, training output will be saved here')
-
-    # Copies config and python model files
-    shutil.copy(config_file_path, os.path.abspath(run_dir))
-    logging.info('Copied config file!')
-    saver_and_loader.save_gan_files(run_dir)
-    logging.info('Copied the Generator and Discriminator files')
+    if not loading_existing_model:
+        logging.info('Directory ' + run_dir + ' created, training output will be saved here')
+        # Copies config and python model files
+        shutil.copy(config_file_path, os.path.abspath(run_dir))
+        logging.info('Copied config file!')
+        saver_and_loader.save_gan_files(run_dir)
+        logging.info('Copied the Generator and Discriminator files')
+    else:
+        logging.info('Directory ' + run_dir + ' loaded, training output will be saved here')
 
     # Creates data-loader
     data_dir = config['CONFIGS']['dataroot']
@@ -52,14 +68,27 @@ if __name__ == '__main__':
     logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
 
     # Save training images
-    saver_and_loader.save_training_images(data_loader, img_dir, 'train_batch.png')
+    if loading_existing_model:
+        saver_and_loader.save_training_images(data_loader, img_dir, 'train_batch2.png')
+    else:
+        saver_and_loader.save_training_images(data_loader, img_dir, 'train_batch.png')
 
     # Create model
-    netG, netD, device = create_model.create_gan_instances(config)
-    saver_and_loader.save_architecture(netG, netD, run_dir, config)
-    logging.info('Is GPU available? ' + str(torch.cuda.is_available()))
-    netD.apply(create_model.weights_init)
-    netG.apply(create_model.weights_init)
+    loaded_epoch_num = 0
+    # If it exists, then try to load the model
+    if loading_existing_model:
+        generator_path, discriminator_path, loaded_epoch_num = os_helper.find_latest_generator_model(existing_model_dir)
+        logging.info('Loading model...')
+        logging.info(generator_path)
+        logging.info(discriminator_path)
+        netG, netD, device = saver_and_loader.load_discrim_and_generator(config, generator_path, discriminator_path)
+        logging.info('Model loaded!')
+    else:
+        netG, netD, device = create_model.create_gan_instances(config)
+        saver_and_loader.save_architecture(netG, netD, run_dir, config)
+        logging.info('Is GPU available? ' + str(torch.cuda.is_available()))
+        netD.apply(create_model.weights_init)
+        netG.apply(create_model.weights_init)
 
     gan_model = GanModel(netG, netD, device, config)
     latent_vector_size = int(config['CONFIGS']['latent_vector_size'])
@@ -69,6 +98,7 @@ if __name__ == '__main__':
     logging.info("Starting Training Loop...")
 
     for epoch in range(n_epochs):
+        epoch_after_loading = loaded_epoch_num + epoch
         train_seq_start_time = time.time()
         # For each batch in the data-loader
         data_get_time = 0
@@ -96,7 +126,7 @@ if __name__ == '__main__':
             data_start_time = time.time()
 
         save_imgs_start_time = time.time()
-        fake_img_output_path = os.path.join(img_dir, 'fake_epoch_' + str(epoch + 1) + '.png')
+        fake_img_output_path = os.path.join(img_dir, 'fake_epoch_' + str(epoch_after_loading + 1) + '.png')
         logging.info('Saving fake images: ' + fake_img_output_path)
         fake_images = gan_model.generate_images(fixed_noise)
         saver_and_loader.save_images(fake_images, fake_img_output_path)
@@ -104,8 +134,8 @@ if __name__ == '__main__':
 
         # Saves models
         save_models_start_time = time.time()
-        generator_path = os.path.join(model_dir, 'gen_epoch_' + str(epoch) + '.pt')
-        discriminator_path = os.path.join(model_dir, 'discrim_epoch_' + str(epoch) + '.pt')
+        generator_path = os.path.join(model_dir, 'gen_epoch_' + str(epoch_after_loading) + '.pt')
+        discriminator_path = os.path.join(model_dir, 'discrim_epoch_' + str(epoch_after_loading) + '.pt')
         saver_and_loader.save_model(netG, netD, generator_path, discriminator_path)
         print('Time to save models: %.2fs ' % (time.time() - save_models_start_time))
     logging.info('Training complete! Models and output saved in the output directory:')

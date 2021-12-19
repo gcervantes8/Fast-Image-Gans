@@ -59,20 +59,20 @@ def find_config_file(dir_path):
 # Assumes file name starts with generator, and the epoch number is after an underscore and before a period
 def find_latest_generator_model(run_dir):
     model_files = glob.glob(run_dir + '/*.pt', recursive=False)
-    gen_model_files = [model_file for model_file in model_files if 'generator_' in model_file]
+    gen_model_files = [model_file for model_file in model_files if 'gen_' in model_file]
+    discrim_model_files = [model_file for model_file in model_files if 'discrim_' in model_file]
 
     # Removes extension of file paths
     gen_model_names = [gen_model_file.split('.')[0] for gen_model_file in gen_model_files]
+    discrim_model_names = [discrim_model_file.split('.')[0] for discrim_model_file in discrim_model_files]
 
     # Gets last thing after _
     gen_epoch_nums = [gen_model_name.split('_')[-1] for gen_model_name in gen_model_names]
+    discrim_epoch_nums = [discrim_model_name.split('_')[-1] for discrim_model_name in discrim_model_names]
 
-    model_epoch_nums = [int(num) if num.isdigit() else -1 for num in gen_epoch_nums]
-    latest_model_index = np.argmax(np.array(model_epoch_nums))
-    return gen_model_files[latest_model_index]
+    model_epoch_nums_gen = [int(num) if num.isdigit() else -1 for num in gen_epoch_nums]
+    model_epoch_nums_discrim = [int(num) if num.isdigit() else -1 for num in discrim_epoch_nums]
 
-
-
-
-
-
+    latest_model_index_gen = np.argmax(np.array(model_epoch_nums_gen))
+    latest_model_index_discrim = np.argmax(np.array(model_epoch_nums_discrim))
+    return gen_model_files[latest_model_index_gen], discrim_model_files[latest_model_index_discrim], max(model_epoch_nums_gen)

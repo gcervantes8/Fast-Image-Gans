@@ -22,7 +22,8 @@ ini_config = ini_parser.read(config_file_path)
 print('Loaded config file!' + config_file_path)
 generator_path = os_helper.find_latest_generator_model(run_dir)
 print('Loading model: ' + generator_path)
-generator, device = saver_and_loader.load_generator(ini_config, generator_path)
+generator, device, _ = saver_and_loader.load_generator(ini_config, generator_path)
+generator.eval()
 print('Loaded model!')
 
 # Generate images
