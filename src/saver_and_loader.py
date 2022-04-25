@@ -11,6 +11,7 @@ import os
 import shutil
 import torch
 import torchvision.utils as torch_utils
+from src.data_load import get_data_batch, color_transform, normalize
 from torchsummary import summary
 
 from src import Generator, Discriminator, create_model
@@ -50,19 +51,16 @@ def save_model(generator, discriminator, generator_path, discriminator_path):
 
 
 # Takes in pytorch's data-loader, and saves the training images in given directory
-def save_training_images(loader, save_dir, img_name):
+def save_train_batch(data_loader, device, save_path: str):
     # Save training images
-    real_batch = next(iter(loader))
-
-    # batch_images is of size (batch_size, num_channels, height, width)
-    batch_images = real_batch[0]
-    save_path = os.path.join(save_dir, img_name)
+    batch_images = get_data_batch(data_loader, device)
+    batch_images = normalize(color_transform(batch_images))
     save_images(batch_images, save_path)
 
 
 # Tensor should be of shape (batch_size, n_channels, height, width) as outputted by pytorch Data-Loader
-def save_images(tensor, save_path):
-    torch_utils.save_image(tensor, save_path, normalize=True)
+def save_images(tensor, save_path, normalized=True):
+    torch_utils.save_image(tensor, save_path, normalize=normalized)
 
 
 def load_discrim_and_generator(config, generator_path, discrim_path):
@@ -70,6 +68,7 @@ def load_discrim_and_generator(config, generator_path, discrim_path):
     generator.load_state_dict(torch.load(generator_path))
     discriminator.load_state_dict(torch.load(discrim_path))
     return generator, discriminator, device
+
 
 # Creates the generator and loads the given values from the model file
 # Returns 2-tuple (loaded generator instance, device loaded with), device can be GPU or CPU
