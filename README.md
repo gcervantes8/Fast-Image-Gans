@@ -7,7 +7,7 @@ With this project, you can train an Generative Adversarial Network to learn how 
 - [Pytorch](https://github.com/pytorch/pytorch)
 - [Torch-Summary](https://pypi.org/project/torch-summary/) Tested with version 1.4.5
 - [Pytorch-ignite](https://pytorch.org/ignite/index.html)
-
+- [SciPy](https://scipy.org/install/)
 ## Running
 
 Train models using **/src/train_gan.py**

@@ -11,9 +11,9 @@ from __future__ import print_function
 import torch
 
 from src import ini_parser, saver_and_loader, os_helper, create_model
-from src.data_load import create_data_loader, color_transform, normalize, get_data_batch
+from src.data_load import create_data_loader, color_transform, normalize, get_data_batch, unnormalize
 from src.gan_model import GanModel
-from src.IS_metric import inception_score
+from src.metrics import score_metrics
 
 import shutil
 import logging
@@ -90,15 +90,21 @@ if __name__ == '__main__':
     # Save training images
     saver_and_loader.save_train_batch(data_loader, device, os.path.join(img_dir, 'train_batch.png'))
 
-    # Compute IS metric
-    if config['CONFIGS'].getboolean('is_metric'):
-        logging.info('IS Metric enabled. Computing inception score for real images ...')
-        is_score = inception_score(get_data_batch(data_loader, device), normalized=False)
-        logging.info('Inception Score for real images is: %.2f' % round(is_score, 2))
+    real_images = get_data_batch(data_loader, device)
+    compute_is = config['CONFIGS'].getboolean('is_metric')
+    compute_fid = config['CONFIGS'].getboolean('fid_metric')
+
+    if compute_is or compute_fid:
+        logging.info('Computing metrics for real images ...')
+        is_score, fid_score = score_metrics(get_data_batch(data_loader, device), compute_is, compute_fid, real_images=real_images, device=device)
+        if compute_is:
+            logging.info('Inception Score for real images: %.2f' % round(is_score, 2))
+        if compute_fid:
+            logging.info('FID Score for real images: %.2f' % round(fid_score, 2))
 
     gan_model = GanModel(netG, netD, device, config)
     latent_vector_size = int(config['CONFIGS']['latent_vector_size'])
-    fixed_noise = torch.randn(64, latent_vector_size, 1, 1, device=device)
+    fixed_noise = torch.randn(int(config['CONFIGS']['batch_size']), latent_vector_size, 1, 1, device=device)
 
     n_epochs = int(config['CONFIGS']['num_epochs'])
     logging.info("Starting Training Loop...")
@@ -146,10 +152,13 @@ if __name__ == '__main__':
         saver_and_loader.save_model(netG, netD, generator_path, discriminator_path)
         print('Time to save models: %.2fs ' % (time.time() - save_models_start_time))
 
-        if config['CONFIGS'].getboolean('is_metric'):
-            logging.info('Computing inception score for the saved images ...')
-            is_score = inception_score(fake_images, normalized=False)
-            logging.info('Inception Score: %.2f' % round(is_score, 2))
+        if compute_is or compute_fid:
+            logging.info('Computing metrics for the saved images ...')
+            is_score, fid_score = score_metrics(unnormalize(fake_images), compute_is, compute_fid, real_images=real_images, device=device)
+            if compute_is:
+                logging.info('Inception Score: %.2f' % round(is_score, 2))
+            if compute_fid:
+                logging.info('FID Score: %.2f' % round(fid_score, 2))
 
     logging.info('Training complete! Models and output saved in the output directory:')
     logging.info(run_dir)

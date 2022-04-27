@@ -10,7 +10,7 @@ Specify the run folder, reads the config file to recreate the model, and loads t
 
 import torch
 from src import ini_parser, saver_and_loader, os_helper
-from src.IS_metric import inception_score
+from src.metrics import score_metrics
 from src.data_load import unnormalize
 
 import os
@@ -47,8 +47,9 @@ if __name__ == '__main__':
     images_output_path = os.path.join(args.model_dir, 'fake_images.png')
     saver_and_loader.save_images(fake_imgs, images_output_path)
     fake_images_unnormalized = unnormalize(fake_imgs)  # Values from 0 to 1
-    score = inception_score(fake_images_unnormalized)
-    logging.info("Inception Score is: " + str(score))
+
+    is_score, _ = score_metrics(fake_images_unnormalized, True, False)
+    logging.info("Inception Score is: " + str(is_score))
 
 
 
