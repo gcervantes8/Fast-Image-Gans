@@ -1,0 +1,5 @@
+torch >= 1.9
+torchvision >= 0.9
+torch-summary == 1.4.5
+pytorch-ignite >= 0.4.6
+scipy >= 1.7
