@@ -14,22 +14,20 @@ from src import Generator, Discriminator
 
 
 # Creates the generator and discriminator using the configuration file
-def create_gan_instances(config):
+def create_gan_instances(model_arch_config, num_channels, n_gpus=0):
 
-    n_gpu = int(config['CONFIGS']['ngpu'])
-    latent_vector_size = int(config['CONFIGS']['latent_vector_size'])
-    ngf = int(config['CONFIGS']['ngf'])
-    ndf = int(config['CONFIGS']['ndf'])
-    num_channels = int(config['CONFIGS']['num_channels'])
+    latent_vector_size = int(model_arch_config['latent_vector_size'])
+    ngf = int(model_arch_config['ngf'])
+    ndf = int(model_arch_config['ndf'])
 
-    device = torch.device('cuda:0' if (torch.cuda.is_available() and n_gpu > 0) else 'cpu')
+    device = torch.device('cuda:0' if (torch.cuda.is_available() and n_gpus > 0) else 'cpu')
 
     # Create the generator and discriminator
-    generator = Generator.Generator(n_gpu, latent_vector_size, ngf, num_channels).to(device)
-    discriminator = Discriminator.Discriminator(n_gpu, ndf, num_channels).to(device)
+    generator = Generator.Generator(n_gpus, latent_vector_size, ngf, num_channels).to(device)
+    discriminator = Discriminator.Discriminator(n_gpus, ndf, num_channels).to(device)
 
-    generator = _handle_multiple_gpus(generator, n_gpu, device)
-    discriminator = _handle_multiple_gpus(discriminator, n_gpu, device)
+    generator = _handle_multiple_gpus(generator, n_gpus, device)
+    discriminator = _handle_multiple_gpus(discriminator, n_gpus, device)
     return generator, discriminator, device
 
 

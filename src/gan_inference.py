@@ -27,7 +27,7 @@ def generate_images(model_dir: str, num_images: int):
     generator.eval()
 
     # Generate images
-    latent_vector_size = int(ini_config['CONFIGS']['latent_vector_size'])
+    latent_vector_size = int(ini_config['MODEL ARCHITECTURE']['latent_vector_size'])
     latent_vector = torch.randn(num_images, latent_vector_size, 1, 1, device=device)
     fake_images = generator.forward(latent_vector)
     return fake_images

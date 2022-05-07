@@ -17,13 +17,13 @@ class GanModel:
     criterion = nn.BCELoss()
     fake_label, real_label = 0, 1
 
-    def __init__(self, generator, discriminator, device, config):
+    def __init__(self, generator, discriminator, device, model_arch_config, train_config):
         self.netG = generator
         self.netD = discriminator
         self.device = device
-        self.latent_vector_size = int(config['CONFIGS']['latent_vector_size'])
-        beta1 = float(config['CONFIGS']['beta1'])
-        lr = float(config['CONFIGS']['lr'])
+        self.latent_vector_size = int(model_arch_config['latent_vector_size'])
+        beta1 = float(train_config['beta1'])
+        lr = float(train_config['lr'])
 
         # Setup Adam optimizers for both G and D
         self.optimizerD = optim.Adam(discriminator.parameters(), lr=lr, betas=(beta1, 0.999))

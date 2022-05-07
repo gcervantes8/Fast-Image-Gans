@@ -10,6 +10,7 @@ Purpose: Functions that are used to generate and transform image data
 import torch
 import torchvision.datasets as torch_data_set
 import torchvision.transforms as transforms
+from src import os_helper
 
 
 def normalize(images, norm_mean=torch.tensor([0.5, 0.5, 0.5], dtype=torch.float32),
@@ -36,22 +37,26 @@ def color_transform(images, brightness=0.1, contrast=0.05, saturation=0.1, hue=0
     return train_transform_augment(images)
 
 
-def create_data_loader(config, data_dir: str):
+def data_loader_from_config(data_config):
+    data_dir = data_config['train_dir']
+    os_helper.is_valid_dir(data_dir, 'Invalid training data directory\nPath is an invalid directory: ' + data_dir)
+    image_height = int(data_config['image_height'])
+    image_width = int(data_config['image_width'])
+    batch_size = int(data_config['batch_size'])
+    n_workers = int(data_config['workers'])
+    return create_data_loader(data_dir, image_height, image_width, batch_size=batch_size, n_workers=n_workers)
 
-    image_height = int(config['CONFIGS']['image_height'])
-    image_width = int(config['CONFIGS']['image_width'])
+
+def create_data_loader(data_dir: str, image_height: int, image_width: int, batch_size=1, n_workers=1):
+
+    data_transform = transforms.Compose([transforms.Resize((image_height, image_width)),
+                                         transforms.ToTensor()])
     try:
-        data_set = torch_data_set.ImageFolder(root=data_dir,
-                                              transform=transforms.Compose([
-                                                  transforms.Resize((image_height, image_width)),
-                                                  transforms.ToTensor(),
-                                              ]))
+        data_set = torch_data_set.ImageFolder(root=data_dir, transform=data_transform)
     except FileNotFoundError:
         raise FileNotFoundError('Data directory provided should contain directories that have images in them, '
                                 'directory provided: ' + data_dir)
 
-    batch_size = int(config['CONFIGS']['batch_size'])
-    n_workers = int(config['CONFIGS']['workers'])
     # Create the data-loader
     torch_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size,
                                                shuffle=True, num_workers=n_workers)

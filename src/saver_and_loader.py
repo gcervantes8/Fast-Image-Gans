@@ -18,11 +18,11 @@ from src import Generator, Discriminator, create_model
 
 
 # Writes text file with information of the generator and discriminator instances
-def save_architecture(generator, discriminator, save_dir, config):
+def save_architecture(generator, discriminator, save_dir, data_config, model_arch_config):
 
-    image_height = int(config['CONFIGS']['image_height'])
-    image_width = int(config['CONFIGS']['image_width'])
-    latent_vector_size = int(config['CONFIGS']['latent_vector_size'])
+    image_height = int(data_config['image_height'])
+    image_width = int(data_config['image_width'])
+    latent_vector_size = int(model_arch_config['latent_vector_size'])
 
     gen_model_stats = summary(generator, input_data=(latent_vector_size, 1, 1), verbose=0)
     gen_summary_str = str(gen_model_stats)

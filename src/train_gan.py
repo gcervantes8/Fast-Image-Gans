@@ -11,7 +11,7 @@ from __future__ import print_function
 import torch
 
 from src import ini_parser, saver_and_loader, os_helper, create_model
-from src.data_load import create_data_loader, color_transform, normalize, get_data_batch, unnormalize
+from src.data_load import data_loader_from_config, color_transform, normalize, get_data_batch, unnormalize
 from src.gan_model import GanModel
 from src.metrics import score_metrics
 
@@ -31,21 +31,23 @@ if __name__ == '__main__':
 
     config = ini_parser.read(config_file_path)
     # Creates the run directory in the output folder specified in the configuration file
-    runs_dir = config['CONFIGS']['output_dir']
-    os_helper.is_valid_dir(runs_dir, 'Model directory is invalid\nPath is not a directory: ' + runs_dir)
+    model_config = config['MODEL']
+
+    models_dir, model_name = model_config['models_dir'], model_config['model_name']
+    os_helper.is_valid_dir(models_dir, 'Model directory is invalid\nPath is not a directory: ' + models_dir)
 
     model_dir_name = 'models'
     images_dir_name = 'images'
-
-    will_restore_model = os.path.isdir(os.path.join(runs_dir, model_dir_name))
+    
+    will_restore_model = os.path.isdir(os.path.join(models_dir, model_dir_name))
     # Then restore existing model
     if will_restore_model:
-        run_dir = runs_dir
+        run_dir = models_dir
         img_dir = os.path.join(run_dir, images_dir_name)
         model_dir = os.path.join(run_dir, model_dir_name)
         log_path = os.path.join(run_dir, 'train.log')
     else:
-        run_dir, run_id = os_helper.create_run_dir(runs_dir)
+        run_dir, run_id = os_helper.create_run_dir(models_dir)
         img_dir = os_helper.create_dir(run_dir, images_dir_name)
         model_dir = os_helper.create_dir(run_dir, model_dir_name)
         # Logs training information, everything logged will also be outputted to stdout (printed)
@@ -64,11 +66,12 @@ if __name__ == '__main__':
         logging.info('Directory ' + run_dir + ' loaded, training output will be saved here')
 
     # Creates data-loader
-    data_dir = config['CONFIGS']['dataroot']
-    os_helper.is_valid_dir(data_dir, 'Invalid training data directory\nPath is an invalid directory: ' + data_dir)
-    data_loader = create_data_loader(config, data_dir)
-    logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
+    data_config = config['DATA']
+    data_loader = data_loader_from_config(data_config)
 
+    logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
+    n_gpus = config['MACHINE']['ngpu']
+    n_color_channels = int(data_config['num_channels'])
     # Create model
     loaded_epoch_num = 0
     # If it exists, then try to load the model
@@ -80,8 +83,9 @@ if __name__ == '__main__':
         netG, netD, device = saver_and_loader.load_discrim_and_generator(config, generator_path, discriminator_path)
         logging.info('Model loaded!')
     else:
-        netG, netD, device = create_model.create_gan_instances(config)
-        saver_and_loader.save_architecture(netG, netD, run_dir, config)
+        model_arch_config = config['MODEL ARCHITECTURE']
+        netG, netD, device = create_model.create_gan_instances(model_arch_config, n_color_channels, n_gpus=n_gpus)
+        saver_and_loader.save_architecture(netG, netD, run_dir, data_config, model_arch_config)
         netD.apply(create_model.weights_init)
         netG.apply(create_model.weights_init)
 
@@ -91,8 +95,8 @@ if __name__ == '__main__':
     saver_and_loader.save_train_batch(data_loader, device, os.path.join(img_dir, 'train_batch.png'))
 
     real_images = get_data_batch(data_loader, device)
-    compute_is = config['CONFIGS'].getboolean('is_metric')
-    compute_fid = config['CONFIGS'].getboolean('fid_metric')
+    compute_is = config['METRICS'].getboolean('is_metric')
+    compute_fid = config['METRICS'].getboolean('fid_metric')
 
     if compute_is or compute_fid:
         logging.info('Computing metrics for real images ...')
@@ -101,12 +105,12 @@ if __name__ == '__main__':
             logging.info('Inception Score for real images: %.2f' % round(is_score, 2))
         if compute_fid:
             logging.info('FID Score for real images: %.2f' % round(fid_score, 2))
+    train_config = config['TRAIN']
+    gan_model = GanModel(netG, netD, device, model_arch_config, train_config=train_config)
+    latent_vector_size = int(model_arch_config['latent_vector_size'])
+    fixed_noise = torch.randn(int(data_config['batch_size']), latent_vector_size, 1, 1, device=device)
 
-    gan_model = GanModel(netG, netD, device, config)
-    latent_vector_size = int(config['CONFIGS']['latent_vector_size'])
-    fixed_noise = torch.randn(int(config['CONFIGS']['batch_size']), latent_vector_size, 1, 1, device=device)
-
-    n_epochs = int(config['CONFIGS']['num_epochs'])
+    n_epochs = int(train_config['num_epochs'])
     logging.info("Starting Training Loop...")
 
     for epoch in range(n_epochs):
@@ -119,7 +123,7 @@ if __name__ == '__main__':
         for i, data in enumerate(data_loader, 0):
 
             real_data = data[0].to(device)
-            transformed_real_data = normalize(color_transform(real_data.cuda()))
+            transformed_real_data = normalize(color_transform(real_data))
             data_get_time += time.time() - data_start_time
 
             model_start_time = time.time()
@@ -143,14 +147,14 @@ if __name__ == '__main__':
         logging.info('Saving fake images: ' + fake_img_output_path)
         fake_images = gan_model.generate_images(fixed_noise)
         saver_and_loader.save_images(fake_images, fake_img_output_path)
-        print('Time to save images: %.2fs ' % (time.time() - save_imgs_start_time))
+        logging.info('Time to save images: %.2fs ' % (time.time() - save_imgs_start_time))
 
         # Saves models
         save_models_start_time = time.time()
         generator_path = os.path.join(model_dir, 'gen_epoch_' + str(epoch_after_loading) + '.pt')
         discriminator_path = os.path.join(model_dir, 'discrim_epoch_' + str(epoch_after_loading) + '.pt')
         saver_and_loader.save_model(netG, netD, generator_path, discriminator_path)
-        print('Time to save models: %.2fs ' % (time.time() - save_models_start_time))
+        logging.info('Time to save models: %.2fs ' % (time.time() - save_models_start_time))
 
         if compute_is or compute_fid:
             logging.info('Computing metrics for the saved images ...')
