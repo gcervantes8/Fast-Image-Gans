@@ -1,5 +1,5 @@
 # Game Image Generation
-With this project, you can train an Generative Adversarial Network to learn how a game looks like, and create (fake) images that look like the game
+With this project, you can train a Generative Adversarial Network.  While this is a general image GAN framework, this repository focuses on generating fake game images.
 
 ## Requirements
 - Python 3.6
@@ -28,36 +28,35 @@ bash train_gan.sh
 
 ## Configuration File
 
-Configure model training: **/model_config.ini**
-
-Modifiable parameters are
+Configuration parameters: **/model_config.ini**
 
 #### Loading and saving
-- Path to training image directory
-- Path to directory to save all output
+- Model name - Name that the model will be saved as.  If there's an existing model, it will try to restore the model instead
+- Model directory - Directory where the models are saved
 
-#### Image details
-
-- Size image width, images will be resized to this
-- Size image height, images will be resized to this
-- Number of channels, black and white (1), or color (3)
-
+#### Data
+- Train Directory - Images to train the model with
+- Image width - images will be resized to have this width
+- Image height - images will be resized to have this height
+- Number of channels - For black and white images, this should be 1.  For color images this should be 3
+- Batch Size - Amount of images in a batch, used in training, and image saving 
+- Number of workers - Used for data loading, see [this](https://discuss.pytorch.org/t/guidelines-for-assigning-num-workers-to-dataloader/813) for more info
 #### Machine-specific parameters
 
 - Number of GPUs
-- Number of workers
 
-#### Hyper-parameters - 1
+#### Train Hyper-parameters
 
 - Number of epochs
-- Batch size
 - Learning rate
-
-#### Hyper-parameters - 2
-
 - Optimizer parameters
+
+#### Model Architecture
 - Latent vector size (Given to the generator)
 - Size of feature maps in the generator and discriminator
+#### Metrics - (RAM Intensive)
+- Inception Score - Computes inception score every epoch.
+- FID Score - Computes FID every epoch using the generated and train data
 
 ## Images Generated
 
