@@ -65,7 +65,7 @@ These models are trained from images that are collected from people speedrunning
 
 ### 1st Trained Model
 
-More results are at [**output/Y8Q8**](output/Y8Q8)
+More results are at [**models/Y8Q8**](models/Y8Q8)
 
 
 - 47,000 images (6.6 GB)
@@ -75,7 +75,7 @@ More results are at [**output/Y8Q8**](output/Y8Q8)
 
 <table>
   <thead><th colspan="3">Training Batch</th></thead>
-  <td colspan="3" align="center"><img src="output/Y8Q8/images/training_batch.png" alt="Images of training batch"></td>
+  <td colspan="3" align="center"><img src="models/Y8Q8/images/training_batch.png" alt="Images of training batch"></td>
   <thead> <th colspan="3"> Generated Images </th> </thead>
   <tr>
       <th>Epoch 50</th>
@@ -83,15 +83,15 @@ More results are at [**output/Y8Q8**](output/Y8Q8)
       <th>Epoch 90</th>
   </tr>
   <tr>
-      <td align="center"> <img src="output/Y8Q8/images/fake_images_epoch_50.png" alt="Generated images at epoch 50"> </td>
-      <td align="center"> <img src="output/Y8Q8/images/fake_images_epoch_70.png" alt="Generated images at epoch 70"> </td>
-      <td align="center"> <img src="output/Y8Q8/images/fake_images_epoch_90.png" alt="Generated images at epoch 90"> </td>
+      <td align="center"> <img src="models/Y8Q8/images/fake_images_epoch_50.png" alt="Generated images at epoch 50"> </td>
+      <td align="center"> <img src="models/Y8Q8/images/fake_images_epoch_70.png" alt="Generated images at epoch 70"> </td>
+      <td align="center"> <img src="models/Y8Q8/images/fake_images_epoch_90.png" alt="Generated images at epoch 90"> </td>
   </tr>
 </table>
 
 ### 2nd Trained Model
 
-More results are at [**output/GC7M**](output/GC7M)
+More results are at [**models/GC7M**](models/GC7M)
 
 
 - 1 million images (279 GB)
@@ -103,7 +103,7 @@ More results are at [**output/GC7M**](output/GC7M)
 
 <table>
   <thead><th colspan="3">Training Batch</th></thead>
-  <td colspan="3" align="center"> <img src="output/GC7M/images/train_batch.png" alt="Images of training batch"> </td>
+  <td colspan="3" align="center"> <img src="models/GC7M/images/train_batch.png" alt="Images of training batch"> </td>
   <thead> <th colspan="3"> Generated Images </th> </thead>
   <tr>
     <th>Epoch 1</th>
@@ -111,15 +111,15 @@ More results are at [**output/GC7M**](output/GC7M)
     <th>Epoch 8</th>
   </tr>
   <tr>
-    <td align="center"> <img src="output/GC7M/images/fake_epoch_0.png" alt="Generated images at epoch 1"> </td>
-    <td align="center"> <img src="output/GC7M/images/fake_epoch_3.png" alt="Generated images at epoch 4"> </td>
-    <td align="center"> <img src="output/GC7M/images/fake_epoch_7.png" alt="Generated images at epoch 8"> </td>
+    <td align="center"> <img src="models/GC7M/images/fake_epoch_0.png" alt="Generated images at epoch 1"> </td>
+    <td align="center"> <img src="models/GC7M/images/fake_epoch_3.png" alt="Generated images at epoch 4"> </td>
+    <td align="center"> <img src="models/GC7M/images/fake_epoch_7.png" alt="Generated images at epoch 8"> </td>
   </tr>
 </table>
 
 ### 3rd Trained Model
 
-More results are at [**output/3CK2**](output/3CK2)
+More results are at [**models/3CK2**](models/3CK2)
 
 - 1 million images (279 GB)
 - 3 different players (images without star count removed)
@@ -129,7 +129,7 @@ More results are at [**output/3CK2**](output/3CK2)
 
 <table>
   <thead><th colspan="3">Training Batch</th></thead>
-  <td colspan="3" align="center"> <img src="output/3CK2/images/train_batch.png" alt="Images of training batch"> </td>
+  <td colspan="3" align="center"> <img src="models/3CK2/images/train_batch.png" alt="Images of training batch"> </td>
   <thead> <th colspan="3"> Generated Images </th> </thead>
   <tr>
     <th>Epoch 1</th>
@@ -137,15 +137,15 @@ More results are at [**output/3CK2**](output/3CK2)
     <th>Epoch 9</th>
   </tr>
   <tr>
-    <td align="center"> <img src="output/3CK2/images/fake_epoch_0.png" alt="Generated images at epoch 1"> </td>
-    <td align="center"> <img src="output/3CK2/images/fake_epoch_4.png" alt="Generated images at epoch 5"> </td>
-    <td align="center"> <img src="output/3CK2/images/fake_epoch_8.png" alt="Generated images at epoch 9"> </td>
+    <td align="center"> <img src="models/3CK2/images/fake_epoch_0.png" alt="Generated images at epoch 1"> </td>
+    <td align="center"> <img src="models/3CK2/images/fake_epoch_4.png" alt="Generated images at epoch 5"> </td>
+    <td align="center"> <img src="models/3CK2/images/fake_epoch_8.png" alt="Generated images at epoch 9"> </td>
   </tr>
 </table>
 
 ### 4th Trained Model
 
-More results are at [**output/KDTI**](output/KDTI)
+More results are at [**models/KDTI**](models/KDTI)
 
 - 1 million images (279 GB)
 - 3 different players (images without star count removed)
@@ -155,7 +155,7 @@ More results are at [**output/KDTI**](output/KDTI)
 
 <table>
   <thead><th colspan="3">Training Batch</th></thead>
-  <td colspan="3" align="center"> <img src="output/KDTI/images/train_batch.png" alt="Images of training batch"> </td>
+  <td colspan="3" align="center"> <img src="models/KDTI/images/train_batch.png" alt="Images of training batch"> </td>
   <thead> <th colspan="3"> Generated Images </th> </thead>
   <tr>
     <th>Epoch 1</th>
@@ -163,9 +163,9 @@ More results are at [**output/KDTI**](output/KDTI)
     <th>Epoch 7</th>
   </tr>
   <tr>
-    <td align="center"> <img src="output/KDTI/images/fake_epoch_1.png" alt="Generated images at epoch 1"> </td>
-    <td align="center"> <img src="output/KDTI/images/fake_epoch_5.png" alt="Generated images at epoch 5"> </td>
-    <td align="center"> <img src="output/KDTI/images/fake_epoch_7.png" alt="Generated images at epoch 7"> </td>
+    <td align="center"> <img src="models/KDTI/images/fake_epoch_1.png" alt="Generated images at epoch 1"> </td>
+    <td align="center"> <img src="models/KDTI/images/fake_epoch_5.png" alt="Generated images at epoch 5"> </td>
+    <td align="center"> <img src="models/KDTI/images/fake_epoch_7.png" alt="Generated images at epoch 7"> </td>
   </tr>
 </table>
 
