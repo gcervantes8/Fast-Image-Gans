@@ -3,7 +3,6 @@ With this project, you can train a Generative Adversarial Network.  While this i
 
 ## Requirements
 - Python 3.6
-- Numpy
 - [Pytorch](https://github.com/pytorch/pytorch)
 - [Torch-Summary](https://pypi.org/project/torch-summary/) Tested with version 1.4.5
 - [Pytorch-ignite](https://pytorch.org/ignite/index.html)

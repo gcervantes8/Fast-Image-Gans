@@ -10,11 +10,12 @@ The class takes in images to classify whether the images are real or fake (gener
 
 import torch.nn as nn
 from torch.nn.utils import spectral_norm
+from src.discriminators.base_discriminator import BaseDiscriminator
 
 
-class Discriminator(nn.Module):
+class DcganDiscriminator(BaseDiscriminator):
     def __init__(self, num_gpu, ndf, num_channels):
-        super(Discriminator, self).__init__()
+        super(DcganDiscriminator, self).__init__(num_gpu, ndf, num_channels)
         self.n_gpu = num_gpu
         self.main = nn.Sequential(
 

@@ -10,7 +10,10 @@ Purpose: Functions that are used to create/init the GAN model
 import torch
 import torch.nn as nn
 
-from src import Generator, Discriminator
+from src.generators import dcgan_generator
+from src.discriminators import dcgan_discriminator
+from src.generators import biggan_generator
+from src.discriminators import biggan_discriminator
 
 
 # Creates the generator and discriminator using the configuration file
@@ -23,8 +26,11 @@ def create_gan_instances(model_arch_config, num_channels, n_gpus=0):
     device = torch.device('cuda:0' if (torch.cuda.is_available() and n_gpus > 0) else 'cpu')
 
     # Create the generator and discriminator
-    generator = Generator.Generator(n_gpus, latent_vector_size, ngf, num_channels).to(device)
-    discriminator = Discriminator.Discriminator(n_gpus, ndf, num_channels).to(device)
+    # generator = dcgan_generator.DcganGenerator(n_gpus, latent_vector_size, ngf, num_channels).to(device)
+    # discriminator = dcgan_discriminator.DcganDiscriminator(n_gpus, ndf, num_channels).to(device)
+
+    generator = biggan_generator.BigganGenerator(n_gpus, latent_vector_size, ngf, num_channels).to(device)
+    discriminator = biggan_discriminator.BigganDiscriminator(n_gpus, ndf, num_channels).to(device)
 
     generator = _handle_multiple_gpus(generator, n_gpus, device)
     discriminator = _handle_multiple_gpus(discriminator, n_gpus, device)

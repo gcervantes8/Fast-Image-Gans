@@ -14,7 +14,9 @@ import torchvision.utils as torch_utils
 from src.data_load import get_data_batch, color_transform, normalize
 from torchsummary import summary
 
-from src import Generator, Discriminator, create_model
+from src import create_model
+from src.generators import dcgan_generator
+from src.discriminators import dcgan_discriminator
 
 
 # Writes text file with information of the generator and discriminator instances
@@ -24,24 +26,24 @@ def save_architecture(generator, discriminator, save_dir, data_config, model_arc
     image_width = int(data_config['image_width'])
     latent_vector_size = int(model_arch_config['latent_vector_size'])
 
-    gen_model_stats = summary(generator, input_data=(latent_vector_size, 1, 1), verbose=0)
-    gen_summary_str = str(gen_model_stats)
-    discrim_model_stats = summary(discriminator, input_data=(3, image_height, image_width), verbose=0)
-    discrim_summary_str = str(discrim_model_stats)
+    # gen_model_stats = summary(generator, input_data=(latent_vector_size, 1, 1), verbose=0)
+    # gen_summary_str = str(gen_model_stats)
+    # discrim_model_stats = summary(discriminator, input_data=(3, image_height, image_width), verbose=0)
+    # discrim_summary_str = str(discrim_model_stats)
 
     with open(os.path.join(save_dir, 'architecture.txt'), 'w', encoding='utf-8') as text_file:
         text_file.write('Generator\n\n')
         text_file.write(str(generator))
-        text_file.write(str(gen_summary_str))
+        # text_file.write(str(gen_summary_str))
         text_file.write('\n\nDiscriminator\n\n')
         text_file.write(str(discriminator))
-        text_file.write(str(discrim_summary_str))
+        # text_file.write(str(discrim_summary_str))
 
 
-# Saves the python files Generator.py, and Discriminator.py to given directory
+# Saves the python files dcgan_generator.py, and dcgan_discriminator.py to given directory
 def save_gan_files(run_dir):
-    shutil.copy(Generator.__name__.replace('.', '/') + '.py', os.path.abspath(run_dir))
-    shutil.copy(Discriminator.__name__.replace('.', '/') + '.py', os.path.abspath(run_dir))
+    shutil.copy(dcgan_generator.__name__.replace('.', '/') + '.py', os.path.abspath(run_dir))
+    shutil.copy(dcgan_discriminator.__name__.replace('.', '/') + '.py', os.path.abspath(run_dir))
 
 
 # Saves the trained generator and discriminator models in the given directories

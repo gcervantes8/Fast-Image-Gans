@@ -14,7 +14,7 @@ import torch.optim as optim
 
 class GanModel:
 
-    criterion = nn.BCELoss()
+    criterion = nn.HingeEmbeddingLoss()
     fake_label, real_label = 0, 1
 
     def __init__(self, generator, discriminator, device, model_arch_config, train_config):

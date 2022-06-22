@@ -10,11 +10,12 @@ The class takes in a latent vector to generate new images (in the forward pass)
 
 import torch.nn as nn
 from torch.nn.utils import spectral_norm
+from src.generators.base_generator import BaseGenerator
 
 
-class Generator(nn.Module):
+class DcganGenerator(BaseGenerator):
     def __init__(self, num_gpu, latent_vector_size, ngf, num_channels):
-        super(Generator, self).__init__()
+        super(DcganGenerator, self).__init__(num_gpu, latent_vector_size, ngf, num_channels)
         self.n_gpu = num_gpu
         self.main = nn.Sequential(
             # (in-1) * s - 2 * p + (1 * (k - 1) + 1
