@@ -11,6 +11,7 @@ import torch
 import torch.nn as nn
 from src.discriminators.base_discriminator import BaseDiscriminator
 from src.discriminators.res_down import ResDown
+from src.layers.nonlocal_block import NonLocalBlock
 
 
 class BigganDiscriminator(BaseDiscriminator):
@@ -25,6 +26,8 @@ class BigganDiscriminator(BaseDiscriminator):
 
         # ndf * 2, 32, 32
         self.discrim_layers.append(ResDown(ndf, ndf * 2))
+
+        self.discrim_layers.append(NonLocalBlock(ndf * 2))
 
         # ndf * 4, 16, 16
         self.discrim_layers.append(ResDown(ndf * 2, ndf * 4))

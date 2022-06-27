@@ -14,8 +14,9 @@ import torch.optim as optim
 
 class GanModel:
 
-    criterion = nn.HingeEmbeddingLoss()
-    fake_label, real_label = 0, 1
+    discrim_criterion = nn.HingeEmbeddingLoss()
+    gen_criterion = nn.HingeEmbeddingLoss()
+    fake_label, real_label = -1, 1
 
     def __init__(self, generator, discriminator, device, model_arch_config, train_config):
         self.netG = generator
@@ -40,9 +41,8 @@ class GanModel:
         b_size = real_data.size(0)
         real_label = torch.full((b_size,), GanModel.real_label, dtype=real_data.dtype, device=self.device)
 
-        # Note discriminator output must be 1 integer, or else criterion will throw an error
         discrim_output = self.netD(real_data)
-        errD_real = GanModel.criterion(discrim_output, real_label)
+        errD_real = GanModel.discrim_criterion(discrim_output, real_label)
         # Calculate gradients for D in backward pass
         errD_real.backward()
         D_x = discrim_output.mean().item()
@@ -55,7 +55,7 @@ class GanModel:
         # Classify all fake batch with D
         fake_output = self.netD(fake.detach())
         # Calculate D's loss on the all-fake batch
-        errD_fake = GanModel.criterion(fake_output, fake_label.reshape_as(fake_output))
+        errD_fake = GanModel.discrim_criterion(fake_output, fake_label.reshape_as(fake_output))
         # Calculate the gradients for this batch
         errD_fake.backward()
         D_G_z1 = fake_output.mean().item()
@@ -70,7 +70,9 @@ class GanModel:
         self.netG.zero_grad()
         # Since we just updated D, perform another forward pass of all-fake batch through D
         output_update = self.netD(fake)
-        errG = GanModel.criterion(output_update, real_label)
+        print(output_update)
+        print(real_label)
+        errG = GanModel.gen_criterion(output_update, real_label)
         # Calculate gradients for G
         errG.backward()
         D_G_z2 = output_update.mean().item()

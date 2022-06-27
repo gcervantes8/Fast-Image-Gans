@@ -11,6 +11,7 @@ import torch
 import torch.nn as nn
 from src.generators.base_generator import BaseGenerator
 from src.generators.res_up import ResUp
+from src.layers.nonlocal_block import NonLocalBlock
 
 
 class BigganGenerator(BaseGenerator):
@@ -31,6 +32,8 @@ class BigganGenerator(BaseGenerator):
 
         # ngf*4 x 32 x 32
         self.generator_layers.append(ResUp(ngf * 8, ngf * 4))
+
+        self.generator_layers.append(NonLocalBlock(ngf * 4))
 
         # ngf*2 x 64 x 64
         self.generator_layers.append(ResUp(ngf * 4, ngf * 2))
