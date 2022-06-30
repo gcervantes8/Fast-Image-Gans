@@ -12,6 +12,7 @@ import torch.nn as nn
 from src.generators.base_generator import BaseGenerator
 from src.generators.res_up import ResUp
 from src.layers.nonlocal_block import NonLocalBlock
+from torch.nn.utils.parametrizations import spectral_norm
 
 
 class BigganGenerator(BaseGenerator):
@@ -21,7 +22,7 @@ class BigganGenerator(BaseGenerator):
         self.ngf = ngf
 
         self.generator_layers = nn.ModuleList()
-        self.initial_linear = nn.Linear(in_features=latent_vector_size, out_features=4 * 4 * 16 * ngf)
+        self.initial_linear = spectral_norm(nn.Linear(in_features=latent_vector_size, out_features=4 * 4 * 16 * ngf))
 
         # Input is nfg*16 x 4 x 4 matrix
         # Output of ResUp: ngf*16 x 8 x 8
@@ -33,7 +34,7 @@ class BigganGenerator(BaseGenerator):
         # ngf*4 x 32 x 32
         self.generator_layers.append(ResUp(ngf * 8, ngf * 4))
 
-        self.generator_layers.append(NonLocalBlock(ngf * 4))
+        # self.generator_layers.append(NonLocalBlock(ngf * 4))
 
         # ngf*2 x 64 x 64
         self.generator_layers.append(ResUp(ngf * 4, ngf * 2))
@@ -50,10 +51,16 @@ class BigganGenerator(BaseGenerator):
         self.generator_layers.append(nn.Tanh())
 
     def forward(self, discriminator_input):
+        # [B, Z, 1, 1] - Z is size of latent vector
         batch_size = discriminator_input.size(dim=0)
+
+        # [B, Z]
         discriminator_input = torch.squeeze(discriminator_input)
-        # Output of linear layer is 4 x 16 x 16
+
+        # [B, 4*4*16*ngf]
         out = self.initial_linear(discriminator_input)
+
+        # [B, 16 * ngf, 4, 4]
         out = torch.reshape(out, [batch_size, 16 * self.ngf, 4, 4])
         for generator_layer in self.generator_layers:
             out = generator_layer(out)

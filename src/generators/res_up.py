@@ -8,14 +8,17 @@ class ResUp(nn.Module):
 
         self.upsample_a1 = nn.Upsample(scale_factor=2)
         self.conv_a2 = nn.Conv2d(in_channels, out_channels, kernel_size=1)
+        nn.init.orthogonal_(self.conv_a2.weight)
 
         self.batch_norm_b1 = nn.BatchNorm2d(num_features=in_channels)
         self.relu_b2 = nn.ReLU()
         self.upsample_b3 = nn.Upsample(scale_factor=2)
         self.conv_b4 = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding='same')
+        nn.init.orthogonal_(self.conv_b4.weight)
         self.batch_norm_b5 = nn.BatchNorm2d(num_features=out_channels)
         self.relu_b6 = nn.ReLU()
         self.conv_b7 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding='same')
+        nn.init.orthogonal_(self.conv_b7.weight)
 
     # res_input is of size (B, C, H, W)
     def forward(self, res_input):

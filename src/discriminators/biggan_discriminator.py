@@ -12,6 +12,7 @@ import torch.nn as nn
 from src.discriminators.base_discriminator import BaseDiscriminator
 from src.discriminators.res_down import ResDown
 from src.layers.nonlocal_block import NonLocalBlock
+from torch.nn.utils.parametrizations import spectral_norm
 
 
 class BigganDiscriminator(BaseDiscriminator):
@@ -27,7 +28,7 @@ class BigganDiscriminator(BaseDiscriminator):
         # ndf * 2, 32, 32
         self.discrim_layers.append(ResDown(ndf, ndf * 2))
 
-        self.discrim_layers.append(NonLocalBlock(ndf * 2))
+        # self.discrim_layers.append(NonLocalBlock(ndf * 2))
 
         # ndf * 4, 16, 16
         self.discrim_layers.append(ResDown(ndf * 2, ndf * 4))
@@ -43,7 +44,7 @@ class BigganDiscriminator(BaseDiscriminator):
 
         self.discrim_layers.append(nn.Flatten())
 
-        self.discrim_layers.append(nn.Linear(in_features=ndf*16*2*2, out_features=1))
+        self.discrim_layers.append(spectral_norm(nn.Linear(in_features=ndf*16*2*2, out_features=1)))
 
     def forward(self, discriminator_input):
         out = discriminator_input

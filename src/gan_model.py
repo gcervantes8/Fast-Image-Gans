@@ -24,11 +24,13 @@ class GanModel:
         self.device = device
         self.latent_vector_size = int(model_arch_config['latent_vector_size'])
         beta1 = float(train_config['beta1'])
-        lr = float(train_config['lr'])
+        beta2 = float(train_config['beta2'])
+        generator_lr = float(train_config['generator_lr'])
+        discriminator_lr = float(train_config['discriminator_lr'])
 
         # Setup Adam optimizers for both G and D
-        self.optimizerD = optim.Adam(discriminator.parameters(), lr=lr, betas=(beta1, 0.999))
-        self.optimizerG = optim.Adam(generator.parameters(), lr=lr, betas=(beta1, 0.999))
+        self.optimizerD = optim.Adam(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2))
+        self.optimizerG = optim.Adam(generator.parameters(), lr=generator_lr, betas=(beta1, beta2))
 
     def update_minimax(self, real_data):
 
@@ -43,6 +45,11 @@ class GanModel:
 
         discrim_output = self.netD(real_data)
         errD_real = GanModel.discrim_criterion(discrim_output, real_label)
+
+        print(discrim_output)
+        print(real_label)
+        print(errD_real)
+
         # Calculate gradients for D in backward pass
         errD_real.backward()
         D_x = discrim_output.mean().item()
@@ -70,8 +77,8 @@ class GanModel:
         self.netG.zero_grad()
         # Since we just updated D, perform another forward pass of all-fake batch through D
         output_update = self.netD(fake)
-        print(output_update)
-        print(real_label)
+        # print(output_update)
+        # print(real_label)
         errG = GanModel.gen_criterion(output_update, real_label)
         # Calculate gradients for G
         errG.backward()

@@ -7,11 +7,14 @@ class ResDown(nn.Module):
         super(ResDown, self).__init__()
 
         self.conv_a1 = nn.Conv2d(in_channels, out_channels, kernel_size=1, padding='same')
+        nn.init.orthogonal_(self.conv_a1.weight)
         self.avg_pooling_a2 = nn.AvgPool2d(kernel_size=2)
         self.relu_b1 = nn.ReLU()
         self.conv_b2 = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding='same')
+        nn.init.orthogonal_(self.conv_b2.weight)
         self.relu_b3 = nn.ReLU()
         self.conv_b4 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding='same')
+        nn.init.orthogonal_(self.conv_b4.weight)
         self.avg_pooling_b5 = nn.AvgPool2d(kernel_size=2)
 
     # res_input is of size (B, C, H, W)
