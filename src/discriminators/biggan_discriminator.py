@@ -28,7 +28,7 @@ class BigganDiscriminator(BaseDiscriminator):
         # ndf * 2, 32, 32
         self.discrim_layers.append(ResDown(ndf, ndf * 2))
 
-        # self.discrim_layers.append(NonLocalBlock(ndf * 2))
+        self.discrim_layers.append(NonLocalBlock(ndf * 2))
 
         # ndf * 4, 16, 16
         self.discrim_layers.append(ResDown(ndf * 2, ndf * 4))
@@ -39,11 +39,17 @@ class BigganDiscriminator(BaseDiscriminator):
         # ndf * 16, 4, 4
         self.discrim_layers.append(ResDown(ndf * 8, ndf * 16))
 
-        # ndf * 16, 2, 2
-        self.discrim_layers.append(ResDown(ndf * 16, ndf * 16))
+        # ndf * 16, 4, 4
+        self.discrim_layers.append(ResDown(ndf * 16, ndf * 16, pooling=False))
 
+        self.discrim_layers.append(nn.ReLU())
+        # ndf * 16, 2, 2
+        self.discrim_layers.append(nn.AvgPool2d(kernel_size=2))
+
+        # ndf * 16 * 2 * 2
         self.discrim_layers.append(nn.Flatten())
 
+        # 1
         self.discrim_layers.append(spectral_norm(nn.Linear(in_features=ndf*16*2*2, out_features=1)))
 
     def forward(self, discriminator_input):

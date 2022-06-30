@@ -8,14 +8,14 @@ Purpose: This will handle having both the generator and discriminator, as well a
 """
 
 import torch
-import torch.nn as nn
 import torch.optim as optim
+from src.losses.hinge_loss import HingeLoss
 
 
 class GanModel:
 
-    discrim_criterion = nn.HingeEmbeddingLoss()
-    gen_criterion = nn.HingeEmbeddingLoss()
+    discrim_criterion = HingeLoss()
+    gen_criterion = HingeLoss()
     fake_label, real_label = -1, 1
 
     def __init__(self, generator, discriminator, device, model_arch_config, train_config):
@@ -34,9 +34,6 @@ class GanModel:
 
     def update_minimax(self, real_data):
 
-        ############################
-        # (1) Update D network: maximize log(D(x)) + log(1 - D(G(z)))
-        ###########################
         # Train with all-real batch
         self.netD.zero_grad()
 
@@ -44,14 +41,10 @@ class GanModel:
         real_label = torch.full((b_size,), GanModel.real_label, dtype=real_data.dtype, device=self.device)
 
         discrim_output = self.netD(real_data)
-        errD_real = GanModel.discrim_criterion(discrim_output, real_label)
-
-        print(discrim_output)
-        print(real_label)
-        print(errD_real)
+        discrim_on_real_error = GanModel.discrim_criterion(discrim_output, real_label)
 
         # Calculate gradients for D in backward pass
-        errD_real.backward()
+        discrim_on_real_error.backward()
         D_x = discrim_output.mean().item()
 
         # Train with all-fake batch
@@ -62,30 +55,26 @@ class GanModel:
         # Classify all fake batch with D
         fake_output = self.netD(fake.detach())
         # Calculate D's loss on the all-fake batch
-        errD_fake = GanModel.discrim_criterion(fake_output, fake_label.reshape_as(fake_output))
+        discrim_on_fake_error = GanModel.discrim_criterion(fake_output, fake_label.reshape_as(fake_output))
         # Calculate the gradients for this batch
-        errD_fake.backward()
+        discrim_on_fake_error.backward()
         D_G_z1 = fake_output.mean().item()
         # Add the gradients from the all-real and all-fake batches
-        errD = errD_real + errD_fake
+        total_discrim_error = discrim_on_real_error + discrim_on_fake_error
         # Update D
         self.optimizerD.step()
 
-        ############################
-        # (2) Update G network: maximize log(D(G(z)))
-        ###########################
+        # ------ Generator ------
         self.netG.zero_grad()
         # Since we just updated D, perform another forward pass of all-fake batch through D
         output_update = self.netD(fake)
-        # print(output_update)
-        # print(real_label)
-        errG = GanModel.gen_criterion(output_update, real_label)
+        generator_error = GanModel.gen_criterion(output_update, real_label)
         # Calculate gradients for G
-        errG.backward()
+        generator_error.backward()
         D_G_z2 = output_update.mean().item()
         # Update G
         self.optimizerG.step()
-        return errD, errG, D_x, D_G_z1, D_G_z2
+        return total_discrim_error, generator_error, D_x, D_G_z1, D_G_z2
 
     def generate_images(self, noise):
         with torch.no_grad():
