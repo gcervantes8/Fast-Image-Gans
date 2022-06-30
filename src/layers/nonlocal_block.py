@@ -43,7 +43,7 @@ class NonLocalBlock(nn.Module):
         # [block_channels_1, B, H, W]
         phi_out = torch.permute(phi_out, (1, 0, 2, 3))
         # [B, block_channels_1, H*W]
-        phi_out = torch.reshape(phi_out, [batch_size, self.block_channelfgts_1, -1])
+        phi_out = torch.reshape(phi_out, [batch_size, self.block_channels_1, -1])
 
         # [B, H*W, H*W]
         first_mult_out = torch.bmm(delta_out, phi_out)
