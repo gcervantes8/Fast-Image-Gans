@@ -11,6 +11,7 @@ import torch
 import torch.optim as optim
 from src.losses.loss_functions import supported_loss_functions
 from src.losses.loss_functions import supported_losses
+import os
 
 
 class GanModel:
@@ -81,3 +82,9 @@ class GanModel:
         with torch.no_grad():
             fake = self.netG(noise).detach().cpu()
         return fake
+
+    def save(self, model_dir, step_or_epoch_num):
+        generator_path = os.path.join(model_dir, 'gen_epoch_' + str(step_or_epoch_num) + '.pt')
+        discriminator_path = os.path.join(model_dir, 'discrim_epoch_' + str(step_or_epoch_num) + '.pt')
+        torch.save(self.netG.state_dict(), generator_path)
+        torch.save(self.netD.state_dict(), discriminator_path)

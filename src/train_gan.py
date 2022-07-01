@@ -53,9 +53,15 @@ def train(config_file_path: str):
 
     # Logs training information, everything logged will also be outputted to stdout (printed)
     log_path = os.path.join(run_dir, 'train.log')
+    logging.root.handlers = []
+    logging.basicConfig(
+        level=logging.INFO,
+        handlers=[
+            logging.FileHandler(log_path),
+            logging.StreamHandler()
+        ]
+    )
 
-    logging.basicConfig(filename=log_path)
-    logging.getLogger().addHandler(logging.StreamHandler())
     if not will_restore_model:
         logging.info('Directory ' + run_dir + ' created, training output will be saved here')
         # Copies config and python model files
@@ -75,6 +81,7 @@ def train(config_file_path: str):
     n_color_channels = int(data_config['num_channels'])
     # Create model
     loaded_epoch_num = 0
+    model_arch_config = config['MODEL ARCHITECTURE']
     # If it exists, then try to load the model
     if will_restore_model:
         generator_path, discriminator_path, loaded_epoch_num = os_helper.find_latest_generator_model(model_dir)
@@ -84,7 +91,6 @@ def train(config_file_path: str):
         netG, netD, device = saver_and_loader.load_discrim_and_generator(config, generator_path, discriminator_path)
         logging.info('Model loaded!')
     else:
-        model_arch_config = config['MODEL ARCHITECTURE']
         netG, netD, device = create_model.create_gan_instances(model_arch_config, n_color_channels, n_gpus=n_gpus)
         saver_and_loader.save_architecture(netG, netD, run_dir, data_config, model_arch_config)
         netD.apply(create_model.weights_init)
@@ -113,54 +119,57 @@ def train(config_file_path: str):
     fixed_noise = torch.randn(int(data_config['batch_size']), latent_vector_size, 1, 1, device=device)
 
     n_epochs = int(train_config['num_epochs'])
+    save_steps = int(train_config['save_steps'])
+    save_steps = None if save_steps == 0 else save_steps
+    log_steps = int(train_config['log_steps'])
+
     logging.info("Starting Training Loop...")
 
+    n_steps = 0
+    steps_in_epoch = len(data_loader)
     for epoch in range(n_epochs):
         epoch_after_loading = loaded_epoch_num + epoch
         train_seq_start_time = time.time()
         # For each batch in the data-loader
-        data_get_time = 0
-        model_update_time = 0
+        data_time, model_time = 0, 0
         data_start_time = time.time()
-        for i, data in enumerate(data_loader, 0):
-
-            real_data = data[0].to(device)
+        for i, batch in enumerate(data_loader, 0):
+            n_steps += 1
+            real_data = batch[0].to(device)
             transformed_real_data = normalize(color_transform(real_data))
-            data_get_time += time.time() - data_start_time
+            data_time += time.time() - data_start_time
 
             model_start_time = time.time()
             errD, errG, D_x, D_G_z1, D_G_z2 = gan_model.update_minimax(transformed_real_data)
-            model_update_time += time.time() - model_start_time
-
+            model_time += time.time() - model_start_time
             # Output training stats
-            if i % 100 == 0:
+            if n_steps % log_steps == 0:
                 logging.info('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f\tTime: %.2fs'
-                             % (epoch, n_epochs, i, len(data_loader), errD.item(), errG.item(), D_x, D_G_z1, D_G_z2,
-                                time.time() - train_seq_start_time))
+                             % (epoch, n_epochs, n_steps % steps_in_epoch, steps_in_epoch, errD.item(), errG.item(),
+                                D_x, D_G_z1, D_G_z2, time.time() - train_seq_start_time))
                 logging.info(
-                    'Data retrieve time: %.2fs Model updating time: %.2fs' % (data_get_time, model_update_time))
-                data_get_time = 0
-                model_update_time = 0
+                    'Data retrieve time: %.2fs Model updating time: %.2fs' % (data_time, model_time))
+
+                data_time, model_time = 0, 0
                 train_seq_start_time = time.time()
+
+            # Save every save_steps or every epoch if save_steps is None
+            if (save_steps is not None and n_steps % save_steps == 0) or \
+                    (save_steps is None and n_steps % steps_in_epoch == 0):
+                save_imgs_start_time = time.time()
+                save_identifier = epoch_after_loading if save_steps is None else n_steps
+                fake_img_output_path = os.path.join(img_dir, 'generated_image_' + str(save_identifier) + '.png')
+                logging.info('Saving fake images: ' + fake_img_output_path)
+                fake_images = gan_model.generate_images(fixed_noise)
+                saver_and_loader.save_images(fake_images, fake_img_output_path)
+                logging.info('Time to save images: %.2fs ' % (time.time() - save_imgs_start_time))
+                gan_model.save(model_dir, save_identifier)
 
             data_start_time = time.time()
 
-        save_imgs_start_time = time.time()
-        fake_img_output_path = os.path.join(img_dir, 'fake_epoch_' + str(epoch_after_loading + 1) + '.png')
-        logging.info('Saving fake images: ' + fake_img_output_path)
-        fake_images = gan_model.generate_images(fixed_noise)
-        saver_and_loader.save_images(fake_images, fake_img_output_path)
-        logging.info('Time to save images: %.2fs ' % (time.time() - save_imgs_start_time))
-
-        # Saves models
-        save_models_start_time = time.time()
-        generator_path = os.path.join(model_dir, 'gen_epoch_' + str(epoch_after_loading) + '.pt')
-        discriminator_path = os.path.join(model_dir, 'discrim_epoch_' + str(epoch_after_loading) + '.pt')
-        saver_and_loader.save_model(netG, netD, generator_path, discriminator_path)
-        logging.info('Time to save models: %.2fs ' % (time.time() - save_models_start_time))
-
         if compute_is or compute_fid:
             logging.info('Computing metrics for the saved images ...')
+            fake_images = gan_model.generate_images(fixed_noise)
             is_score, fid_score = score_metrics(unnormalize(fake_images), compute_is, compute_fid,
                                                 real_images=real_images, device=device)
             if compute_is:
