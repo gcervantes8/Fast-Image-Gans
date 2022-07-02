@@ -77,7 +77,7 @@ def train(config_file_path: str):
     data_loader = data_loader_from_config(data_config)
 
     logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
-    n_gpus = config['MACHINE']['ngpu']
+    n_gpus = int(config['MACHINE']['ngpu'])
     n_color_channels = int(data_config['num_channels'])
     # Create model
     loaded_epoch_num = 0
@@ -93,8 +93,9 @@ def train(config_file_path: str):
     else:
         netG, netD, device = create_model.create_gan_instances(model_arch_config, n_color_channels, n_gpus=n_gpus)
         saver_and_loader.save_architecture(netG, netD, run_dir, data_config, model_arch_config)
-        netD.apply(create_model.weights_init)
-        netG.apply(create_model.weights_init)
+        # TODO Apply weight initialization to only DCGAN
+        # netD.apply(create_model.weights_init)
+        # netG.apply(create_model.weights_init)
 
     logging.info('Is GPU available? ' + str(torch.cuda.is_available()))
 

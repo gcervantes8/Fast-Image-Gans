@@ -1,4 +1,5 @@
 import torch.nn as nn
+from torch.nn.utils.parametrizations import spectral_norm
 
 
 class ResDown(nn.Module):
@@ -10,10 +11,10 @@ class ResDown(nn.Module):
         self.conv_a1 = nn.Conv2d(in_channels, out_channels, kernel_size=1, padding='same')
         nn.init.orthogonal_(self.conv_a1.weight)
         self.relu_b1 = nn.ReLU()
-        self.conv_b2 = nn.Conv2d(in_channels, out_channels, kernel_size=3, padding='same')
+        self.conv_b2 = spectral_norm(nn.Conv2d(in_channels, out_channels, kernel_size=3, padding='same'))
         nn.init.orthogonal_(self.conv_b2.weight)
         self.relu_b3 = nn.ReLU()
-        self.conv_b4 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding='same')
+        self.conv_b4 = spectral_norm(nn.Conv2d(out_channels, out_channels, kernel_size=3, padding='same'))
         nn.init.orthogonal_(self.conv_b4.weight)
         if pooling:
             self.avg_pooling_a2 = nn.AvgPool2d(kernel_size=2)

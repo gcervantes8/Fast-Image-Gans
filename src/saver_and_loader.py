@@ -26,6 +26,7 @@ def save_architecture(generator, discriminator, save_dir, data_config, model_arc
     image_width = int(data_config['image_width'])
     latent_vector_size = int(model_arch_config['latent_vector_size'])
 
+    # TODO Update print summary library
     # gen_model_stats = summary(generator, input_data=(latent_vector_size, 1, 1), verbose=0)
     # gen_summary_str = str(gen_model_stats)
     # discrim_model_stats = summary(discriminator, input_data=(3, image_height, image_width), verbose=0)
