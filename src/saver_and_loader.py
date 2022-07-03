@@ -12,7 +12,8 @@ import shutil
 import torch
 import torchvision.utils as torch_utils
 from src.data_load import get_data_batch, color_transform, normalize
-from torchsummary import summary
+# from torchsummary import summary
+from torchinfo import summary
 
 from src import create_model
 from src.generators import dcgan_generator
@@ -25,20 +26,16 @@ def save_architecture(generator, discriminator, save_dir, data_config, model_arc
     image_height = int(data_config['image_height'])
     image_width = int(data_config['image_width'])
     latent_vector_size = int(model_arch_config['latent_vector_size'])
-
-    # TODO Update print summary library
-    # gen_model_stats = summary(generator, input_data=(latent_vector_size, 1, 1), verbose=0)
-    # gen_summary_str = str(gen_model_stats)
-    # discrim_model_stats = summary(discriminator, input_data=(3, image_height, image_width), verbose=0)
-    # discrim_summary_str = str(discrim_model_stats)
+    discriminator_stats = summary(discriminator, input_size=(1, 3, image_height, image_width), verbose=0)
+    generator_stats = summary(generator, input_size=(1, latent_vector_size, 1, 1), verbose=0)
 
     with open(os.path.join(save_dir, 'architecture.txt'), 'w', encoding='utf-8') as text_file:
         text_file.write('Generator\n\n')
         text_file.write(str(generator))
-        # text_file.write(str(gen_summary_str))
+        text_file.write(str(generator_stats))
         text_file.write('\n\nDiscriminator\n\n')
         text_file.write(str(discriminator))
-        # text_file.write(str(discrim_summary_str))
+        text_file.write(str(discriminator_stats))
 
 
 # Saves the python files dcgan_generator.py, and dcgan_discriminator.py to given directory
