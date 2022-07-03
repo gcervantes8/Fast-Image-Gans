@@ -16,24 +16,35 @@ from src.generators import biggan_generator
 from src.discriminators import biggan_discriminator
 
 
+def create_gen_and_discrim(model_name: str):
+    model_name = model_name.lower()
+    models_supported = {
+        'dcgan': (dcgan_generator.DcganGenerator, dcgan_discriminator.DcganDiscriminator),
+        'biggan': (biggan_generator.BigganGenerator, biggan_discriminator.BigganDiscriminator),
+    }
+    if model_name not in models_supported:
+        raise ValueError("Given model name in config file is not supported\n" +
+                         'Supported models: ' + str(list(models_supported.keys())))
+    return models_supported[model_name]
+
+
 # Creates the generator and discriminator using the configuration file
 def create_gan_instances(model_arch_config, num_channels, n_gpus=0):
 
+    model_type = model_arch_config['model_type']
     latent_vector_size = int(model_arch_config['latent_vector_size'])
     ngf = int(model_arch_config['ngf'])
     ndf = int(model_arch_config['ndf'])
 
     device = torch.device('cuda:0' if (torch.cuda.is_available() and n_gpus > 0) else 'cpu')
 
+    generator, discriminator = create_gen_and_discrim(model_type)
     # Create the generator and discriminator
-    # generator = dcgan_generator.DcganGenerator(n_gpus, latent_vector_size, ngf, num_channels).to(device)
-    # discriminator = dcgan_discriminator.DcganDiscriminator(n_gpus, ndf, num_channels).to(device)
+    generator_init = generator(n_gpus, latent_vector_size, ngf, num_channels).to(device)
+    discriminator_init = discriminator(n_gpus, ndf, num_channels).to(device)
 
-    generator = biggan_generator.BigganGenerator(n_gpus, latent_vector_size, ngf, num_channels).to(device)
-    discriminator = biggan_discriminator.BigganDiscriminator(n_gpus, ndf, num_channels).to(device)
-
-    generator = _handle_multiple_gpus(generator, n_gpus, device)
-    discriminator = _handle_multiple_gpus(discriminator, n_gpus, device)
+    generator = _handle_multiple_gpus(generator_init, n_gpus, device)
+    discriminator = _handle_multiple_gpus(discriminator_init, n_gpus, device)
     return generator, discriminator, device
 
 
