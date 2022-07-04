@@ -10,17 +10,21 @@ Purpose: Functions that are used to create/init the GAN model
 import torch
 import torch.nn as nn
 
-from src.generators import dcgan_generator
-from src.discriminators import dcgan_discriminator
-from src.generators import biggan_generator
-from src.discriminators import biggan_discriminator
+from src.generators.dcgan_generator import DcganGenerator
+from src.generators.biggan_generator import BigganGenerator
+from src.generators.deep_biggan_generator import DeepBigganGenerator
+
+from src.discriminators.dcgan_discriminator import DcganDiscriminator
+from src.discriminators.biggan_discriminator import BigganDiscriminator
+from src.discriminators.deep_biggan_discriminator import DeepBigganDiscriminator
 
 
 def create_gen_and_discrim(model_name: str):
     model_name = model_name.lower()
     models_supported = {
-        'dcgan': (dcgan_generator.DcganGenerator, dcgan_discriminator.DcganDiscriminator),
-        'biggan': (biggan_generator.BigganGenerator, biggan_discriminator.BigganDiscriminator),
+        'dcgan': (DcganGenerator, DcganDiscriminator),
+        'biggan': (BigganGenerator, BigganDiscriminator),
+        'deep-biggan': (DeepBigganGenerator, DeepBigganDiscriminator),
     }
     if model_name not in models_supported:
         raise ValueError("Given model name in config file is not supported\n" +

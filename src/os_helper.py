@@ -31,8 +31,8 @@ def create_run_dir(output_dir):
         os.mkdir(run_dir_path)
         return run_dir_path, run_id
     except FileExistsError:
-        raise OSError('Could create new directory with identifier: ' + run_id +
-                      '\nIt\'s possible one exists already in the ' + output_dir)
+        raise OSError('Could not create new directory with identifier: ' + run_id +
+                      '\nIt\'s possible one exists already in the following directory: ' + output_dir)
 
 
 # Creates a directory with name of dir_nam in the given path, returns the path to the created directory
