@@ -23,7 +23,7 @@ class DeepBigganDiscriminator(BaseDiscriminator):
         self.discrim_layers = nn.ModuleList()
 
         # [B, ndf, 128, 128]
-        self.discrim_layers.append(nn.Conv2d(3, ndf, kernel_size=3, padding='same'))
+        self.discrim_layers.append(spectral_norm(nn.Conv2d(3, ndf, kernel_size=3, padding='same')))
         # [B, ndf * 2, 64, 64]
         self.discrim_layers.append(DeepResDown(ndf, ndf * 2))
 

@@ -50,7 +50,7 @@ class DeepBigganGenerator(BaseGenerator):
 
         self.generator_layers.append(nn.BatchNorm2d(num_features=ngf))
         self.generator_layers.append(nn.ReLU())
-        self.generator_layers.append(nn.Conv2d(ngf, 3, kernel_size=3, padding='same'))
+        self.generator_layers.append(spectral_norm(nn.Conv2d(ngf, 3, kernel_size=3, padding='same')))
         self.generator_layers.append(nn.Tanh())
 
     def forward(self, discriminator_input):

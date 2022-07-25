@@ -39,9 +39,9 @@ class DeepResDown(nn.Module):
             out_a = self.avg_pooling_a1(res_input)
         else:
             out_a = res_input
-
+        out_a = self.conv_a2(out_a)
         if not self.same_dim:
-            out_a = torch.cat((self.conv_a2(out_a), out_a), dim=1)
+            out_a = torch.cat((out_a, out_a), dim=1)
 
         out_b = self.relu_b1(res_input)
         # out_b is (B, ndf, H, W)

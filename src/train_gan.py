@@ -103,8 +103,10 @@ def train(config_file_path: str):
     saver_and_loader.save_train_batch(data_loader, device, os.path.join(img_dir, 'train_batch.png'))
 
     real_images = get_data_batch(data_loader, device)
-    compute_is = config['METRICS'].getboolean('is_metric')
-    compute_fid = config['METRICS'].getboolean('fid_metric')
+
+    metrics_config = config['METRICS']
+    compute_is = metrics_config.getboolean('is_metric')
+    compute_fid = metrics_config.getboolean('fid_metric')
 
     if compute_is or compute_fid:
         logging.info('Computing metrics for real images ...')
