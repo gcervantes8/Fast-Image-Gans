@@ -48,7 +48,7 @@ class DeepBigganGenerator(BaseGenerator):
         # [B, ngf, 128, 128]
         self.generator_layers.append(DeepResUp(ngf * 2, ngf))
 
-        self.generator_layers.append(nn.BatchNorm2d(num_features=ngf))
+        self.generator_layers.append(nn.BatchNorm2d(num_features=ngf, eps=1e-04))
         self.generator_layers.append(nn.ReLU())
         self.generator_layers.append(spectral_norm(nn.Conv2d(ngf, 3, kernel_size=3, padding='same')))
         self.generator_layers.append(nn.Tanh())

@@ -40,7 +40,7 @@ def create_gan_instances(model_arch_config, num_channels, n_gpus=0):
     ngf = int(model_arch_config['ngf'])
     ndf = int(model_arch_config['ndf'])
 
-    device = torch.device('cuda:0' if (torch.cuda.is_available() and n_gpus > 0) else 'cpu')
+    device = torch.device('cuda' if (torch.cuda.is_available() and n_gpus > 0) else 'cpu')
 
     generator, discriminator = create_gen_and_discrim(model_type)
     # Create the generator and discriminator

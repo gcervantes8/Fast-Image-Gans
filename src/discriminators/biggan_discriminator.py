@@ -50,7 +50,7 @@ class BigganDiscriminator(BaseDiscriminator):
         self.discrim_layers.append(nn.Flatten())
 
         # 1
-        self.discrim_layers.append(spectral_norm(nn.Linear(in_features=ndf*16*2*2, out_features=1)))
+        self.discrim_layers.append(spectral_norm(nn.Linear(in_features=ndf*16*2*2, out_features=1), eps=1e-04))
 
     def forward(self, discriminator_input):
         out = discriminator_input

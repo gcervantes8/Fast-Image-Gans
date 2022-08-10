@@ -21,6 +21,7 @@ import os
 import time
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+torch.cuda.empty_cache()
 
 
 def train(config_file_path: str):
@@ -119,7 +120,8 @@ def train(config_file_path: str):
     train_config = config['TRAIN']
     gan_model = GanModel(netG, netD, device, model_arch_config, train_config=train_config)
     latent_vector_size = int(model_arch_config['latent_vector_size'])
-    fixed_noise = torch.randn(int(data_config['batch_size']), latent_vector_size, 1, 1, device=device)
+    fixed_noise = torch.randn(int(data_config['batch_size']), latent_vector_size, 1, 1, device=device,
+                              requires_grad=False)
 
     n_epochs = int(train_config['num_epochs'])
     save_steps = int(train_config['save_steps'])
@@ -139,11 +141,12 @@ def train(config_file_path: str):
         for i, batch in enumerate(data_loader, 0):
             n_steps += 1
             real_data = batch[0].to(device)
-            transformed_real_data = normalize(color_transform(real_data))
+            # Normalized
+            real_data = normalize(color_transform(real_data))
             data_time += time.time() - data_start_time
 
             model_start_time = time.time()
-            errD, errG, D_x, D_G_z1, D_G_z2 = gan_model.update_minimax(transformed_real_data)
+            errD, errG, D_x, D_G_z1, D_G_z2 = gan_model.update_minimax(real_data)
             model_time += time.time() - model_start_time
             # Output training stats
             if n_steps % log_steps == 0:
