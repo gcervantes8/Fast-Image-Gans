@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torch.nn.utils.parametrizations import spectral_norm
 
 # Attention block based on https://arxiv.org/pdf/1805.08318.pdf
 # And the original paper https://arxiv.org/pdf/1711.07971.pdf
@@ -19,13 +20,17 @@ class NonLocalBlock(nn.Module):
         self.channels = channels
         self.block_channels_1 = block_channels_1
         self.block_channels_2 = block_channels_2
-        self.conv_delta = nn.Conv2d(channels, block_channels_1, kernel_size=1, padding='same')
-        self.conv_phi = nn.Conv2d(channels, block_channels_1, kernel_size=1, padding='same')
+        self.conv_delta = spectral_norm(nn.Conv2d(channels, block_channels_1, kernel_size=1, padding='same'), eps=1e-04)
+        nn.init.orthogonal_(self.conv_delta.weight)
+        self.conv_phi = spectral_norm(nn.Conv2d(channels, block_channels_1, kernel_size=1, padding='same'), eps=1e-04)
+        nn.init.orthogonal_(self.conv_phi.weight)
         self.pooling_phi = nn.MaxPool2d(kernel_size=2)
-        self.conv_g = nn.Conv2d(channels, block_channels_2, kernel_size=1, padding='same')
+        self.conv_g = spectral_norm(nn.Conv2d(channels, block_channels_2, kernel_size=1, padding='same'), eps=1e-04)
+        nn.init.orthogonal_(self.conv_g.weight)
         self.pooling_g = nn.MaxPool2d(kernel_size=2)
         self.softmax = nn.Softmax(dim=-1)  # Should not be dim 0, since that's batch
-        self.conv_last = nn.Conv2d(block_channels_2, channels, kernel_size=1, padding='same')
+        self.conv_last = spectral_norm(nn.Conv2d(block_channels_2, channels, kernel_size=1, padding='same'), eps=1e-04)
+        nn.init.orthogonal_(self.conv_last.weight)
         self.gamma = nn.Parameter(torch.zeros(1))
 
         # res_input is of size (B, C, H, W)
@@ -57,10 +62,6 @@ class NonLocalBlock(nn.Module):
 
         # [B, H*W, H*W/4]
         mult_out = self.softmax(mult_out)
-
-        # mult_out = torch.reshape(mult_out, [batch_size, -1])
-
-        # mult_out = torch.reshape(mult_out, [batch_size, height * width, height * width])
 
         # conv g out is [B, block_channels_2, H, W]
         g_out = self.conv_g(nonlocal_input)
