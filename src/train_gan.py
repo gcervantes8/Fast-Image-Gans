@@ -75,9 +75,7 @@ def train(config_file_path: str):
 
     # Creates data-loader
     data_config = config['DATA']
-    data_loader = data_loader_from_config(data_config)
 
-    logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
     n_gpus = int(config['MACHINE']['ngpu'])
     n_color_channels = int(data_config['num_channels'])
     # Create model
@@ -98,7 +96,11 @@ def train(config_file_path: str):
         # netD.apply(create_model.weights_init)
         # netG.apply(create_model.weights_init)
 
-    logging.info('Is GPU available? ' + str(torch.cuda.is_available()))
+    logging.info('Is GPU available? ' + str(torch.cuda.is_available()) + ' - Running on device:' + str(device))
+    running_on_cpu = str(device) == 'cpu'
+
+    data_loader = data_loader_from_config(data_config, using_gpu=not running_on_cpu)
+    logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
 
     # Save training images
     saver_and_loader.save_train_batch(data_loader, device, os.path.join(img_dir, 'train_batch.png'))
