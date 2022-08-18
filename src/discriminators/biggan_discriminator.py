@@ -43,8 +43,9 @@ class BigganDiscriminator(BaseDiscriminator):
         self.discrim_layers.append(ResDown(ndf * 16, ndf * 16, pooling=False))
 
         self.discrim_layers.append(nn.ReLU())
-        # ndf * 16, 2, 2
-        self.discrim_layers.append(nn.AvgPool2d(kernel_size=2))
+
+        # ndf * 16, 2, 2 - equivalent to sum pooling
+        self.discrim_layers.append(nn.LPPool2d(1, kernel_size=2))
 
         # ndf * 16 * 2 * 2
         self.discrim_layers.append(nn.Flatten())

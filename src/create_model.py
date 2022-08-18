@@ -44,11 +44,11 @@ def create_gan_instances(model_arch_config, num_channels, n_gpus=0):
 
     generator, discriminator = create_gen_and_discrim(model_type)
     # Create the generator and discriminator
-    generator_init = generator(n_gpus, latent_vector_size, ngf, num_channels).to(device)
-    discriminator_init = discriminator(n_gpus, ndf, num_channels).to(device)
+    generator = generator(n_gpus, latent_vector_size, ngf, num_channels).to(device)
+    discriminator = discriminator(n_gpus, ndf, num_channels).to(device)
 
-    generator = _handle_multiple_gpus(generator_init, n_gpus, device)
-    discriminator = _handle_multiple_gpus(discriminator_init, n_gpus, device)
+    generator = _handle_multiple_gpus(generator, n_gpus, device)
+    discriminator = _handle_multiple_gpus(discriminator, n_gpus, device)
     return generator, discriminator, device
 
 

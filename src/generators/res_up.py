@@ -8,13 +8,14 @@ class ResUp(nn.Module):
         super(ResUp, self).__init__()
 
         self.upsample_a1 = nn.Upsample(scale_factor=2)
-        self.conv_a2 = nn.Conv2d(in_channels, out_channels, kernel_size=1)
+        self.conv_a2 = spectral_norm(nn.Conv2d(in_channels, out_channels, kernel_size=1), eps=1e-04)
         nn.init.orthogonal_(self.conv_a2.weight)
 
         self.batch_norm_b1 = nn.BatchNorm2d(num_features=in_channels, eps=1e-04)
         self.relu_b2 = nn.ReLU()
         self.upsample_b3 = nn.Upsample(scale_factor=2)
-        self.conv_b4 = spectral_norm(nn.Conv2d(in_channels, out_channels, kernel_size=3, padding='same'), eps=1e-04)
+        # Set bias to False because it is followed by a batch norm (speed up)
+        self.conv_b4 = spectral_norm(nn.Conv2d(in_channels, out_channels, kernel_size=3, padding='same', bias=False), eps=1e-04)
         nn.init.orthogonal_(self.conv_b4.weight)
         self.batch_norm_b5 = nn.BatchNorm2d(num_features=out_channels, eps=1e-04)
         self.relu_b6 = nn.ReLU()

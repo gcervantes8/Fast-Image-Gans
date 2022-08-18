@@ -8,7 +8,7 @@ class ResDown(nn.Module):
         super(ResDown, self).__init__()
 
         self.pooling = pooling
-        self.conv_a1 = nn.Conv2d(in_channels, out_channels, kernel_size=1, padding='same')
+        self.conv_a1 = spectral_norm(nn.Conv2d(in_channels, out_channels, kernel_size=1, padding='same'), eps=1e-04)
         nn.init.orthogonal_(self.conv_a1.weight)
         self.relu_b1 = nn.ReLU()
         self.conv_b2 = spectral_norm(nn.Conv2d(in_channels, out_channels, kernel_size=3, padding='same'), eps=1e-04)
