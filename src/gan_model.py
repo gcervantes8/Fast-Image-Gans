@@ -17,8 +17,8 @@ import os
 class GanModel:
 
     def __init__(self, generator, discriminator, device, model_arch_config, train_config):
-        self.netG = generator
-        self.netD = discriminator
+        self.netG = generator.to(device)
+        self.netD = discriminator.to(device)
         self.device = device
         self.latent_vector_size = int(model_arch_config['latent_vector_size'])
         beta1 = float(train_config['beta1'])
@@ -26,11 +26,11 @@ class GanModel:
         generator_lr = float(train_config['generator_lr'])
         discriminator_lr = float(train_config['discriminator_lr'])
         self.accumulation_iterations = int(train_config['accumulation_iterations'])
-        self.mixed_precision = bool(train_config['mixed_precision'])
+        self.mixed_precision = train_config.getboolean('mixed_precision')
         self.grad_scaler = torch.cuda.amp.GradScaler(enabled=self.mixed_precision)
         self.batch_iterations = 0
 
-        self.criterion, self.fake_label, self.real_label = supported_loss_functions(train_config['loss_function'])
+        self.criterion, self.fake_label, self.real_label = supported_loss_functions(train_config['loss_function'], device=device)
         if self.criterion is None:
             raise ValueError("Loss values options: " + str(supported_losses()))
 

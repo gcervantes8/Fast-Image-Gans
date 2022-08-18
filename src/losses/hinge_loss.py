@@ -2,7 +2,6 @@ import torch
 
 
 class HingeLoss(torch.nn.Module):
-    reduction: str
 
     def __init__(self) -> None:
         super(HingeLoss, self).__init__()
