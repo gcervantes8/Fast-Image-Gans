@@ -9,6 +9,7 @@ Purpose: Train the GAN (Generative Adversarial Network) model
 
 from __future__ import print_function
 import torch
+from torch.profiler import profile, ProfilerActivity
 
 from src import ini_parser, saver_and_loader, os_helper, create_model
 from src.data_load import data_loader_from_config, color_transform, normalize, get_data_batch, unnormalize
@@ -39,6 +40,7 @@ def train(config_file_path: str):
 
     model_dir_name = 'models'
     images_dir_name = 'images'
+    profiler_dir_name = 'profiler'
 
     run_dir = os.path.join(models_dir, model_name)
     will_restore_model = os.path.isdir(os.path.join(run_dir, model_dir_name))
@@ -47,10 +49,12 @@ def train(config_file_path: str):
     if will_restore_model:
         img_dir = os.path.join(run_dir, images_dir_name)
         model_dir = os.path.join(run_dir, model_dir_name)
+        profiler_dir = os.path.join(run_dir, profiler_dir_name)
     else:
         run_dir, run_id = os_helper.create_run_dir(models_dir)
         img_dir = os_helper.create_dir(run_dir, images_dir_name)
         model_dir = os_helper.create_dir(run_dir, model_dir_name)
+        profiler_dir = os_helper.create_dir(run_dir, profiler_dir_name)
 
     # Logs training information, everything logged will also be outputted to stdout (printed)
     log_path = os.path.join(run_dir, 'train.log')
@@ -131,7 +135,11 @@ def train(config_file_path: str):
     log_steps = int(train_config['log_steps'])
 
     logging.info("Starting Training Loop...")
-
+    profiler = profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+                       schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=2),
+                       on_trace_ready=torch.profiler.tensorboard_trace_handler(profiler_dir),
+                       record_shapes=True, profile_memory=True)
+    profiler.start()
     n_steps = 0
     steps_in_epoch = len(data_loader)
     for epoch in range(n_epochs):
@@ -174,6 +182,7 @@ def train(config_file_path: str):
                 gan_model.save(model_dir, save_identifier)
 
             data_start_time = time.time()
+            profiler.step()
 
         if compute_is or compute_fid:
             logging.info('Computing metrics for the saved images ...')
@@ -185,6 +194,7 @@ def train(config_file_path: str):
             if compute_fid:
                 logging.info('FID Score: %.2f' % round(fid_score, 2))
 
+    profiler.stop()
     logging.info('Training complete! Models and output saved in the output directory:')
     logging.info(run_dir)
 
