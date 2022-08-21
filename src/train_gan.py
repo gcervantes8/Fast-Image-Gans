@@ -142,27 +142,53 @@ def train(config_file_path: str):
     profiler.start()
     n_steps = 0
     steps_in_epoch = len(data_loader)
+    train_generator = True
+    alternate_generator_training = train_config.getboolean('two_d_steps_per_g')
+    total_g_error, total_d_error = torch.zeros([1], device=device), torch.zeros([1], device=device)
+    g_steps, d_steps = 0, 0
     for epoch in range(n_epochs):
         epoch_after_loading = loaded_epoch_num + epoch
         train_seq_start_time = time.time()
         # For each batch in the data-loader
         data_time, model_time = 0, 0
         data_start_time = time.time()
-        for i, batch in enumerate(data_loader, 0):
-            n_steps += 1
-            real_data = batch[0].to(device)
-            # Normalized
-            real_data = normalize(color_transform(real_data))
-            data_time += time.time() - data_start_time
 
+        for i, batch in enumerate(data_loader, 0):
+
+            n_steps += 1
+            real_data = batch[0]
+
+            # Normalization can't be done on bloat16 operators
+            if running_on_cpu:
+                real_data = normalize(color_transform(real_data))
+            if train_config.getboolean('mixed_precision'):
+                real_data = real_data.to(torch.bfloat16) if running_on_cpu else real_data.to(torch.float16)
+
+            real_data = real_data.to(device)  # Moving to GPU is a slow operation
+            if not running_on_cpu:
+                real_data = normalize(color_transform(real_data))
+
+            data_time += time.time() - data_start_time
             model_start_time = time.time()
-            errD, errG, D_x, D_G_z1, D_G_z2 = gan_model.update_minimax(real_data)
+
+            err_discriminator, err_generator = gan_model.update_minimax(real_data, train_generator)
+            alternate_generator_training = not alternate_generator_training
+
+            if err_generator:
+                total_g_error += err_generator
+                g_steps += 1
+
+            if err_discriminator:
+                total_d_error += err_discriminator
+                d_steps += 1
+
             model_time += time.time() - model_start_time
             # Output training stats
             if n_steps % log_steps == 0:
-                logging.info('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f\tTime: %.2fs'
-                             % (epoch, n_epochs, n_steps % steps_in_epoch, steps_in_epoch, errD.item(), errG.item(),
-                                D_x, D_G_z1, D_G_z2, time.time() - train_seq_start_time))
+                # TODO add case when diving by 0 steps
+                logging.info('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tTime: %.2fs'
+                             % (epoch, n_epochs, n_steps % steps_in_epoch, steps_in_epoch, (total_d_error/d_steps).item(),
+                                (total_g_error/g_steps).item(), time.time() - train_seq_start_time))
                 logging.info(
                     'Data retrieve time: %.2fs Model updating time: %.2fs' % (data_time, model_time))
 

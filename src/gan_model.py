@@ -11,6 +11,7 @@ import torch
 import torch.optim as optim
 from src.losses.loss_functions import supported_loss_functions
 from src.losses.loss_functions import supported_losses
+from torch_ema import ExponentialMovingAverage
 import os
 
 
@@ -30,7 +31,8 @@ class GanModel:
         self.grad_scaler = torch.cuda.amp.GradScaler(enabled=self.mixed_precision)
         self.batch_iterations = 0
 
-        self.criterion, self.fake_label, self.real_label = supported_loss_functions(train_config['loss_function'], device=device)
+        self.criterion, self.fake_label, self.real_label = supported_loss_functions(train_config['loss_function'],
+                                                                                    device=device)
         if self.criterion is None:
             raise ValueError("Loss values options: " + str(supported_losses()))
 
@@ -38,64 +40,56 @@ class GanModel:
         self.optimizerD = optim.Adam(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2))
         self.optimizerG = optim.Adam(generator.parameters(), lr=generator_lr, betas=(beta1, beta2))
 
-    def update_minimax(self, real_data):
-        batch_size = real_data.size(0)
+        # Set EMA
+        ema_enabled = model_arch_config.getboolean('generator_ema')
+        ema_decay = model_arch_config['ema_decay']
+        self.ema = ExponentialMovingAverage(generator.parameters(), decay=float(ema_decay)) if ema_enabled else None
 
-        # Train discriminator with all-real batch
-        with torch.autocast(device_type=str(self.device), dtype=torch.float16, enabled=self.mixed_precision):
-            real_label_tensor = torch.full((batch_size,), self.real_label, device=self.device)
+    def update_minimax(self, real_data, train_generator=True):
+        b_size = real_data.size(0)
+        device_type, dtype = ('cpu', torch.bfloat16) if self.device.type == 'cpu' else ('cuda', torch.float16)
+
+        self.netD.zero_grad()
+        with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
+            real_label = torch.full((b_size,), self.real_label, dtype=real_data.dtype, device=self.device)
             discrim_output = self.netD(real_data)
-            discrim_on_real_error = self.criterion(discrim_output, real_label_tensor)
-            discrim_on_real_error = discrim_on_real_error / self.accumulation_iterations
+            discrim_on_real_error = self.criterion(discrim_output, real_label)
 
-        # Calculate gradients for D in backward pass
         self.grad_scaler.scale(discrim_on_real_error).backward()
-        D_x = discrim_output.mean().item()
 
-        # Train discriminator with a generated batch
-        with torch.autocast(device_type=str(self.device), dtype=torch.float16, enabled=self.mixed_precision):
-            # Generate fake image batch with G, training with a fake batch
-            fake = self.netG(torch.randn(batch_size, self.latent_vector_size, 1, 1, device=self.device))
+        with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
+            # Train with all-fake batch
+            noise = torch.randn(b_size, self.latent_vector_size, 1, 1, device=self.device)
+            # Generate fake image batch with G
+            fake = self.netG(noise)
+            fake_label = torch.full((b_size,), self.fake_label, dtype=real_data.dtype, device=self.device)
+            # Classify all fake batch with D
             fake_output = self.netD(fake.detach())
-
             # Calculate D's loss on the all-fake batch
-            discrim_on_fake_error = self.criterion(fake_output, torch.full((batch_size,), self.fake_label, device=self.device).reshape_as(fake_output))
-            discrim_on_fake_error = discrim_on_fake_error / self.accumulation_iterations
+            discrim_on_fake_error = self.criterion(fake_output, fake_label.reshape_as(fake_output))
 
-        # Calculate the gradients for this batch
         self.grad_scaler.scale(discrim_on_fake_error).backward()
-        D_G_z1 = fake_output.mean().item()
-
-        # ------ Generator ------
-        # Since we just updated D, perform another forward pass of all-fake batch through D
-        with torch.autocast(device_type=str(self.device), dtype=torch.float16, enabled=self.mixed_precision):
-            output_update = self.netD(fake)
-            generator_error = self.criterion(output_update, real_label_tensor)
-            generator_error = generator_error / self.accumulation_iterations
-
-        # Calculate gradients for G
-        self.grad_scaler.scale(generator_error).backward()
-        D_G_z2 = output_update.mean().item()
-
-        self.batch_iterations += 1
-        if self.batch_iterations % self.accumulation_iterations == 0:
-            # Update generator and discriminator
-            self.grad_scaler.step(self.optimizerG)
-            self.grad_scaler.step(self.optimizerD)
-            self.grad_scaler.update()
-            # Reset the grad back to 0 after a step
-            self.netG.zero_grad()
-            self.netD.zero_grad()
-            self.batch_iterations = 0
-
-        # Add the gradients from the all-real and all-fake batches
         total_discrim_error = discrim_on_real_error + discrim_on_fake_error
+        self.grad_scaler.step(self.optimizerD)
 
-        return total_discrim_error, generator_error, D_x, D_G_z1, D_G_z2
+        with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
+            self.netG.zero_grad()
+            output_update = self.netD(fake)
+            generator_error = self.criterion(output_update, real_label)
+        self.grad_scaler.scale(generator_error).backward()
+        self.grad_scaler.step(self.optimizerG)
+        self.grad_scaler.update()
+        if self.ema:
+            self.ema.update()
+        return total_discrim_error, generator_error
 
     def generate_images(self, noise):
         with torch.no_grad():
-            fake = self.netG(noise).detach().cpu()
+            if self.ema:
+                with self.ema.average_parameters():
+                    fake = self.netG(noise).detach().cpu()
+            else:
+                fake = self.netG(noise).detach().cpu()
         return fake
 
     def save(self, model_dir, step_or_epoch_num):
