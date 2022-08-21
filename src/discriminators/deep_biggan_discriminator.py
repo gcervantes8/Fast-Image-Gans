@@ -45,18 +45,17 @@ class DeepBigganDiscriminator(BaseDiscriminator):
 
         # [B, ndf * 16, 4, 4]
         self.discrim_layers.append(nn.ReLU())
-        # [B, ndf * 16, 2, 2]
-        self.discrim_layers.append(nn.AvgPool2d(kernel_size=2))
 
-        # [B, ndf * 16 * 2 * 2]
-        self.discrim_layers.append(nn.Flatten())
-
-        # [B, 1]
-        self.discrim_layers.append(spectral_norm(nn.Linear(in_features=ndf*16*2*2, out_features=1), eps=1e-04))
+        # Fully connected layer
+        self.fc_layer = spectral_norm(nn.Linear(in_features=ndf * 16, out_features=1), eps=1e-04)
 
     def forward(self, discriminator_input):
         out = discriminator_input
         for discrim_layer in self.discrim_layers:
             out = discrim_layer(out)
+        # ndf * 16 - Global Sum Pooling
+        out = torch.sum(out, dim=[2, 3])
+        # 1 - Fully connected layer
+        out = self.fc_layer(out)
         out = torch.squeeze(out, dim=1)
         return out
