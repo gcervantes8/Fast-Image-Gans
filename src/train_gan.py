@@ -77,10 +77,23 @@ def train(config_file_path: str):
     else:
         logging.info('Directory ' + run_dir + ' loaded, training output will be saved here')
 
+    # Set device
+    n_gpus = int(config['MACHINE']['ngpu'])
+    device = create_model.get_device(n_gpus)
+    running_on_cpu = str(device) == 'cpu'
+
     # Creates data-loader
     data_config = config['DATA']
+    data_loader = data_loader_from_config(data_config, using_gpu=not running_on_cpu)
+    logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
 
-    n_gpus = int(config['MACHINE']['ngpu'])
+    # Save training images
+    saver_and_loader.save_train_batch(data_loader, os.path.join(img_dir, 'train_batch.png'))
+    num_classes = len(data_loader.dataset.classes)
+    logging.info('Number of different image labels: ' + str(num_classes))
+    real_images = get_data_batch(data_loader, device)
+
+
     n_color_channels = int(data_config['num_channels'])
     # Create model
     loaded_epoch_num = 0
@@ -91,25 +104,17 @@ def train(config_file_path: str):
         logging.info('Loading model from epoch ' + str(loaded_epoch_num) + ' ...')
         logging.info(generator_path)
         logging.info(discriminator_path)
-        netG, netD, device = saver_and_loader.load_discrim_and_generator(config, generator_path, discriminator_path)
+        netG, netD = saver_and_loader.load_discrim_and_generator(config, generator_path, discriminator_path, device)
         logging.info('Model loaded!')
     else:
-        netG, netD, device = create_model.create_gan_instances(model_arch_config, n_color_channels, n_gpus=n_gpus)
+        netG, netD = create_model.create_gan_instances(model_arch_config, device, num_channels=n_color_channels,
+                                                       num_classes=num_classes, n_gpus=n_gpus)
         saver_and_loader.save_architecture(netG, netD, run_dir, data_config, model_arch_config)
         # TODO Apply weight initialization to only DCGAN
         # netD.apply(create_model.weights_init)
         # netG.apply(create_model.weights_init)
 
     logging.info('Is GPU available? ' + str(torch.cuda.is_available()) + ' - Running on device:' + str(device))
-    running_on_cpu = str(device) == 'cpu'
-
-    data_loader = data_loader_from_config(data_config, using_gpu=not running_on_cpu)
-    logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
-
-    # Save training images
-    saver_and_loader.save_train_batch(data_loader, device, os.path.join(img_dir, 'train_batch.png'))
-
-    real_images = get_data_batch(data_loader, device)
 
     metrics_config = config['METRICS']
     compute_is = metrics_config.getboolean('is_metric')
@@ -124,10 +129,11 @@ def train(config_file_path: str):
         if compute_fid:
             logging.info('FID Score for real images: %.2f' % round(fid_score, 2))
     train_config = config['TRAIN']
-    gan_model = GanModel(netG, netD, device, model_arch_config, train_config=train_config)
+    gan_model = GanModel(netG, netD, num_classes, device, model_arch_config, train_config=train_config)
     latent_vector_size = int(model_arch_config['latent_vector_size'])
-    fixed_noise = torch.randn(int(data_config['batch_size']), latent_vector_size, 1, 1, device=device,
+    fixed_noise = torch.randn(int(data_config['batch_size']), latent_vector_size, device=device,
                               requires_grad=False)
+    fixed_labels = torch.randint(low=0, high=num_classes, size=[int(data_config['batch_size'])], device=device, dtype=torch.int64)
 
     n_epochs = int(train_config['num_epochs'])
     save_steps = int(train_config['save_steps'])
@@ -156,7 +162,7 @@ def train(config_file_path: str):
         for i, batch in enumerate(data_loader, 0):
 
             n_steps += 1
-            real_data = batch[0]
+            real_data, labels = batch
 
             # Normalization can't be done on bloat16 operators
             if running_on_cpu:
@@ -165,13 +171,15 @@ def train(config_file_path: str):
                 real_data = real_data.to(torch.bfloat16) if running_on_cpu else real_data.to(torch.float16)
 
             real_data = real_data.to(device)  # Moving to GPU is a slow operation
+            labels = labels.to(device)  # Moving to GPU is a slow operation
             if not running_on_cpu:
                 real_data = normalize(color_transform(real_data))
 
             data_time += time.time() - data_start_time
             model_start_time = time.time()
 
-            err_discriminator, err_generator = gan_model.update_minimax(real_data, train_generator)
+            err_discriminator, err_generator = gan_model.update_minimax(real_data, labels,
+                                                                        train_generator=train_generator)
             alternate_generator_training = not alternate_generator_training
 
             if err_generator:
@@ -202,7 +210,7 @@ def train(config_file_path: str):
                 save_identifier = epoch_after_loading if save_steps is None else n_steps
                 fake_img_output_path = os.path.join(img_dir, 'generated_image_' + str(save_identifier) + '.png')
                 logging.info('Saving fake images: ' + fake_img_output_path)
-                fake_images = gan_model.generate_images(fixed_noise)
+                fake_images = gan_model.generate_images(fixed_noise, fixed_labels)
                 saver_and_loader.save_images(fake_images, fake_img_output_path)
                 logging.info('Time to save images: %.2fs ' % (time.time() - save_imgs_start_time))
                 gan_model.save(model_dir, save_identifier)
@@ -212,7 +220,7 @@ def train(config_file_path: str):
 
         if compute_is or compute_fid:
             logging.info('Computing metrics for the saved images ...')
-            fake_images = gan_model.generate_images(fixed_noise)
+            fake_images = gan_model.generate_images(fixed_noise, fixed_labels)
             is_score, fid_score = score_metrics(unnormalize(fake_images), compute_is, compute_fid,
                                                 real_images=real_images, device=device)
             if compute_is:

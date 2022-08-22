@@ -16,56 +16,66 @@ from torch.nn.utils.parametrizations import spectral_norm
 
 
 class DeepBigganGenerator(BaseGenerator):
-    def __init__(self, num_gpu, latent_vector_size, ngf, num_channels):
-        super(DeepBigganGenerator, self).__init__(num_gpu, latent_vector_size, ngf, num_channels)
+    def __init__(self, num_gpu, latent_vector_size, ngf, num_channels, num_classes):
+        super(DeepBigganGenerator, self).__init__(num_gpu, latent_vector_size, ngf, num_channels, num_classes)
         self.n_gpu = num_gpu
         self.ngf = ngf
 
+        embedding_size = 128
+        self.embeddings = torch.nn.Embedding(num_classes, embedding_size)
+
         self.generator_layers = nn.ModuleList()
-        self.initial_linear = spectral_norm(nn.Linear(in_features=latent_vector_size, out_features=4 * 4 * 16 * ngf))
+        latent_embed_vector_size = latent_vector_size + embedding_size
+        self.initial_linear = spectral_norm(nn.Linear(in_features=latent_embed_vector_size,
+                                                      out_features=4 * 4 * 16 * ngf))
 
         # Input should be: [B, ngf * 16, 4, 4]
-        self.generator_layers.append(DeepResUp(ngf * 16, ngf * 16, upsample=False))
+        self.generator_layers.append(DeepResUp(ngf * 16, ngf * 16, latent_embed_vector_size, upsample=False))
 
         # [B, ngf * 16, 8, 8]
-        self.generator_layers.append(DeepResUp(ngf * 16, ngf * 16))
-        self.generator_layers.append(DeepResUp(ngf * 16, ngf * 16, upsample=False))
+        self.generator_layers.append(DeepResUp(ngf * 16, ngf * 16, latent_embed_vector_size))
+        self.generator_layers.append(DeepResUp(ngf * 16, ngf * 16, latent_embed_vector_size, upsample=False))
 
         # [B, ngf * 8, 16, 16]
-        self.generator_layers.append(DeepResUp(ngf * 16, ngf * 8))
-        self.generator_layers.append(DeepResUp(ngf * 8, ngf * 8, upsample=False))
+        self.generator_layers.append(DeepResUp(ngf * 16, ngf * 8, latent_embed_vector_size))
+        self.generator_layers.append(DeepResUp(ngf * 8, ngf * 8, latent_embed_vector_size, upsample=False))
 
         # [B, ngf * 4, 32, 32]
-        self.generator_layers.append(DeepResUp(ngf * 8, ngf * 4))
+        self.generator_layers.append(DeepResUp(ngf * 8, ngf * 4, latent_embed_vector_size))
 
-        self.generator_layers.append(DeepResUp(ngf * 4, ngf * 4, upsample=False))
+        self.generator_layers.append(DeepResUp(ngf * 4, ngf * 4, latent_embed_vector_size, upsample=False))
 
         self.generator_layers.append(NonLocalBlock(ngf * 4))
         # [B, ngf * 2, 64, 64]
-        self.generator_layers.append(DeepResUp(ngf * 4, ngf * 2))
+        self.generator_layers.append(DeepResUp(ngf * 4, ngf * 2, latent_embed_vector_size))
 
-        self.generator_layers.append(DeepResUp(ngf * 2, ngf * 2, upsample=False))
+        self.generator_layers.append(DeepResUp(ngf * 2, ngf * 2, latent_embed_vector_size, upsample=False))
         # [B, ngf, 128, 128]
-        self.generator_layers.append(DeepResUp(ngf * 2, ngf))
+        self.generator_layers.append(DeepResUp(ngf * 2, ngf, latent_embed_vector_size))
 
-        self.generator_layers.append(nn.BatchNorm2d(num_features=ngf, eps=1e-04))
-        self.generator_layers.append(nn.ReLU())
-        self.generator_layers.append(spectral_norm(nn.Conv2d(ngf, 3, kernel_size=3, padding='same')))
-        self.generator_layers.append(nn.Tanh())
+        self.batch_norm = nn.BatchNorm2d(num_features=ngf)
+        self.relu = nn.ReLU()
+        self.conv = nn.Conv2d(ngf, 3, kernel_size=3, padding='same')
+        self.tanh = nn.Tanh()
 
-    def forward(self, discriminator_input):
-        # [B, Z, 1, 1] - Z is size of latent vector
-        batch_size = discriminator_input.size(dim=0)
+    def forward(self, latent_vector, labels):
+        # [B, Z] - Z is size of latent vector
+        batch_size = latent_vector.size(dim=0)
 
-        # [B, Z]
-        discriminator_input = torch.squeeze(discriminator_input)
+        # [B, embedding_size]
+        embed_vector = self.embeddings(labels)
 
+        latent_embed_vector = torch.concat((latent_vector, embed_vector), axis=1)
         # [B, 4*4*16*ngf]
-        out = self.initial_linear(discriminator_input)
+        out = self.initial_linear(latent_embed_vector)
 
         # [B, 16 * ngf, 4, 4]
         out = torch.reshape(out, [batch_size, 16 * self.ngf, 4, 4])
         for generator_layer in self.generator_layers:
-            out = generator_layer(out)
+            out = generator_layer(out, latent_embed_vector)
 
+        out = self.batch_norm(out)
+        out = self.relu(out)
+        out = self.conv(out)
+        out = self.tanh(out)
         return out

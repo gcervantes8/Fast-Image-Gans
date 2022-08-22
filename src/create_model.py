@@ -32,24 +32,27 @@ def create_gen_and_discrim(model_name: str):
     return models_supported[model_name]
 
 
+def get_device(n_gpus):
+    device = torch.device('cuda' if (torch.cuda.is_available() and n_gpus > 0) else 'cpu')
+    return device
+
+
 # Creates the generator and discriminator using the configuration file
-def create_gan_instances(model_arch_config, num_channels, n_gpus=0):
+def create_gan_instances(model_arch_config, device, num_channels=3, num_classes=1, n_gpus=0):
 
     model_type = model_arch_config['model_type']
     latent_vector_size = int(model_arch_config['latent_vector_size'])
     ngf = int(model_arch_config['ngf'])
     ndf = int(model_arch_config['ndf'])
 
-    device = torch.device('cuda' if (torch.cuda.is_available() and n_gpus > 0) else 'cpu')
-
     generator, discriminator = create_gen_and_discrim(model_type)
     # Create the generator and discriminator
-    generator = generator(n_gpus, latent_vector_size, ngf, num_channels).to(device)
-    discriminator = discriminator(n_gpus, ndf, num_channels).to(device)
+    generator = generator(n_gpus, latent_vector_size, ngf, num_channels, num_classes).to(device)
+    discriminator = discriminator(n_gpus, ndf, num_channels, num_classes).to(device)
 
     generator = _handle_multiple_gpus(generator, n_gpus, device)
     discriminator = _handle_multiple_gpus(discriminator, n_gpus, device)
-    return generator, discriminator, device
+    return generator, discriminator
 
 
 # Handle multi-gpu if desired, returns the new instance that is multi-gpu capable

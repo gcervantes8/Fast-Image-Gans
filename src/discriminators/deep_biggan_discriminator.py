@@ -16,8 +16,8 @@ from torch.nn.utils.parametrizations import spectral_norm
 
 
 class DeepBigganDiscriminator(BaseDiscriminator):
-    def __init__(self, num_gpu, ndf, num_channels):
-        super(DeepBigganDiscriminator, self).__init__(num_gpu, ndf, num_channels)
+    def __init__(self, num_gpu, ndf, num_channels, num_classes):
+        super(DeepBigganDiscriminator, self).__init__(num_gpu, ndf, num_channels, num_classes)
         self.n_gpu = num_gpu
         # Input is Batch_size x 3 x 128 x 128 matrix
         self.discrim_layers = nn.ModuleList()
@@ -45,17 +45,21 @@ class DeepBigganDiscriminator(BaseDiscriminator):
 
         # [B, ndf * 16, 4, 4]
         self.discrim_layers.append(nn.ReLU())
-
+        self.embeddings = torch.nn.Embedding(num_classes, ndf * 16)
         # Fully connected layer
         self.fc_layer = spectral_norm(nn.Linear(in_features=ndf * 16, out_features=1), eps=1e-04)
 
-    def forward(self, discriminator_input):
+    def forward(self, discriminator_input, labels):
         out = discriminator_input
         for discrim_layer in self.discrim_layers:
             out = discrim_layer(out)
         # ndf * 16 - Global Sum Pooling
         out = torch.sum(out, dim=[2, 3])
         # 1 - Fully connected layer
-        out = self.fc_layer(out)
-        out = torch.squeeze(out, dim=1)
+        fc_out = self.fc_layer(out)
+        fc_out = torch.squeeze(fc_out, dim=1)
+        # embed_vector is of size [B, ndf*16]
+        embed_vector = self.embeddings(labels)
+        # TODO not sure if sum is needed
+        out = fc_out + torch.sum(torch.mul(embed_vector, out), 1)
         return out

@@ -43,6 +43,8 @@ class DcganDiscriminator(BaseDiscriminator):
         )
 
     def forward(self, discriminator_input):
+        # Expands input by 2 dimensions
+        discriminator_input.expand(-1, -1, 1, 1)
         if discriminator_input.is_cuda and self.n_gpu > 1:
             output = nn.parallel.data_parallel(self.main, discriminator_input, range(self.n_gpu))
         else:

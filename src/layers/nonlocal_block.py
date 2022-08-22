@@ -34,7 +34,7 @@ class NonLocalBlock(nn.Module):
         self.gamma = nn.Parameter(torch.zeros(1))
 
         # res_input is of size (B, C, H, W)
-    def forward(self, nonlocal_input):
+    def forward(self, nonlocal_input, *args):
         batch_size = nonlocal_input.size(0)
         height = nonlocal_input.size(2)
         width = nonlocal_input.size(3)

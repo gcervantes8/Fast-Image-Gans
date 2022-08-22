@@ -17,9 +17,10 @@ import os
 
 class GanModel:
 
-    def __init__(self, generator, discriminator, device, model_arch_config, train_config):
+    def __init__(self, generator, discriminator, num_classes, device, model_arch_config, train_config):
         self.netG = generator.to(device)
         self.netD = discriminator.to(device)
+        self.num_classes = num_classes
         self.device = device
         self.latent_vector_size = int(model_arch_config['latent_vector_size'])
         beta1 = float(train_config['beta1'])
@@ -45,26 +46,27 @@ class GanModel:
         ema_decay = model_arch_config['ema_decay']
         self.ema = ExponentialMovingAverage(generator.parameters(), decay=float(ema_decay)) if ema_enabled else None
 
-    def update_minimax(self, real_data, train_generator=True):
+    def update_minimax(self, real_data, labels, train_generator=True):
         b_size = real_data.size(0)
         device_type, dtype = ('cpu', torch.bfloat16) if self.device.type == 'cpu' else ('cuda', torch.float16)
 
         self.netD.zero_grad()
         with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
             real_label = torch.full((b_size,), self.real_label, dtype=real_data.dtype, device=self.device)
-            discrim_output = self.netD(real_data)
+            discrim_output = self.netD(real_data, labels)
             discrim_on_real_error = self.criterion(discrim_output, real_label)
 
         self.grad_scaler.scale(discrim_on_real_error).backward()
 
         with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
             # Train with all-fake batch
-            noise = torch.randn(b_size, self.latent_vector_size, 1, 1, device=self.device)
+            noise = torch.randn(b_size, self.latent_vector_size, device=self.device)
+            random_class_labels = torch.randint(low=0, high=self.num_classes, size=[b_size], device=self.device, dtype=torch.int64)
             # Generate fake image batch with G
-            fake = self.netG(noise)
+            fake = self.netG(noise, random_class_labels)
             fake_label = torch.full((b_size,), self.fake_label, dtype=real_data.dtype, device=self.device)
             # Classify all fake batch with D
-            fake_output = self.netD(fake.detach())
+            fake_output = self.netD(fake.detach(), random_class_labels)
             # Calculate D's loss on the all-fake batch
             discrim_on_fake_error = self.criterion(fake_output, fake_label.reshape_as(fake_output))
 
@@ -74,7 +76,7 @@ class GanModel:
 
         with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
             self.netG.zero_grad()
-            output_update = self.netD(fake)
+            output_update = self.netD(fake, random_class_labels)
             generator_error = self.criterion(output_update, real_label)
         self.grad_scaler.scale(generator_error).backward()
         self.grad_scaler.step(self.optimizerG)
@@ -83,13 +85,13 @@ class GanModel:
             self.ema.update()
         return total_discrim_error, generator_error
 
-    def generate_images(self, noise):
+    def generate_images(self, noise, labels):
         with torch.no_grad():
             if self.ema:
                 with self.ema.average_parameters():
-                    fake = self.netG(noise).detach().cpu()
+                    fake = self.netG(noise, labels).detach().cpu()
             else:
-                fake = self.netG(noise).detach().cpu()
+                fake = self.netG(noise, labels).detach().cpu()
         return fake
 
     def save(self, model_dir, step_or_epoch_num):
