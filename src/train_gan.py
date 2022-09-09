@@ -133,11 +133,14 @@ def train(config_file_path: str):
     latent_vector_size = int(model_arch_config['latent_vector_size'])
     fixed_noise = torch.randn(int(data_config['batch_size']), latent_vector_size, device=device,
                               requires_grad=False)
-    fixed_labels = torch.randint(low=0, high=num_classes, size=[int(data_config['batch_size'])], device=device, dtype=torch.int64)
+    fixed_labels = torch.randint(low=0, high=num_classes, size=[int(data_config['batch_size'])], device=device,
+                                 dtype=torch.int64)
 
     n_epochs = int(train_config['num_epochs'])
     save_steps = int(train_config['save_steps'])
     save_steps = None if save_steps == 0 else save_steps
+    eval_steps = int(metrics_config['steps_to_eval'])
+    eval_steps = None if eval_steps == 0 else eval_steps
     log_steps = int(train_config['log_steps'])
 
     logging.info("Starting Training Loop...")
@@ -215,18 +218,19 @@ def train(config_file_path: str):
                 logging.info('Time to save images: %.2fs ' % (time.time() - save_imgs_start_time))
                 gan_model.save(model_dir, save_identifier)
 
+            if (eval_steps is not None and n_steps % eval_steps == 0) or \
+                    (eval_steps is None and n_steps % steps_in_epoch == 0):
+                if compute_is or compute_fid:
+                    logging.info('Computing metrics for the saved images ...')
+                    fake_images = gan_model.generate_images(fixed_noise, fixed_labels)
+                    is_score, fid_score = score_metrics(unnormalize(fake_images), compute_is, compute_fid,
+                                                        real_images=real_images, device=device)
+                    if compute_is:
+                        logging.info('Inception Score: %.2f' % round(is_score, 2))
+                    if compute_fid:
+                        logging.info('FID Score: %.2f' % round(fid_score, 2))
             data_start_time = time.time()
             profiler.step()
-
-        if compute_is or compute_fid:
-            logging.info('Computing metrics for the saved images ...')
-            fake_images = gan_model.generate_images(fixed_noise, fixed_labels)
-            is_score, fid_score = score_metrics(unnormalize(fake_images), compute_is, compute_fid,
-                                                real_images=real_images, device=device)
-            if compute_is:
-                logging.info('Inception Score: %.2f' % round(is_score, 2))
-            if compute_fid:
-                logging.info('FID Score: %.2f' % round(fid_score, 2))
 
     profiler.stop()
     logging.info('Training complete! Models and output saved in the output directory:')
