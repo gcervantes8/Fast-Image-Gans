@@ -23,16 +23,19 @@ class DeepBigganDiscriminator(BaseDiscriminator):
         self.discrim_layers = nn.ModuleList()
 
         # [B, ndf, 128, 128]
-        self.discrim_layers.append(spectral_norm(nn.Conv2d(3, ndf, kernel_size=3, padding='same'), eps=1e-04))
+        initial_conv = spectral_norm(nn.Conv2d(3, ndf, kernel_size=3, padding='same'), eps=1e-04)
+        nn.init.orthogonal_(initial_conv.weight)
+        self.discrim_layers.append(initial_conv)
         # [B, ndf * 2, 64, 64]
         self.discrim_layers.append(DeepResDown(ndf, ndf * 2))
 
         self.discrim_layers.append(DeepResDown(ndf * 2, ndf * 2, pooling=False))
+        self.discrim_layers.append(NonLocalBlock(ndf * 2))
 
         # [B, ndf * 4, 32, 32]
         self.discrim_layers.append(DeepResDown(ndf * 2, ndf * 4))
         self.discrim_layers.append(DeepResDown(ndf * 4, ndf * 4, pooling=False))
-        self.discrim_layers.append(NonLocalBlock(ndf * 4))
+
         # [B, ndf * 8, 16, 16]
         self.discrim_layers.append(DeepResDown(ndf * 4, ndf * 8))
         self.discrim_layers.append(DeepResDown(ndf * 8, ndf * 8, pooling=False))
@@ -46,8 +49,10 @@ class DeepBigganDiscriminator(BaseDiscriminator):
         # [B, ndf * 16, 4, 4]
         self.discrim_layers.append(nn.ReLU())
         self.embeddings = torch.nn.Embedding(num_classes, ndf * 16)
+        nn.init.orthogonal_(self.embeddings.weight)
         # Fully connected layer
         self.fc_layer = spectral_norm(nn.Linear(in_features=ndf * 16, out_features=1), eps=1e-04)
+        nn.init.orthogonal_(self.fc_layer.weight)
 
     def forward(self, discriminator_input, labels):
         out = discriminator_input

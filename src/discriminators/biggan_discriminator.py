@@ -25,10 +25,9 @@ class BigganDiscriminator(BaseDiscriminator):
         # Output of ResDown ndf, 64, 64
         self.discrim_layers.append(ResDown(3, ndf))
 
+        self.discrim_layers.append(NonLocalBlock(ndf))
         # ndf * 2, 32, 32
         self.discrim_layers.append(ResDown(ndf, ndf * 2))
-
-        self.discrim_layers.append(NonLocalBlock(ndf * 2))
 
         # ndf * 4, 16, 16
         self.discrim_layers.append(ResDown(ndf * 2, ndf * 4))
@@ -45,8 +44,10 @@ class BigganDiscriminator(BaseDiscriminator):
         self.discrim_layers.append(nn.ReLU())
 
         self.embeddings = torch.nn.Embedding(num_classes, ndf * 16)
+        nn.init.orthogonal_(self.embeddings.weight)
         # Fully connected layer
         self.fc_layer = spectral_norm(nn.Linear(in_features=ndf*16, out_features=1), eps=1e-04)
+        nn.init.orthogonal_(self.fc_layer.weight)
 
     def forward(self, discriminator_input, labels):
         out = discriminator_input
