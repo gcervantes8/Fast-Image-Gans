@@ -93,7 +93,6 @@ def train(config_file_path: str):
     logging.info('Number of different image labels: ' + str(num_classes))
     real_images = get_data_batch(data_loader, device)
 
-
     n_color_channels = int(data_config['num_channels'])
     # Create model
     loaded_epoch_num = 0

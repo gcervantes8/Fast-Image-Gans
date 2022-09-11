@@ -41,6 +41,9 @@ class GanModel:
         self.optimizerD = optim.Adam(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2))
         self.optimizerG = optim.Adam(generator.parameters(), lr=generator_lr, betas=(beta1, beta2))
 
+        self.netD.zero_grad()
+        self.netG.zero_grad()
+
         # Set EMA
         ema_enabled = model_arch_config.getboolean('generator_ema')
         ema_decay = model_arch_config['ema_decay']
@@ -50,11 +53,11 @@ class GanModel:
         b_size = real_data.size(0)
         device_type, dtype = ('cpu', torch.bfloat16) if self.device.type == 'cpu' else ('cuda', torch.float16)
 
-        self.netD.zero_grad()
         with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
             real_label = torch.full((b_size,), self.real_label, dtype=real_data.dtype, device=self.device)
             discrim_output = self.netD(real_data, labels)
             discrim_on_real_error = self.criterion(discrim_output, real_label)
+            discrim_on_real_error = discrim_on_real_error / self.accumulation_iterations
 
         self.grad_scaler.scale(discrim_on_real_error).backward()
 
@@ -69,21 +72,30 @@ class GanModel:
             fake_output = self.netD(fake.detach(), random_class_labels)
             # Calculate D's loss on the all-fake batch
             discrim_on_fake_error = self.criterion(fake_output, fake_label.reshape_as(fake_output))
+            discrim_on_fake_error = discrim_on_fake_error / self.accumulation_iterations
 
         self.grad_scaler.scale(discrim_on_fake_error).backward()
         total_discrim_error = discrim_on_real_error + discrim_on_fake_error
-        self.grad_scaler.step(self.optimizerD)
 
         with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
-            self.netG.zero_grad()
+            self.netD.requires_grad_(requires_grad=False)
             output_update = self.netD(fake, random_class_labels)
+            self.netD.requires_grad_(requires_grad=True)
             generator_error = self.criterion(output_update, real_label)
+            generator_error = generator_error / self.accumulation_iterations
         self.grad_scaler.scale(generator_error).backward()
-        self.grad_scaler.step(self.optimizerG)
-        self.grad_scaler.update()
-        if self.ema:
-            self.ema.update()
-        return total_discrim_error, generator_error
+
+        self.batch_iterations += 1
+        if self.batch_iterations % self.accumulation_iterations == 0:
+            self.grad_scaler.step(self.optimizerD)
+            self.grad_scaler.step(self.optimizerG)
+            self.grad_scaler.update()
+            if self.ema:
+                self.ema.update()
+            self.netD.zero_grad()
+            self.netG.zero_grad()
+
+        return total_discrim_error * self.accumulation_iterations, generator_error * self.accumulation_iterations
 
     def generate_images(self, noise, labels):
         with torch.no_grad():
