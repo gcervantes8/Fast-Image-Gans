@@ -132,6 +132,12 @@ def train(config_file_path: str):
     latent_vector_size = int(model_arch_config['latent_vector_size'])
     fixed_noise = torch.randn(int(data_config['batch_size']), latent_vector_size, device=device,
                               requires_grad=False)
+
+    truncation_value = float(model_arch_config['orthogonal_value'])
+    if truncation_value != 0:
+        # https://github.com/pytorch/pytorch/blob/a40812de534b42fcf0eb57a5cecbfdc7a70100cf/torch/nn/init.py#L153
+        torch.nn.init.trunc_normal_(fixed_noise, a=(truncation_value * -1), b=truncation_value)
+
     fixed_labels = torch.randint(low=0, high=num_classes, size=[int(data_config['batch_size'])], device=device,
                                  dtype=torch.int64)
 

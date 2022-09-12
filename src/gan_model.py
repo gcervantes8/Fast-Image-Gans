@@ -27,6 +27,7 @@ class GanModel:
         beta2 = float(train_config['beta2'])
         generator_lr = float(train_config['generator_lr'])
         discriminator_lr = float(train_config['discriminator_lr'])
+        self.orthogonal_value = float(model_arch_config['orthogonal_value'])
         self.accumulation_iterations = int(train_config['accumulation_iterations'])
         self.mixed_precision = train_config.getboolean('mixed_precision')
         self.grad_scaler = torch.cuda.amp.GradScaler(enabled=self.mixed_precision)
@@ -57,6 +58,8 @@ class GanModel:
             real_label = torch.full((b_size,), self.real_label, dtype=real_data.dtype, device=self.device)
             discrim_output = self.netD(real_data, labels)
             discrim_on_real_error = self.criterion(discrim_output, real_label)
+            if not self.orthogonal_value == 0:
+                discrim_on_real_error += self.apply_orthogonal_regularization(self.netD)
             discrim_on_real_error = discrim_on_real_error / self.accumulation_iterations
 
         self.grad_scaler.scale(discrim_on_real_error).backward()
@@ -82,6 +85,8 @@ class GanModel:
             output_update = self.netD(fake, random_class_labels)
             self.netD.requires_grad_(requires_grad=True)
             generator_error = self.criterion(output_update, real_label)
+            if not self.orthogonal_value == 0:
+                generator_error += self.apply_orthogonal_regularization(self.netG)
             generator_error = generator_error / self.accumulation_iterations
         self.grad_scaler.scale(generator_error).backward()
 
@@ -96,6 +101,17 @@ class GanModel:
             self.netG.zero_grad()
 
         return total_discrim_error * self.accumulation_iterations, generator_error * self.accumulation_iterations
+
+    def apply_orthogonal_regularization(self, model):
+        model_orthogonal_loss = 0.0
+        for name, param in model.named_parameters():
+            if len(param.size()) >= 2 and param.requires_grad and 'conv' in name:
+                param = torch.reshape(param, [param.size(dim=0), -1])
+                mult_out = torch.mm(torch.t(param), param)
+                orthogonal_matrix = torch.mul(mult_out, 1 - torch.eye(mult_out.size(dim=0), device=self.device))
+                # Frobenius norm
+                model_orthogonal_loss += self.orthogonal_value * torch.norm(orthogonal_matrix, p='fro')
+        return model_orthogonal_loss
 
     def generate_images(self, noise, labels):
         with torch.no_grad():
