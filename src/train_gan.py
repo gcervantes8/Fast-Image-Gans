@@ -149,7 +149,10 @@ def train(config_file_path: str):
     log_steps = int(train_config['log_steps'])
 
     logging.info("Starting Training Loop...")
-    profiler = profile(activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+    profile_devices = [ProfilerActivity.CPU]
+    if not running_on_cpu:
+        profile_devices.append(ProfilerActivity.CUDA)
+    profiler = profile(activities=profile_devices,
                        schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=2),
                        on_trace_ready=torch.profiler.tensorboard_trace_handler(profiler_dir),
                        record_shapes=True, profile_memory=True)
