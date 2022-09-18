@@ -27,36 +27,32 @@ class DeepBigganGenerator(BaseGenerator):
         nn.init.orthogonal_(self.embeddings.weight)
 
         self.generator_layers = nn.ModuleList()
-        self.nonlocal_block_layer = 7
         latent_embed_vector_size = latent_vector_size + embedding_size
 
         self.initial_linear = spectral_norm(nn.Linear(in_features=latent_embed_vector_size,
                                                       out_features=4 * 4 * 16 * ngf), eps=1e-04)
         nn.init.orthogonal_(self.initial_linear.weight)
 
-        self.nonlocal_block = NonLocalBlock(ngf * 2)
-        # Input should be: [B, ngf * 16, 4, 4]
-        self.generator_layers.append(DeepResUp(ngf * 16, ngf * 16, latent_embed_vector_size, upsample=False))
+        n_upsample_layers = 5
+        if n_upsample_layers == 5:
+            residual_channels = [ngf * 16, ngf * 16, ngf * 16, ngf * 16, ngf * 8, ngf * 8, ngf * 4, ngf * 4, ngf * 2,
+                                 ngf * 2, ngf]
+            upsample_layers = [False, True, False, True, False, True, False, True, False, True]
+            self.nonlocal_block_index = 7
+        else:
+            raise NotImplementedError(str(n_upsample_layers) + ' layers for biggan discriminator is not supported.  You'
+                                                               ' can either use a different amount of layers, or make a'
+                                                               ' list with the channels you want with those layers')
 
-        # [B, ngf * 16, 8, 8]
-        self.generator_layers.append(DeepResUp(ngf * 16, ngf * 16, latent_embed_vector_size))
-        self.generator_layers.append(DeepResUp(ngf * 16, ngf * 16, latent_embed_vector_size, upsample=False))
-
-        # [B, ngf * 8, 16, 16]
-        self.generator_layers.append(DeepResUp(ngf * 16, ngf * 8, latent_embed_vector_size))
-        self.generator_layers.append(DeepResUp(ngf * 8, ngf * 8, latent_embed_vector_size, upsample=False))
-
-        # [B, ngf * 4, 32, 32]
-        self.generator_layers.append(DeepResUp(ngf * 8, ngf * 4, latent_embed_vector_size))
-
-        self.generator_layers.append(DeepResUp(ngf * 4, ngf * 4, latent_embed_vector_size, upsample=False))
-
-        # [B, ngf * 2, 64, 64]
-        self.generator_layers.append(DeepResUp(ngf * 4, ngf * 2, latent_embed_vector_size))
-
-        self.generator_layers.append(DeepResUp(ngf * 2, ngf * 2, latent_embed_vector_size, upsample=False))
-        # [B, ngf, 128, 128]
-        self.generator_layers.append(DeepResUp(ngf * 2, ngf, latent_embed_vector_size))
+        self.generator_layers.append(DeepResUp(residual_channels[0], residual_channels[1], latent_embed_vector_size,
+                                               upsample=upsample_layers[0]))
+        previous_out_channel = residual_channels[1]
+        for i, layer_channel in enumerate(residual_channels[2:]):
+            if self.nonlocal_block_index == i:
+                self.nonlocal_block = NonLocalBlock(previous_out_channel)
+            self.generator_layers.append(DeepResUp(previous_out_channel, layer_channel, latent_embed_vector_size,
+                                                   upsample=upsample_layers[i+1]))
+            previous_out_channel = layer_channel
 
         self.batch_norm = nn.BatchNorm2d(num_features=ngf)
         self.relu = nn.ReLU()
@@ -79,7 +75,7 @@ class DeepBigganGenerator(BaseGenerator):
         out = torch.reshape(out, [batch_size, 16 * self.ngf, 4, 4])
         for i, generator_layer in enumerate(self.generator_layers):
             out = generator_layer(out, latent_embed_vector)
-            if i == self.nonlocal_block_layer:
+            if i == self.nonlocal_block_index:
                 out = self.nonlocal_block(out)
         out = self.batch_norm(out)
         out = self.relu(out)

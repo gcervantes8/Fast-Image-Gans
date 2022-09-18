@@ -19,32 +19,34 @@ class DeepBigganDiscriminator(BaseDiscriminator):
     def __init__(self, num_gpu, ndf, num_channels, num_classes):
         super(DeepBigganDiscriminator, self).__init__(num_gpu, ndf, num_channels, num_classes)
         self.n_gpu = num_gpu
-        # Input is Batch_size x 3 x 128 x 128 matrix
-        self.discrim_layers = nn.ModuleList()
 
         # [B, ndf, 128, 128]
         initial_conv = spectral_norm(nn.Conv2d(3, ndf, kernel_size=3, padding='same'), eps=1e-04)
         nn.init.orthogonal_(initial_conv.weight)
+
+        n_upsample_layers = 5
+        if n_upsample_layers == 5:
+            residual_channels = [ndf, ndf * 2, ndf * 2, ndf * 4, ndf * 4, ndf * 8, ndf * 8, ndf * 16, ndf * 16,
+                                 ndf * 16, ndf * 16]
+            downsample_layers = [True, False, True, False, True, False, True, False, True, False]
+            nonlocal_block_index = 1
+        else:
+            raise NotImplementedError(str(n_upsample_layers) + ' layers for biggan discriminator is not supported.  You'
+                                                               ' can either use a different amount of layers, or make a'
+                                                               ' list with the channels you want with those layers')
+
+        # Input is Batch_size x 3 x 128 x 128 matrix
+        self.discrim_layers = nn.ModuleList()
+
         self.discrim_layers.append(initial_conv)
-        # [B, ndf * 2, 64, 64]
-        self.discrim_layers.append(DeepResDown(ndf, ndf * 2))
 
-        self.discrim_layers.append(DeepResDown(ndf * 2, ndf * 2, pooling=False))
-        self.discrim_layers.append(NonLocalBlock(ndf * 2))
-
-        # [B, ndf * 4, 32, 32]
-        self.discrim_layers.append(DeepResDown(ndf * 2, ndf * 4))
-        self.discrim_layers.append(DeepResDown(ndf * 4, ndf * 4, pooling=False))
-
-        # [B, ndf * 8, 16, 16]
-        self.discrim_layers.append(DeepResDown(ndf * 4, ndf * 8))
-        self.discrim_layers.append(DeepResDown(ndf * 8, ndf * 8, pooling=False))
-        # [B, ndf * 16, 8, 8]
-        self.discrim_layers.append(DeepResDown(ndf * 8, ndf * 16))
-        self.discrim_layers.append(DeepResDown(ndf * 16, ndf * 16, pooling=False))
-        # [B, ndf * 16, 4, 4]
-        self.discrim_layers.append(DeepResDown(ndf * 16, ndf * 16))
-        self.discrim_layers.append(DeepResDown(ndf * 16, ndf * 16, pooling=False))
+        self.discrim_layers.append(DeepResDown(residual_channels[0], residual_channels[1], pooling=downsample_layers[0]))
+        previous_out_channel = residual_channels[1]
+        for i, layer_channel in enumerate(residual_channels[2:]):
+            if nonlocal_block_index == i:
+                self.discrim_layers.append(NonLocalBlock(previous_out_channel))
+            self.discrim_layers.append(DeepResDown(previous_out_channel, layer_channel, pooling=downsample_layers[i+1]))
+            previous_out_channel = layer_channel
 
         # [B, ndf * 16, 4, 4]
         self.discrim_layers.append(nn.ReLU())

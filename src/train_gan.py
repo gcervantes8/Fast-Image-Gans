@@ -223,6 +223,7 @@ def train(config_file_path: str):
                 logging.info('Saving fake images: ' + fake_img_output_path)
                 fake_images = gan_model.generate_images(fixed_noise, fixed_labels)
                 saver_and_loader.save_images(fake_images, fake_img_output_path)
+                del fake_images
                 logging.info('Time to save images: %.2fs ' % (time.time() - save_imgs_start_time))
                 gan_model.save(model_dir, save_identifier)
 
