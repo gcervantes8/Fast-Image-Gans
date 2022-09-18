@@ -29,7 +29,6 @@ class BigganGenerator(BaseGenerator):
         self.residual_layers = nn.ModuleList()
 
         n_layers = 6
-        self.nonlocal_block_layer = 3
 
         self.z_split_sizes = self.z_vector_split(latent_vector_size, n_layers)
 
@@ -37,23 +36,23 @@ class BigganGenerator(BaseGenerator):
                                                       out_features=4 * 4 * 16 * ngf), eps=1e-04)
         nn.init.orthogonal_(self.initial_linear.weight)
 
-        # Input is nfg*16 x 4 x 4 matrix
-        # Output of ResUp: ngf*16 x 8 x 8
-        self.residual_layers.append(ResUp(ngf * 16, ngf * 16, self.z_split_sizes[1] + embedding_size))
+        n_upsample_layers = 5
+        if n_upsample_layers == 5:
+            layer_channels = [ngf * 16, ngf * 16, ngf * 8, ngf * 4, ngf * 2, ngf]
+            self.nonlocal_block_index = 3
+        else:
+            raise NotImplementedError(str(n_upsample_layers) + ' layers for biggan discriminator is not supported.  You'
+                                                               ' can either use a different amount of layers, or make a'
+                                                               ' list with the channels you want with those layers')
 
-        # ngf*8 x 16 x 16
-        self.residual_layers.append(ResUp(ngf * 16, ngf * 8, self.z_split_sizes[2] + embedding_size))
-
-        # ngf*4 x 32 x 32
-        self.residual_layers.append(ResUp(ngf * 8, ngf * 4, self.z_split_sizes[3] + embedding_size))
-
-        # ngf*2 x 64 x 64
-        self.residual_layers.append(ResUp(ngf * 4, ngf * 2, self.z_split_sizes[4] + embedding_size))
-
-        self.nonlocal_block = NonLocalBlock(ngf * 2)
-
-        # ngf x 128 x 128
-        self.residual_layers.append(ResUp(ngf * 2, ngf, self.z_split_sizes[5] + embedding_size))
+        self.residual_layers.append(ResUp(layer_channels[0], layer_channels[1], self.z_split_sizes[1] + embedding_size))
+        previous_out_channel = layer_channels[1]
+        for i, layer_channel in enumerate(layer_channels[2:]):
+            if self.nonlocal_block_index == i:
+                self.nonlocal_block = NonLocalBlock(previous_out_channel)
+            self.residual_layers.append(ResUp(previous_out_channel, layer_channel,
+                                              self.z_split_sizes[i + 2] + embedding_size))
+            previous_out_channel = layer_channel
 
         self.batch_norm = nn.BatchNorm2d(num_features=ngf)
         self.relu = nn.ReLU()
@@ -86,7 +85,7 @@ class BigganGenerator(BaseGenerator):
         for i, generator_layer in enumerate(self.residual_layers):
             conditioning_vector = torch.concat((z_splits[i+1], embed_vector), axis=1)
             out = generator_layer(out, conditioning_vector)
-            if i == self.nonlocal_block_layer:
+            if i == self.nonlocal_block_index:
                 out = self.nonlocal_block(out)
         out = self.batch_norm(out)
         out = self.relu(out)
