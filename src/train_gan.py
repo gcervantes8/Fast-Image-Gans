@@ -84,6 +84,8 @@ def train(config_file_path: str):
 
     # Creates data-loader
     data_config = config['DATA']
+    data_config['image_height'] = str(int(data_config['base_height']) * (2 ** int(data_config['upsample_layers'])))
+    data_config['image_width'] = str(int(data_config['base_width']) * (2 ** int(data_config['upsample_layers'])))
     data_loader = data_loader_from_config(data_config, using_gpu=not running_on_cpu)
     logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
 
@@ -106,8 +108,9 @@ def train(config_file_path: str):
         netG, netD = saver_and_loader.load_discrim_and_generator(config, generator_path, discriminator_path, device)
         logging.info('Model loaded!')
     else:
-        netG, netD = create_model.create_gan_instances(model_arch_config, device, num_channels=n_color_channels,
-                                                       num_classes=num_classes, n_gpus=n_gpus)
+        netG, netD = create_model.create_gan_instances(model_arch_config, data_config, device,
+                                                       num_channels=n_color_channels, num_classes=num_classes,
+                                                       n_gpus=n_gpus)
         saver_and_loader.save_architecture(netG, netD, run_dir, data_config, model_arch_config)
         # TODO Apply weight initialization to only DCGAN
         # netD.apply(create_model.weights_init)

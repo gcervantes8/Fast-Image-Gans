@@ -14,8 +14,10 @@ from src.generators.base_generator import BaseGenerator
 
 
 class DcganGenerator(BaseGenerator):
-    def __init__(self, num_gpu, latent_vector_size, ngf, num_channels):
-        super(DcganGenerator, self).__init__(num_gpu, latent_vector_size, ngf, num_channels)
+    def __init__(self, num_gpu, base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels,
+                 num_classes):
+        super(DcganGenerator, self).__init__(num_gpu, base_width, base_height, upsample_layers, latent_vector_size,
+                                             ngf, num_channels, num_classes)
         self.n_gpu = num_gpu
         self.main = nn.Sequential(
             # (in-1) * s - 2 * p + (1 * (k - 1) + 1

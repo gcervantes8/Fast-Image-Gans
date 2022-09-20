@@ -14,8 +14,9 @@ from src.discriminators.base_discriminator import BaseDiscriminator
 
 
 class DcganDiscriminator(BaseDiscriminator):
-    def __init__(self, num_gpu, ndf, num_channels):
-        super(DcganDiscriminator, self).__init__(num_gpu, ndf, num_channels)
+    def __init__(self, num_gpu, base_width, base_height, upsample_layers, ndf, num_channels, num_classes):
+        super(DcganDiscriminator, self).__init__(num_gpu, base_width, base_height, upsample_layers, ndf, num_channels,
+                                                 num_classes)
         self.n_gpu = num_gpu
         self.main = nn.Sequential(
 

@@ -16,11 +16,12 @@ from torch.nn.utils.parametrizations import spectral_norm
 
 
 class DeepBigganDiscriminator(BaseDiscriminator):
-    def __init__(self, num_gpu, ndf, num_channels, num_classes):
-        super(DeepBigganDiscriminator, self).__init__(num_gpu, ndf, num_channels, num_classes)
+    def __init__(self, num_gpu, base_width, base_height, upsample_layers, ndf, num_channels, num_classes):
+        super(DeepBigganDiscriminator, self).__init__(num_gpu, base_width, base_height, upsample_layers, ndf,
+                                                      num_channels, num_classes)
         self.n_gpu = num_gpu
-
-        # [B, ndf, 128, 128]
+        self.base_width, self.base_height = base_width, base_height
+        # [B, ndf, image_width, image_height]
         initial_conv = spectral_norm(nn.Conv2d(3, ndf, kernel_size=3, padding='same'), eps=1e-04)
         nn.init.orthogonal_(initial_conv.weight)
 
@@ -35,7 +36,7 @@ class DeepBigganDiscriminator(BaseDiscriminator):
                                                                ' can either use a different amount of layers, or make a'
                                                                ' list with the channels you want with those layers')
 
-        # Input is Batch_size x 3 x 128 x 128 matrix
+        # Input is Batch_size x 3 x image_width x image_height matrix
         self.discrim_layers = nn.ModuleList()
 
         self.discrim_layers.append(initial_conv)
@@ -48,7 +49,7 @@ class DeepBigganDiscriminator(BaseDiscriminator):
             self.discrim_layers.append(DeepResDown(previous_out_channel, layer_channel, pooling=downsample_layers[i+1]))
             previous_out_channel = layer_channel
 
-        # [B, ndf * 16, 4, 4]
+        # [B, ndf * 16, base_width, base_height]
         self.discrim_layers.append(nn.ReLU())
         self.embeddings = torch.nn.Embedding(num_classes, ndf * 16)
         nn.init.orthogonal_(self.embeddings.weight)

@@ -38,17 +38,19 @@ def get_device(n_gpus):
 
 
 # Creates the generator and discriminator using the configuration file
-def create_gan_instances(model_arch_config, device, num_channels=3, num_classes=1, n_gpus=0):
+def create_gan_instances(model_arch_config, data_config, device, num_channels=3, num_classes=1, n_gpus=0):
 
     model_type = model_arch_config['model_type']
     latent_vector_size = int(model_arch_config['latent_vector_size'])
     ngf = int(model_arch_config['ngf'])
     ndf = int(model_arch_config['ndf'])
-
+    base_width = int(data_config['base_width'])
+    base_height = int(data_config['base_height'])
+    upsample_layers = int(data_config['upsample_layers'])
     generator, discriminator = create_gen_and_discrim(model_type)
     # Create the generator and discriminator
-    generator = generator(n_gpus, latent_vector_size, ngf, num_channels, num_classes).to(device)
-    discriminator = discriminator(n_gpus, ndf, num_channels, num_classes).to(device)
+    generator = generator(n_gpus, base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels, num_classes).to(device)
+    discriminator = discriminator(n_gpus, base_width, base_height, upsample_layers, ndf, num_channels, num_classes).to(device)
 
     generator = _handle_multiple_gpus(generator, n_gpus, device)
     discriminator = _handle_multiple_gpus(discriminator, n_gpus, device)

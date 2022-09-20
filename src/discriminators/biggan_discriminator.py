@@ -16,19 +16,19 @@ from torch.nn.utils.parametrizations import spectral_norm
 
 
 class BigganDiscriminator(BaseDiscriminator):
-    def __init__(self, num_gpu, ndf, num_channels, num_classes):
-        super(BigganDiscriminator, self).__init__(num_gpu, ndf, num_channels, num_classes)
+    def __init__(self, num_gpu, base_width, base_height, upsample_layers, ndf, num_channels, num_classes):
+        super(BigganDiscriminator, self).__init__(num_gpu, base_width, base_height, upsample_layers, ndf, num_channels,
+                                                  num_classes)
         self.n_gpu = num_gpu
-        n_upsample_layers = 5
-        if n_upsample_layers == 5:
+        if upsample_layers == 5:
             layer_channels = [3, ndf, ndf * 2, ndf * 4, ndf * 8, ndf * 16, ndf * 16]
             downsample_layers = [True, True, True, True, True, False]
             nonlocal_block_index = 1
         else:
-            raise NotImplementedError(str(n_upsample_layers) + ' layers for biggan discriminator is not supported.  You'
-                                                               ' can either use a different amount of layers, or make a'
-                                                               ' list with the channels you want with those layers')
-        # Input is Batch_size x 3 x 128 x 128 matrix
+            raise NotImplementedError(str(upsample_layers) + ' layers for biggan discriminator is not supported.  You'
+                                                             ' can either use a different amount of layers, or make a'
+                                                             ' list with the channels you want with those layers')
+        # Input is Batch_size x 3 x image_width x image_height matrix
         self.discrim_layers = nn.ModuleList()
 
         self.discrim_layers.append(ResDown(layer_channels[0], layer_channels[1], pooling=downsample_layers[0]))
