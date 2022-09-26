@@ -9,6 +9,8 @@ Purpose: Functions that are used to create/init the GAN model
 
 import torch
 import torch.nn as nn
+from src import saver_and_loader, os_helper
+from src.gan_model import GanModel
 
 from src.generators.dcgan_generator import DcganGenerator
 from src.generators.biggan_generator import BigganGenerator
@@ -38,9 +40,10 @@ def get_device(n_gpus):
 
 
 # Creates the generator and discriminator using the configuration file
-def create_gan_instances(model_arch_config, data_config, device, num_channels=3, num_classes=1, n_gpus=0):
+def create_gan_instances(model_arch_config, data_config, device, num_classes=1, n_gpus=0):
 
     model_type = model_arch_config['model_type']
+    num_channels = int(data_config['num_channels'])
     latent_vector_size = int(model_arch_config['latent_vector_size'])
     ngf = int(model_arch_config['ngf'])
     ndf = int(model_arch_config['ndf'])
@@ -55,6 +58,25 @@ def create_gan_instances(model_arch_config, data_config, device, num_channels=3,
     generator = _handle_multiple_gpus(generator, n_gpus, device)
     discriminator = _handle_multiple_gpus(discriminator, n_gpus, device)
     return generator, discriminator
+
+
+def create_gan_model(run_dir, model_arch_config, data_config, train_config, num_classes, device, n_gpus):
+
+    generator, discriminator = create_gan_instances(model_arch_config, data_config, device,
+                                                    num_classes=num_classes, n_gpus=n_gpus)
+    saver_and_loader.save_architecture(generator, discriminator, run_dir, data_config, model_arch_config)
+    return _to_gan_model(generator, discriminator, num_classes, device, model_arch_config, train_config)
+
+
+def restore_model(model_dir, model_arch_config, train_config, data_config, num_classes, device):
+    generator_path, discrim_path, epoch_num = os_helper.find_latest_generator_model(model_dir)
+    generator, discriminator = saver_and_loader.load_discrim_and_generator(model_arch_config, data_config, num_classes,
+                                                                           generator_path, discrim_path, device)
+    return _to_gan_model(generator, discriminator, num_classes, device, model_arch_config, train_config), epoch_num
+
+
+def _to_gan_model(generator, discriminator, num_classes, device, model_arch_config, train_config):
+    return GanModel(generator, discriminator, num_classes, device, model_arch_config, train_config=train_config)
 
 
 # Handle multi-gpu if desired, returns the new instance that is multi-gpu capable

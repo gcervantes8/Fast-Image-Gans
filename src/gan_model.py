@@ -115,13 +115,15 @@ class GanModel:
         return model_orthogonal_loss
 
     def generate_images(self, noise, labels):
-        with torch.no_grad():
-            if self.ema:
-                with self.ema.average_parameters():
-                    fake = self.netG(noise, labels).detach().cpu()
-            else:
-                fake = self.netG(noise, labels).detach().cpu()
-        return fake
+        device_type, dtype = ('cpu', torch.bfloat16) if self.device.type == 'cpu' else ('cuda', torch.float16)
+        with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
+            with torch.no_grad():
+                if self.ema:
+                    with self.ema.average_parameters():
+                        fake = self.netG(noise, labels)
+                else:
+                    fake = self.netG(noise, labels)
+            return fake.detach().cpu()
 
     def save(self, model_dir, step_or_epoch_num):
         generator_path = os.path.join(model_dir, 'gen_epoch_' + str(step_or_epoch_num) + '.pt')

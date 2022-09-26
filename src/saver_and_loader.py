@@ -8,7 +8,6 @@ Purpose: Functions that can save output into file or loads models.
 """
 
 import os
-import shutil
 import torch
 import torchvision.utils as torch_utils
 from src.data_load import get_data_batch, color_transform, normalize
@@ -16,8 +15,6 @@ from src.data_load import get_data_batch, color_transform, normalize
 from torchinfo import summary
 
 from src import create_model
-from src.generators import dcgan_generator
-from src.discriminators import dcgan_discriminator
 
 
 # Writes text file with information of the generator and discriminator instances
@@ -40,12 +37,6 @@ def save_architecture(generator, discriminator, save_dir, data_config, model_arc
         text_file.write(str(discriminator))
 
 
-# Saves the python files dcgan_generator.py, and dcgan_discriminator.py to given directory
-def save_gan_files(run_dir):
-    shutil.copy(dcgan_generator.__name__.replace('.', '/') + '.py', os.path.abspath(run_dir))
-    shutil.copy(dcgan_discriminator.__name__.replace('.', '/') + '.py', os.path.abspath(run_dir))
-
-
 # Saves the trained generator and discriminator models in the given directories
 def save_model(generator, discriminator, generator_path, discriminator_path):
     torch.save(generator.state_dict(), generator_path)
@@ -56,7 +47,7 @@ def save_model(generator, discriminator, generator_path, discriminator_path):
 def save_train_batch(data_loader, save_path: str, device=torch.device('cpu')):
     # Save training images
     batch_images = get_data_batch(data_loader, device)
-    batch_images = normalize(color_transform(batch_images))
+    batch_images = normalize(color_transform(batch_images.to(torch.float32)))
     save_images(batch_images, save_path)
 
 
@@ -65,8 +56,9 @@ def save_images(tensor, save_path, normalized=True):
     torch_utils.save_image(tensor, save_path, normalize=normalized)
 
 
-def load_discrim_and_generator(config, generator_path, discrim_path, device):
-    generator, discriminator = create_model.create_gan_instances(config, device)
+def load_discrim_and_generator(model_arch_config, data_config, num_classes, generator_path, discrim_path, device):
+    generator, discriminator = create_model.create_gan_instances(model_arch_config, data_config, device,
+                                                                 num_classes=num_classes)
     generator.load_state_dict(torch.load(generator_path))
     discriminator.load_state_dict(torch.load(discrim_path))
     return generator, discriminator
