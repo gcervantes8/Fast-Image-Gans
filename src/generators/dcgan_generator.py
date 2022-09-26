@@ -35,8 +35,6 @@ class DcganGenerator(BaseGenerator):
                                                              ' list with the channels you want with those layers')
 
         # input of conv is size (latent_embed_vector_size, 1, 1)
-        # self.generator_layers.append(spectral_norm(nn.ConvTranspose2d(conv_channels[0], conv_channels[1], kernel_size=3,
-        #                                                               stride=2, padding=1)))
         self.generator_layers.append(spectral_norm(nn.ConvTranspose2d(conv_channels[0], conv_channels[1],
                                                                       kernel_size=(base_height, base_width),
                                                                       stride=1, padding=0, bias=False)))
