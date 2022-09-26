@@ -30,10 +30,6 @@ class BigganGenerator(BaseGenerator):
 
         self.residual_layers = nn.ModuleList()
 
-        self.initial_linear = spectral_norm(nn.Linear(in_features=self.z_split_sizes[0],
-                                                      out_features=base_width * base_height * 16 * ngf), eps=1e-04)
-        nn.init.orthogonal_(self.initial_linear.weight)
-
         if upsample_layers == 5:
             layer_channels = [ngf * 16, ngf * 16, ngf * 8, ngf * 4, ngf * 2, ngf]
             self.nonlocal_block_index = 3
@@ -44,6 +40,9 @@ class BigganGenerator(BaseGenerator):
                                                              ' list with the channels you want with those layers')
 
         self.z_split_sizes = self.z_vector_split(latent_vector_size, n_layers)
+        self.initial_linear = spectral_norm(nn.Linear(in_features=self.z_split_sizes[0],
+                                                      out_features=base_width * base_height * 16 * ngf), eps=1e-04)
+        nn.init.orthogonal_(self.initial_linear.weight)
 
         self.residual_layers.append(ResUp(layer_channels[0], layer_channels[1], self.z_split_sizes[1] + embedding_size))
         previous_out_channel = layer_channels[1]
