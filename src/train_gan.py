@@ -164,13 +164,13 @@ def train(config_file_path: str):
     steps_in_epoch = len(data_loader)
     train_generator = True
     alternate_generator_training = train_config.getboolean('two_d_steps_per_g')
-    total_g_error, total_d_error = torch.zeros([1], device=device), torch.zeros([1], device=device)
+    total_g_error, total_d_error = 0.0, 0.0
     g_steps, d_steps = 0, 0
     for epoch in range(n_epochs):
         epoch_after_loading = loaded_epoch_num + epoch
         train_seq_start_time = time.time()
         # For each batch in the data-loader
-        data_time, model_time = 0, 0
+        data_time, model_time = 0.0, 0.0
         data_start_time = time.time()
 
         for i, batch in enumerate(data_loader, 0):
@@ -207,10 +207,12 @@ def train(config_file_path: str):
             model_time += time.time() - model_start_time
             # Output training stats
             if n_steps % log_steps == 0:
-                # TODO add case when diving by 0 steps
-                logging.info('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tTime: %.2fs'
-                             % (epoch, n_epochs, n_steps % steps_in_epoch, steps_in_epoch, (total_d_error/d_steps).item(),
-                                (total_g_error/g_steps).item(), time.time() - train_seq_start_time))
+                d_loss = '{:.4f}'.format((total_d_error / d_steps)) if d_steps else '0 steps'
+                g_loss = '{:.4f}'.format((total_g_error / g_steps)) if g_steps else '0 steps'
+
+                logging.info('[{}/{}][{}/{}]\tLoss_D: {}\tLoss_G: {}\tTime: {:.2f}s'.format(
+                    epoch, n_epochs, n_steps % steps_in_epoch, steps_in_epoch, d_loss, g_loss,
+                    time.time() - train_seq_start_time))
                 logging.info(
                     'Data retrieve time: %.2fs Model updating time: %.2fs' % (data_time, model_time))
 

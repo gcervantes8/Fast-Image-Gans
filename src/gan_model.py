@@ -100,7 +100,8 @@ class GanModel:
             self.netD.zero_grad()
             self.netG.zero_grad()
 
-        return total_discrim_error * self.accumulation_iterations, generator_error * self.accumulation_iterations
+        return (total_discrim_error * self.accumulation_iterations).item(), \
+               (generator_error * self.accumulation_iterations).item()
 
     def apply_orthogonal_regularization(self, model):
         model_orthogonal_loss = 0.0
