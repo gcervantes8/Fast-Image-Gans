@@ -69,10 +69,10 @@ def create_gan_model(run_dir, model_arch_config, data_config, train_config, num_
 
 
 def restore_model(model_dir, model_arch_config, train_config, data_config, num_classes, device):
-    generator_path, discrim_path, epoch_num = os_helper.find_latest_generator_model(model_dir)
+    generator_path, discrim_path, step_num = os_helper.find_latest_generator_model(model_dir)
     generator, discriminator = saver_and_loader.load_discrim_and_generator(model_arch_config, data_config, num_classes,
                                                                            generator_path, discrim_path, device)
-    return _to_gan_model(generator, discriminator, num_classes, device, model_arch_config, train_config), epoch_num
+    return _to_gan_model(generator, discriminator, num_classes, device, model_arch_config, train_config), step_num
 
 
 def _to_gan_model(generator, discriminator, num_classes, device, model_arch_config, train_config):

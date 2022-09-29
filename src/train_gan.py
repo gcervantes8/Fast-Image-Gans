@@ -7,7 +7,6 @@ Created on Thu Feb 20 00:23:38 2020
 Purpose: Train the GAN (Generative Adversarial Network) model
 """
 
-from __future__ import print_function
 import torch
 from torch.profiler import profile, ProfilerActivity
 
@@ -21,9 +20,6 @@ import shutil
 import logging
 import os
 import time
-from PIL import ImageFile
-ImageFile.LOAD_TRUNCATED_IMAGES = True
-torch.cuda.empty_cache()
 
 
 def train(config_file_path: str):
@@ -69,7 +65,7 @@ def train(config_file_path: str):
 
     if not will_restore_model:
         logging.info('Directory ' + run_dir + ' created, training output will be saved here')
-        # Copies config and python model files
+        # Copies config file
         shutil.copy(config_file_path, os.path.abspath(run_dir))
         logging.info('Copied config file!')
     else:
@@ -102,11 +98,11 @@ def train(config_file_path: str):
     model_arch_config = config['MODEL ARCHITECTURE']
 
     logging.info('Creating model...')
-    loaded_epoch_num = 0
+    loaded_step_num = 0
     if will_restore_model:
-        gan_model, loaded_epoch_num = create_model.restore_model(model_dir, model_arch_config, train_config,
-                                                                 data_config, num_classes, device)
-        logging.info('Loaded model from epoch ' + str(loaded_epoch_num))
+        gan_model, loaded_step_num = create_model.restore_model(model_dir, model_arch_config, train_config,
+                                                                data_config, num_classes, device)
+        logging.info('Loaded model from step ' + str(loaded_step_num))
     else:
         gan_model = create_model.create_gan_model(run_dir, model_arch_config, data_config, train_config, num_classes,
                                                   device, n_gpus)
@@ -138,8 +134,6 @@ def train(config_file_path: str):
 
     logging.info("Starting Training Loop...")
 
-    profile_steps = 5
-
     def tensorboard_profiler():
         profile_devices = [ProfilerActivity.CPU]
         if not running_on_cpu:
@@ -148,11 +142,11 @@ def train(config_file_path: str):
                        schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=2),
                        on_trace_ready=torch.profiler.tensorboard_trace_handler(profiler_dir),
                        record_shapes=True, profile_memory=True)
-        return tb_profiler
 
-    if profile_steps != 0:
-        profiler = tensorboard_profiler()
+    profiler = tensorboard_profiler()
+    if profiler:
         profiler.start()
+
     n_steps = 0
     steps_in_epoch = len(data_loader)
     train_generator = True
@@ -160,7 +154,6 @@ def train(config_file_path: str):
     total_g_error, total_d_error = 0.0, 0.0
     g_steps, d_steps = 0, 0
     for epoch in range(n_epochs):
-        epoch_after_loading = loaded_epoch_num + epoch
         train_seq_start_time = time.time()
         # For each batch in the data-loader
         data_time, model_time = 0.0, 0.0
@@ -212,20 +205,18 @@ def train(config_file_path: str):
                 train_seq_start_time = time.time()
 
             # Save every save_steps or every epoch if save_steps is None
-            if (save_steps is not None and n_steps % save_steps == 0) or \
-                    (save_steps is None and n_steps % steps_in_epoch == 0):
-                save_imgs_start_time = time.time()
-                save_identifier = epoch_after_loading if save_steps is None else n_steps
+            if n_steps % save_steps == 0:
+                save_start_time = time.time()
+                save_identifier = loaded_step_num + n_steps
                 fake_img_output_path = os.path.join(img_dir, 'generated_image_' + str(save_identifier) + '.png')
                 logging.info('Saving fake images: ' + fake_img_output_path)
                 fake_images = gan_model.generate_images(fixed_noise, fixed_labels)
                 saver_and_loader.save_images(fake_images.to(torch.float32), fake_img_output_path)
                 del fake_images
-                logging.info('Time to save images: %.2fs ' % (time.time() - save_imgs_start_time))
                 gan_model.save(model_dir, save_identifier)
+                logging.info('Time to save images and model: %.2fs ' % (time.time() - save_start_time))
 
-            if (eval_steps is not None and n_steps % eval_steps == 0) or \
-                    (eval_steps is None and n_steps % steps_in_epoch == 0):
+            if n_steps % eval_steps == 0:
                 if compute_is or compute_fid:
                     logging.info('Computing metrics for the saved images ...')
                     fake_images = gan_model.generate_images(fixed_noise, fixed_labels)
@@ -237,10 +228,7 @@ def train(config_file_path: str):
                     if compute_fid:
                         logging.info('FID Score: %.2f' % round(fid_score, 2))
             data_start_time = time.time()
-            if n_steps == profile_steps and profile_steps != 0:
-                profiler.step()
-                profiler.stop()
-            elif n_steps < profile_steps:
+            if profiler:
                 profiler.step()
 
     logging.info('Training complete! Models and output saved in the output directory:')
@@ -254,5 +242,7 @@ if __name__ == '__main__':
                         help='The configuration file to train with, configuration files end with .ini extension.\n'
                         'Default config files are in the configs folder.')
     args = parser.parse_args()
+
+    torch.cuda.empty_cache()
     train(args.config_file)
 
