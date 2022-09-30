@@ -10,7 +10,8 @@ Purpose: Train the GAN (Generative Adversarial Network) model
 import torch
 from torch.profiler import profile, ProfilerActivity
 
-from src import ini_parser, saver_and_loader, os_helper, create_model
+from src import saver_and_loader, os_helper, create_model
+from src.configs import ini_parser
 from src.data_load import data_loader_from_config, color_transform, normalize, get_data_batch, unnormalize, \
     create_latent_vector
 from src.metrics import score_metrics
@@ -26,8 +27,7 @@ def train(config_file_path: str):
     if not os.path.exists(config_file_path):
         raise OSError('Configuration file path doesn\'t exist:' + config_file_path)
 
-    config = ini_parser.read(config_file_path)
-
+    config = ini_parser.read_with_defaults(config_file_path)
     # Creates the run directory in the output folder specified in the configuration file
     model_config = config['MODEL']
 
@@ -150,7 +150,6 @@ def train(config_file_path: str):
     n_steps = 0
     steps_in_epoch = len(data_loader)
     train_generator = True
-    alternate_generator_training = train_config.getboolean('two_d_steps_per_g')
     total_g_error, total_d_error = 0.0, 0.0
     g_steps, d_steps = 0, 0
     for epoch in range(n_epochs):
@@ -179,7 +178,6 @@ def train(config_file_path: str):
 
             err_discriminator, err_generator = gan_model.update_minimax(real_data, labels,
                                                                         train_generator=train_generator)
-            alternate_generator_training = not alternate_generator_training
 
             if err_generator:
                 total_g_error += err_generator
@@ -243,6 +241,4 @@ if __name__ == '__main__':
                         'Default config files are in the configs folder.')
     args = parser.parse_args()
 
-    torch.cuda.empty_cache()
     train(args.config_file)
-

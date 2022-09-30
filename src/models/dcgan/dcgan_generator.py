@@ -10,7 +10,7 @@ The class takes in a latent vector to generate new images (in the forward pass)
 import torch
 import torch.nn as nn
 from torch.nn.utils import spectral_norm
-from src.generators.base_generator import BaseGenerator
+from src.models.base_generator import BaseGenerator
 from src import create_model
 
 

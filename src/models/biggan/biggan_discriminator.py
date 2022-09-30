@@ -9,8 +9,8 @@ The class takes in images to classify whether the images are real or fake (gener
 
 import torch
 import torch.nn as nn
-from src.discriminators.base_discriminator import BaseDiscriminator
-from src.discriminators.res_down import ResDown
+from src.models.base_discriminator import BaseDiscriminator
+from src.models.biggan.res_down import ResDown
 from src.layers.nonlocal_block import NonLocalBlock
 from torch.nn.utils.parametrizations import spectral_norm
 

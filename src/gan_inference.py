@@ -9,7 +9,8 @@ Specify the run folder, reads the config file to recreate the model, and loads t
 """
 
 import torch
-from src import ini_parser, saver_and_loader, os_helper
+from src import saver_and_loader, os_helper
+from src.configs import ini_parser
 from src.metrics import score_metrics
 from src.data_load import unnormalize
 

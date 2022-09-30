@@ -12,13 +12,13 @@ import torch.nn as nn
 from src import saver_and_loader, os_helper
 from src.gan_model import GanModel
 
-from src.generators.dcgan_generator import DcganGenerator
-from src.generators.biggan_generator import BigganGenerator
-from src.generators.deep_biggan_generator import DeepBigganGenerator
+from src.models.dcgan.dcgan_generator import DcganGenerator
+from src.models.biggan.biggan_generator import BigganGenerator
+from src.models.deep_biggan.deep_biggan_generator import DeepBigganGenerator
 
-from src.discriminators.dcgan_discriminator import DcganDiscriminator
-from src.discriminators.biggan_discriminator import BigganDiscriminator
-from src.discriminators.deep_biggan_discriminator import DeepBigganDiscriminator
+from src.models.dcgan.dcgan_discriminator import DcganDiscriminator
+from src.models.biggan.biggan_discriminator import BigganDiscriminator
+from src.models.deep_biggan.deep_biggan_discriminator import DeepBigganDiscriminator
 
 
 def create_gen_and_discrim(model_name: str):
@@ -26,7 +26,7 @@ def create_gen_and_discrim(model_name: str):
     models_supported = {
         'dcgan': (DcganGenerator, DcganDiscriminator),
         'biggan': (BigganGenerator, BigganDiscriminator),
-        'deep-biggan': (DeepBigganGenerator, DeepBigganDiscriminator),
+        'deep_biggan': (DeepBigganGenerator, DeepBigganDiscriminator),
     }
     if model_name not in models_supported:
         raise ValueError("Given model name in config file is not supported\n" +
@@ -52,8 +52,10 @@ def create_gan_instances(model_arch_config, data_config, device, num_classes=1, 
     upsample_layers = int(data_config['upsample_layers'])
     generator, discriminator = create_gen_and_discrim(model_type)
     # Create the generator and discriminator
-    generator = generator(n_gpus, base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels, num_classes).to(device)
-    discriminator = discriminator(n_gpus, base_width, base_height, upsample_layers, ndf, num_channels, num_classes).to(device)
+    generator = generator(n_gpus, base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels,
+                          num_classes).to(device)
+    discriminator = discriminator(n_gpus, base_width, base_height, upsample_layers, ndf, num_channels,
+                                  num_classes).to(device)
 
     generator = _handle_multiple_gpus(generator, n_gpus, device)
     discriminator = _handle_multiple_gpus(discriminator, n_gpus, device)

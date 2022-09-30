@@ -11,7 +11,7 @@ The class takes in images to classify whether the images are real or fake (gener
 import torch
 import torch.nn as nn
 from torch.nn.utils import spectral_norm
-from src.discriminators.base_discriminator import BaseDiscriminator
+from src.models.base_discriminator import BaseDiscriminator
 from src import create_model
 
 
