@@ -16,10 +16,9 @@ from src import create_model
 
 
 class DcganDiscriminator(BaseDiscriminator):
-    def __init__(self, num_gpu, base_width, base_height, upsample_layers, ndf, num_channels, num_classes):
-        super(DcganDiscriminator, self).__init__(num_gpu, base_width, base_height, upsample_layers, ndf, num_channels,
+    def __init__(self, base_width, base_height, upsample_layers, ndf, num_channels, num_classes):
+        super(DcganDiscriminator, self).__init__(base_width, base_height, upsample_layers, ndf, num_channels,
                                                  num_classes)
-        self.n_gpu = num_gpu
 
         # Input is Batch_size x 3 x image_width x image_height matrix
         self.discrim_layers = nn.ModuleList()

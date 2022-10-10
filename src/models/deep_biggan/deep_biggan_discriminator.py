@@ -9,17 +9,16 @@ The class takes in images to classify whether the images are real or fake (gener
 
 import torch
 import torch.nn as nn
-from src.discriminators.base_discriminator import BaseDiscriminator
-from src.discriminators.deep_res_down import DeepResDown
+from src.models.base_discriminator import BaseDiscriminator
+from src.models.deep_biggan.deep_res_down import DeepResDown
 from src.layers.nonlocal_block import NonLocalBlock
 from torch.nn.utils.parametrizations import spectral_norm
 
 
 class DeepBigganDiscriminator(BaseDiscriminator):
-    def __init__(self, num_gpu, base_width, base_height, upsample_layers, ndf, num_channels, num_classes):
-        super(DeepBigganDiscriminator, self).__init__(num_gpu, base_width, base_height, upsample_layers, ndf,
+    def __init__(self, base_width, base_height, upsample_layers, ndf, num_channels, num_classes):
+        super(DeepBigganDiscriminator, self).__init__(base_width, base_height, upsample_layers, ndf,
                                                       num_channels, num_classes)
-        self.n_gpu = num_gpu
         self.base_width, self.base_height = base_width, base_height
         # [B, ndf, image_width, image_height]
         initial_conv = spectral_norm(nn.Conv2d(3, ndf, kernel_size=3, padding='same'), eps=1e-04)

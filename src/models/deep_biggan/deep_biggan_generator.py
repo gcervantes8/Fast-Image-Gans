@@ -9,18 +9,17 @@ The class takes in images to classify whether the images are real or fake (gener
 
 import torch
 import torch.nn as nn
-from src.generators.base_generator import BaseGenerator
-from src.generators.deep_res_up import DeepResUp
+from src.models.base_generator import BaseGenerator
+from src.models.deep_biggan.deep_res_up import DeepResUp
 from src.layers.nonlocal_block import NonLocalBlock
 from torch.nn.utils.parametrizations import spectral_norm
 
 
 class DeepBigganGenerator(BaseGenerator):
-    def __init__(self, num_gpu, base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels,
+    def __init__(self, base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels,
                  num_classes):
-        super(DeepBigganGenerator, self).__init__(num_gpu, base_width, base_height, upsample_layers, latent_vector_size,
+        super(DeepBigganGenerator, self).__init__(base_width, base_height, upsample_layers, latent_vector_size,
                                                   ngf, num_channels, num_classes)
-        self.n_gpu = num_gpu
         self.ngf = ngf
 
         self.base_width, self.base_height = base_width, base_height
@@ -84,3 +83,29 @@ class DeepBigganGenerator(BaseGenerator):
         out = self.conv(out)
         out = self.tanh(out)
         return out
+
+    def get_class_embedding(self, label):
+        return self.embeddings(label)
+
+    def forward_with_class_embeddings(self, latent_vector, class_embeddings):
+        # [B, Z] - Z is size of latent vector
+        batch_size = latent_vector.size(dim=0)
+
+        latent_embed_vector = torch.concat((latent_vector, class_embeddings), axis=1)
+        # [B, 4*4*16*ngf]
+        out = self.initial_linear(latent_embed_vector)
+
+        # [B, 16 * ngf, 4, 4]
+        out = torch.reshape(out, [batch_size, 16 * self.ngf, self.base_height, self.base_width])
+        for i, generator_layer in enumerate(self.generator_layers):
+            out = generator_layer(out, latent_embed_vector)
+            if i == self.nonlocal_block_index:
+                out = self.nonlocal_block(out)
+        out = self.batch_norm(out)
+        out = self.relu(out)
+        out = self.conv(out)
+        out = self.tanh(out)
+        return out
+
+
+

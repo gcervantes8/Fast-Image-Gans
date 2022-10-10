@@ -15,11 +15,10 @@ from src import create_model
 
 
 class DcganGenerator(BaseGenerator):
-    def __init__(self, num_gpu, base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels,
+    def __init__(self, base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels,
                  num_classes):
-        super(DcganGenerator, self).__init__(num_gpu, base_width, base_height, upsample_layers, latent_vector_size,
+        super(DcganGenerator, self).__init__(base_width, base_height, upsample_layers, latent_vector_size,
                                              ngf, num_channels, num_classes)
-        self.n_gpu = num_gpu
         self.generator_layers = nn.ModuleList()
 
         embedding_size = 32

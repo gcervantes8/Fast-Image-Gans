@@ -16,10 +16,9 @@ from torch.nn.utils.parametrizations import spectral_norm
 
 
 class BigganDiscriminator(BaseDiscriminator):
-    def __init__(self, num_gpu, base_width, base_height, upsample_layers, ndf, num_channels, num_classes):
-        super(BigganDiscriminator, self).__init__(num_gpu, base_width, base_height, upsample_layers, ndf, num_channels,
+    def __init__(self, base_width, base_height, upsample_layers, ndf, num_channels, num_classes):
+        super(BigganDiscriminator, self).__init__(base_width, base_height, upsample_layers, ndf, num_channels,
                                                   num_classes)
-        self.n_gpu = num_gpu
         if upsample_layers == 5:
             layer_channels = [3, ndf, ndf * 2, ndf * 4, ndf * 8, ndf * 16, ndf * 16]
             downsample_layers = [True, True, True, True, True, False]

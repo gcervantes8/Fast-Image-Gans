@@ -10,10 +10,10 @@ Purpose: Train the GAN (Generative Adversarial Network) model
 import torch
 from torch.profiler import profile, ProfilerActivity
 
-from src import saver_and_loader, os_helper, create_model
+from src import saver_and_loader, create_model, os_helper
 from src.configs import ini_parser
 from src.data_load import data_loader_from_config, color_transform, normalize, get_data_batch, unnormalize, \
-    create_latent_vector
+    create_latent_vector, get_num_classes
 from src.metrics import score_metrics
 
 import argparse
@@ -28,29 +28,12 @@ def train(config_file_path: str):
         raise OSError('Configuration file path doesn\'t exist:' + config_file_path)
 
     config = ini_parser.read_with_defaults(config_file_path)
-    # Creates the run directory in the output folder specified in the configuration file
-    model_config = config['MODEL']
 
-    models_dir, model_name = model_config['models_dir'], model_config['model_name']
-    os_helper.is_valid_dir(models_dir, 'Model directory is invalid\nPath is not a directory: ' + models_dir)
-
-    model_dir_name = 'models'
-    images_dir_name = 'images'
-    profiler_dir_name = 'profiler'
-
-    run_dir = os.path.join(models_dir, model_name)
-    will_restore_model = os.path.isdir(os.path.join(run_dir, model_dir_name))
-
-    # Then restore existing model
+    will_restore_model = saver_and_loader.is_loadable_model(config)
     if will_restore_model:
-        img_dir = os.path.join(run_dir, images_dir_name)
-        model_dir = os.path.join(run_dir, model_dir_name)
-        profiler_dir = os.path.join(run_dir, profiler_dir_name)
+        run_dir, model_dir, img_dir, profiler_dir = saver_and_loader.get_run_directories(config)
     else:
-        run_dir, run_id = os_helper.create_run_dir(models_dir)
-        img_dir = os_helper.create_dir(run_dir, images_dir_name)
-        model_dir = os_helper.create_dir(run_dir, model_dir_name)
-        profiler_dir = os_helper.create_dir(run_dir, profiler_dir_name)
+        run_dir, model_dir, img_dir, profiler_dir = saver_and_loader.create_run_directories(config)
 
     # Logs training information, everything logged will also be outputted to stdout (printed)
     log_path = os.path.join(run_dir, 'train.log')
@@ -91,7 +74,7 @@ def train(config_file_path: str):
 
     # Save training images
     saver_and_loader.save_train_batch(data_loader, os.path.join(img_dir, 'train_batch.png'))
-    num_classes = len(data_loader.dataset.classes)
+    num_classes = get_num_classes(data_config)
     logging.info('Number of different image labels: ' + str(num_classes))
     real_images = get_data_batch(data_loader, device)
 
@@ -99,14 +82,15 @@ def train(config_file_path: str):
 
     logging.info('Creating model...')
     loaded_step_num = 0
+
+    gan_model = create_model.create_gan_model(model_arch_config, data_config, train_config, device, n_gpus)
+    gan_model.save_architecture(run_dir, data_config)
+
+    logging.info('Created GAN model')
     if will_restore_model:
-        gan_model, loaded_step_num = create_model.restore_model(model_dir, model_arch_config, train_config,
-                                                                data_config, num_classes, device)
-        logging.info('Loaded model from step ' + str(loaded_step_num))
-    else:
-        gan_model = create_model.create_gan_model(run_dir, model_arch_config, data_config, train_config, num_classes,
-                                                  device, n_gpus)
-        logging.info('Created GAN model')
+        saver_and_loader.load_model(gan_model, model_dir)
+        logging.info('Restored model from step ' + str(loaded_step_num))
+
     logging.info('Is GPU available? ' + str(torch.cuda.is_available()) + ' - Running on device:' + str(device))
 
     metrics_config = config['METRICS']
@@ -149,15 +133,12 @@ def train(config_file_path: str):
 
     n_steps = 0
     steps_in_epoch = len(data_loader)
-    train_generator = True
     total_g_error, total_d_error = 0.0, 0.0
     g_steps, d_steps = 0, 0
+    data_time, model_time = 0.0, 0.0
+    data_start_time = time.time()
+    train_seq_start_time = time.time()
     for epoch in range(n_epochs):
-        train_seq_start_time = time.time()
-        # For each batch in the data-loader
-        data_time, model_time = 0.0, 0.0
-        data_start_time = time.time()
-
         for i, batch in enumerate(data_loader, 0):
 
             n_steps += 1
@@ -176,8 +157,7 @@ def train(config_file_path: str):
             data_time += time.time() - data_start_time
             model_start_time = time.time()
 
-            err_discriminator, err_generator = gan_model.update_minimax(real_data, labels,
-                                                                        train_generator=train_generator)
+            err_discriminator, err_generator = gan_model.update_minimax(real_data, labels)
 
             if err_generator:
                 total_g_error += err_generator

@@ -16,11 +16,10 @@ from torch.nn.utils.parametrizations import spectral_norm
 
 
 class BigganGenerator(BaseGenerator):
-    def __init__(self, num_gpu, base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels,
+    def __init__(self, base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels,
                  num_classes):
-        super(BigganGenerator, self).__init__(num_gpu, base_width, base_height, upsample_layers, latent_vector_size,
+        super(BigganGenerator, self).__init__(base_width, base_height, upsample_layers, latent_vector_size,
                                               ngf, num_channels, num_classes)
-        self.n_gpu = num_gpu
         self.ngf = ngf
         self.base_width, self.base_height = base_width, base_height
         # Embedding size of 128 is used for the biggan and deep-biggan paper

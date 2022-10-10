@@ -9,7 +9,7 @@ Purpose: Functions that are used to create/init the GAN model
 
 import torch
 import torch.nn as nn
-from src import saver_and_loader, os_helper
+from src import data_load
 from src.gan_model import GanModel
 
 from src.models.dcgan.dcgan_generator import DcganGenerator
@@ -40,7 +40,7 @@ def get_device(n_gpus):
 
 
 # Creates the generator and discriminator using the configuration file
-def create_gan_instances(model_arch_config, data_config, device, num_classes=1, n_gpus=0):
+def create_gan_instances(model_arch_config, data_config, device, n_gpus=0):
 
     model_type = model_arch_config['model_type']
     num_channels = int(data_config['num_channels'])
@@ -50,11 +50,12 @@ def create_gan_instances(model_arch_config, data_config, device, num_classes=1, 
     base_width = int(data_config['base_width'])
     base_height = int(data_config['base_height'])
     upsample_layers = int(data_config['upsample_layers'])
+    num_classes = data_load.get_num_classes(data_config)
     generator, discriminator = create_gen_and_discrim(model_type)
     # Create the generator and discriminator
-    generator = generator(n_gpus, base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels,
+    generator = generator(base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels,
                           num_classes).to(device)
-    discriminator = discriminator(n_gpus, base_width, base_height, upsample_layers, ndf, num_channels,
+    discriminator = discriminator(base_width, base_height, upsample_layers, ndf, num_channels,
                                   num_classes).to(device)
 
     generator = _handle_multiple_gpus(generator, n_gpus, device)
@@ -62,22 +63,9 @@ def create_gan_instances(model_arch_config, data_config, device, num_classes=1, 
     return generator, discriminator
 
 
-def create_gan_model(run_dir, model_arch_config, data_config, train_config, num_classes, device, n_gpus):
-
-    generator, discriminator = create_gan_instances(model_arch_config, data_config, device,
-                                                    num_classes=num_classes, n_gpus=n_gpus)
-    saver_and_loader.save_architecture(generator, discriminator, run_dir, data_config, model_arch_config)
-    return _to_gan_model(generator, discriminator, num_classes, device, model_arch_config, train_config)
-
-
-def restore_model(model_dir, model_arch_config, train_config, data_config, num_classes, device):
-    generator_path, discrim_path, step_num = os_helper.find_latest_generator_model(model_dir)
-    generator, discriminator = saver_and_loader.load_discrim_and_generator(model_arch_config, data_config, num_classes,
-                                                                           generator_path, discrim_path, device)
-    return _to_gan_model(generator, discriminator, num_classes, device, model_arch_config, train_config), step_num
-
-
-def _to_gan_model(generator, discriminator, num_classes, device, model_arch_config, train_config):
+def create_gan_model(model_arch_config, data_config, train_config, device, n_gpus):
+    generator, discriminator = create_gan_instances(model_arch_config, data_config, device, n_gpus=n_gpus)
+    num_classes = data_load.get_num_classes(data_config)
     return GanModel(generator, discriminator, num_classes, device, model_arch_config, train_config=train_config)
 
 

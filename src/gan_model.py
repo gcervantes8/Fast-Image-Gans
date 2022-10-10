@@ -12,6 +12,9 @@ import torch.optim as optim
 from src.losses.loss_functions import supported_loss_functions
 from src.losses.loss_functions import supported_losses
 from torch_ema import ExponentialMovingAverage
+from torchinfo import summary
+
+from src import os_helper, data_load
 import os
 
 
@@ -50,7 +53,7 @@ class GanModel:
         ema_decay = model_arch_config['ema_decay']
         self.ema = ExponentialMovingAverage(generator.parameters(), decay=float(ema_decay)) if ema_enabled else None
 
-    def update_minimax(self, real_data, labels, train_generator=True):
+    def update_minimax(self, real_data, labels):
         b_size = real_data.size(0)
         device_type, dtype = ('cpu', torch.bfloat16) if self.device.type == 'cpu' else ('cuda', torch.float16)
 
@@ -114,19 +117,55 @@ class GanModel:
                 model_orthogonal_loss += self.orthogonal_value * torch.norm(orthogonal_matrix, p='fro')
         return model_orthogonal_loss
 
-    def generate_images(self, noise, labels):
+    # If class_embeddings is provided, then it will ignore labels to generate the images
+    def generate_images(self, noise, labels, class_embeddings=None):
         device_type, dtype = ('cpu', torch.bfloat16) if self.device.type == 'cpu' else ('cuda', torch.float16)
         with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
             with torch.no_grad():
                 if self.ema:
                     with self.ema.average_parameters():
-                        fake = self.netG(noise, labels)
+                        if class_embeddings:
+                            forward_with_class_embeddings = getattr(self.netG, "forward_with_class_embeddings", None)
+                            if callable(forward_with_class_embeddings):
+                                fake = forward_with_class_embeddings(noise, class_embeddings)
+                            else:
+                                raise ValueError('Given generator model does not support providing class embeddings '
+                                                 'directly.')
+                        else:
+                            fake = self.netG(noise, labels)
                 else:
                     fake = self.netG(noise, labels)
             return fake.detach().cpu()
 
-    def save(self, model_dir, step_or_epoch_num):
-        generator_path = os.path.join(model_dir, 'gen_epoch_' + str(step_or_epoch_num) + '.pt')
-        discriminator_path = os.path.join(model_dir, 'discrim_epoch_' + str(step_or_epoch_num) + '.pt')
+    def save(self, model_dir, step_num):
+        generator_path = os.path.join(model_dir, os_helper.ModelType.GENERATOR.value + '_step_' + str(step_num) + '.pt')
+        discrim_path = os.path.join(model_dir, os_helper.ModelType.DISCRIMINATOR.value + '_step_' +
+                                    str(step_num) + '.pt')
         torch.save(self.netG.state_dict(), generator_path)
-        torch.save(self.netD.state_dict(), discriminator_path)
+        torch.save(self.netD.state_dict(), discrim_path)
+        if self.ema:
+            ema_path = os.path.join(model_dir, os_helper.ModelType.EMA.value + '_step_' + str(step_num) + '.pt')
+            torch.save(self.ema.state_dict(), ema_path)
+
+    def load(self, generator_path, discrim_path, ema_path=None):
+        self.netG.load_state_dict(torch.load(generator_path))
+        self.netD.load_state_dict(torch.load(discrim_path))
+        if self.ema and ema_path:
+            self.ema.load_state_dict(torch.load(ema_path))
+
+    # Writes text file with information of the generator and discriminator instances
+    def save_architecture(self, save_dir, data_config):
+
+        image_height, image_width = data_load.get_image_height_and_width(data_config)
+        discriminator_stats = summary(self.netD, input_data=[torch.zeros((1, 3, image_height, image_width)),
+                                                             torch.zeros(1, dtype=torch.int64)], verbose=0)
+        generator_stats = summary(self.netG, input_data=[torch.zeros(1, self.latent_vector_size),
+                                                         torch.zeros(1, dtype=torch.int64)], verbose=0)
+
+        with open(os.path.join(save_dir, 'architecture.txt'), 'w', encoding='utf-8') as text_file:
+            text_file.write('Generator\n\n')
+            text_file.write(str(generator_stats))
+            text_file.write(str(self.netG))
+            text_file.write('\n\nDiscriminator\n\n')
+            text_file.write(str(discriminator_stats))
+            text_file.write(str(self.netD))
