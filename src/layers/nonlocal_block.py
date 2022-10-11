@@ -14,8 +14,10 @@ class NonLocalBlock(nn.Module):
         # By default, divides original channels by 8 and 2, similar to original biggan paper
         if block_channels_1 is None:
             block_channels_1 = int(channels/8)
+            block_channels_1 = 1 if block_channels_1 < 1 else block_channels_1
         if block_channels_2 is None:
             block_channels_2 = int(channels/2)
+            block_channels_2 = 1 if block_channels_2 < 1 else block_channels_2
 
         self.channels = channels
         self.block_channels_1 = block_channels_1
