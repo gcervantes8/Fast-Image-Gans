@@ -57,6 +57,7 @@ def train(config_file_path: str):
     # Set device
     n_gpus = int(config['MACHINE']['ngpu'])
     device = create_model.get_device(n_gpus)
+    logging.info('Running on: ' + str(device))
     running_on_cpu = str(device) == 'cpu'
 
     # Creates data-loader
@@ -145,13 +146,14 @@ def train(config_file_path: str):
             real_data, labels = batch
 
             # Normalization can't be done on bloat16 operators
-            if running_on_cpu:
+            is_bfloat16_dtype = running_on_cpu and is_mixed_precision
+            if is_bfloat16_dtype:
                 real_data = normalize(color_transform(real_data))
                 real_data = real_data.to(torch.bfloat16)
 
             real_data = real_data.to(device)  # Moving to GPU is a slow operation
             labels = labels.to(device)  # Moving to GPU is a slow operation
-            if not running_on_cpu:
+            if not is_bfloat16_dtype:
                 real_data = normalize(color_transform(real_data))
 
             data_time += time.time() - data_start_time
@@ -208,9 +210,10 @@ def train(config_file_path: str):
             data_start_time = time.time()
             if profiler:
                 profiler.step()
-
+    profiler.stop()
     logging.info('Training complete! Models and output saved in the output directory:')
     logging.info(run_dir)
+    return run_dir
 
 
 if __name__ == '__main__':

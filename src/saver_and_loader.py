@@ -23,6 +23,8 @@ def get_model_directory_names():
 
 def is_loadable_model(config):
     models_dir, model_name = _get_model_dir(config)
+    if not model_name:
+        return False
     model_dir_name, images_dir_name, profiler_dir_name = get_model_directory_names()
 
     run_dir = os.path.join(models_dir, model_name)

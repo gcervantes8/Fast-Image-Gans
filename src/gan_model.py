@@ -33,7 +33,8 @@ class GanModel:
         self.orthogonal_value = float(model_arch_config['orthogonal_value'])
         self.accumulation_iterations = int(train_config['accumulation_iterations'])
         self.mixed_precision = train_config.getboolean('mixed_precision')
-        self.grad_scaler = torch.cuda.amp.GradScaler(enabled=self.mixed_precision)
+        cpu_enabled = self.device.type == 'cpu'
+        self.grad_scaler = torch.cuda.amp.GradScaler(enabled=self.mixed_precision and not cpu_enabled)
         self.batch_iterations = 0
 
         self.criterion, self.fake_label, self.real_label = supported_loss_functions(train_config['loss_function'],
@@ -51,11 +52,18 @@ class GanModel:
         # Set EMA
         ema_enabled = model_arch_config.getboolean('generator_ema')
         ema_decay = model_arch_config['ema_decay']
-        self.ema = ExponentialMovingAverage(generator.parameters(), decay=float(ema_decay)) if ema_enabled else None
+        self.ema = ExponentialMovingAverage(generator.parameters(),
+                                            decay=float(ema_decay)).to(device) if ema_enabled else None
 
     def update_minimax(self, real_data, labels):
         b_size = real_data.size(0)
-        device_type, dtype = ('cpu', torch.bfloat16) if self.device.type == 'cpu' else ('cuda', torch.float16)
+        # device_type and dtype are only used in
+        device_type, dtype = self.device.type, None
+        if self.mixed_precision:
+            if self.device.type == 'cpu':
+                device_type, dtype = ('cpu', torch.bfloat16)
+            else:
+                device_type, dtype = ('cuda', torch.float16)
 
         with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
             real_label = torch.full((b_size,), self.real_label, dtype=real_data.dtype, device=self.device)
@@ -65,7 +73,7 @@ class GanModel:
                 discrim_on_real_error += self.apply_orthogonal_regularization(self.netD)
             discrim_on_real_error = discrim_on_real_error / self.accumulation_iterations
 
-        self.grad_scaler.scale(discrim_on_real_error).backward()
+            self.grad_scaler.scale(discrim_on_real_error).backward()
 
         with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
             # Train with all-fake batch
@@ -158,9 +166,11 @@ class GanModel:
 
         image_height, image_width = data_load.get_image_height_and_width(data_config)
         discriminator_stats = summary(self.netD, input_data=[torch.zeros((1, 3, image_height, image_width)),
-                                                             torch.zeros(1, dtype=torch.int64)], verbose=0)
+                                                             torch.zeros(1, dtype=torch.int64)], verbose=0,
+                                      device=self.device)
         generator_stats = summary(self.netG, input_data=[torch.zeros(1, self.latent_vector_size),
-                                                         torch.zeros(1, dtype=torch.int64)], verbose=0)
+                                                         torch.zeros(1, dtype=torch.int64)], verbose=0,
+                                  device=self.device)
 
         with open(os.path.join(save_dir, 'architecture.txt'), 'w', encoding='utf-8') as text_file:
             text_file.write('Generator\n\n')
