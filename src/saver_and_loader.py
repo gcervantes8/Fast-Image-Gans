@@ -28,7 +28,13 @@ def is_loadable_model(config):
     model_dir_name, images_dir_name, profiler_dir_name = get_model_directory_names()
 
     run_dir = os.path.join(models_dir, model_name)
-    will_restore_model = os.path.isdir(os.path.join(run_dir, model_dir_name))
+    path_to_models = os.path.join(run_dir, model_dir_name)
+    has_model_directory = os.path.isdir(path_to_models)
+    will_restore_model = False
+    if has_model_directory:
+        # If directory is not empty
+        if os.listdir(path_to_models):
+            will_restore_model = True
     return will_restore_model
 
 
@@ -37,8 +43,7 @@ def create_run_directories(config):
 
     model_dir_name, images_dir_name, profiler_dir_name = get_model_directory_names()
     if model_name:
-        run_dir = os.path.join(models_dir, model_name)
-        os.mkdir(run_dir)
+        run_dir = os_helper.create_dir(models_dir, model_name)
     else:
         run_dir, run_id = os_helper.create_run_dir(models_dir)
     img_dir = os_helper.create_dir(run_dir, images_dir_name)
