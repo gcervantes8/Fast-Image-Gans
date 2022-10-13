@@ -9,15 +9,9 @@ Purpose: This metric takes images and returns the inception score (IS)
 """
 import torch
 from ignite.engine import Engine
-import torchvision.transforms as transforms
 from ignite.metrics import InceptionScore, FID
-import PIL
 
-
-def _compute_is(default_evaluator, images, real_images):
-    state = default_evaluator.run([[images, real_images]])
-    is_score = state.metrics["is"]
-    return is_score
+from src.data_load import upscale_images
 
 
 def _create_default_engine():
@@ -25,82 +19,51 @@ def _create_default_engine():
     def eval_step(engine, batch):
         pred, true = batch
         return pred, true
+
     default_evaluator = Engine(eval_step)
     return default_evaluator
 
 
-def _compute_fid(default_evaluator, images_pred, images_true):
+class Metrics:
 
-    state = default_evaluator.run([[images_pred, images_true]])
-    fid_score = state.metrics["fid"]
-    return fid_score
+    def __init__(self, compute_is, compute_fid, device=None):
+        self.default_evaluator = _create_default_engine()
+        self.device = device
+        if device is None:
+            self.device = torch.device("cpu")
 
+        if compute_is:
+            is_metric = InceptionScore(device=device, output_transform=lambda x: x[0])
+            is_metric.attach(self.default_evaluator, "is")
+        if compute_fid:
+            fid_metric = FID(device=device)
+            fid_metric.attach(self.default_evaluator, "fid")
 
-# Resize images so width and height are both greater than min_size. Keep images the same if they already are bigger
-# Keeps aspect ratio
-def upscale_images(images, min_size: int):
-    if len(images.size()) != 4:
-        raise ValueError("Could not upscale images.  Images should be tensor of size (batch size, n_channels, w, h)")
-    height = images.size(dim=2)
-    width = images.size(dim=3)
+    def _compute_is(self, images, real_images):
+        state = self.default_evaluator.run([[images, real_images]])
+        is_score = state.metrics["is"]
+        return is_score
 
-    if width > min_size and height > min_size:
-        return images
+    def _compute_fid(self, generated_images, real_images):
+        state = self.default_evaluator.run([[generated_images, real_images]])
+        fid_score = state.metrics["fid"]
+        return fid_score
 
-    ratio_to_upscale = float(min_size / min(width, height))
+    # Images should be a tensor of size (batch size, n_channels, width, height) - n_channels is 3 for RGB
+    # Images will be upscaled if the width or height are not above 300.  This is required by the inception model
+    # Images should be scaled from 0 to 1, and they will be normalized to be from -1 to 1 for the inception model
+    def score_metrics(self, images, compute_is, compute_fid, real_images=None):
 
-    if width < height:
-        new_width = min_size
-        new_height = int(ratio_to_upscale * height)
-        # Safety check
-        new_height = new_height if new_height >= min_size else min_size
-    else:
-        new_width = int(ratio_to_upscale * width)
-        new_height = min_size
-        # Safety check
-        new_width = new_width if new_width >= min_size else min_size
+        images = upscale_images(images, 299).to(self.device)
+        real_images = upscale_images(real_images, 299).to(self.device)
 
-    return _antialias_resize(images, new_width, new_height)
+        # Converts from 0 to 1 values to -1 to 1 values
+        images = (images - 0.5) * 2
+        real_images = (real_images - 0.5) * 2
+        is_score, fid_score = None, None
 
-
-# As seen in https://pytorch-ignite.ai/blog/gan-evaluation-with-fid-and-is/#evaluation-metrics
-def _antialias_resize(batch, width, height):
-    arr = []
-    for img in batch:
-        pil_img = transforms.ToPILImage()(img)
-        resized_img = pil_img.resize((width, height), PIL.Image.BILINEAR)
-        arr.append(transforms.ToTensor()(resized_img))
-    return torch.stack(arr)
-
-
-def preprocess_images_for_metric(images, device):
-    images = upscale_images(images, 299)
-    images = images * 255
-    return images.to(device)
-
-
-# Images should be a tensor of size (batch size, n_channels, width, height) - n_channels is 3 for RGB
-# Images will be upscaled if the width or height are not above 300.  This is required by the inception model
-def score_metrics(images, compute_is, compute_fid, real_images=None, device=None):
-    if device is None:
-        device = torch.device("cpu")
-
-    images = preprocess_images_for_metric(images, device)
-    if real_images is not None:
-        real_images = preprocess_images_for_metric(real_images, device)
-    else:
-        compute_fid = False
-
-    is_score, fid_score = None, None
-    default_evaluator = _create_default_engine()
-    if compute_is:
-        is_metric = InceptionScore(device=device, output_transform=lambda x: x[0])
-        is_metric.attach(default_evaluator, "is")
-    if compute_fid:
-        fid_metric = FID(device=device)
-        fid_metric.attach(default_evaluator, "fid")
-    if compute_is:
-        is_score = _compute_is(default_evaluator, images, images)
-    if compute_fid:
-        fid_score = _compute_fid(default_evaluator, images, real_images)
-    return is_score, fid_score
+        if compute_is:
+            is_score = self._compute_is(images, real_images)
+        if compute_fid:
+            fid_score = self._compute_fid(images, real_images)
+        return is_score, fid_score

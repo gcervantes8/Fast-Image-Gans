@@ -88,12 +88,13 @@ def save_images(tensor, save_path, normalized=True):
 
 
 def load_model(gan_model, model_dir):
-    generator_path, _ = os_helper.get_step_model(model_dir, os_helper.ModelType.GENERATOR)
-    discrim_path, _ = os_helper.get_step_model(model_dir, os_helper.ModelType.DISCRIMINATOR)
+    generator_path, gen_step = os_helper.get_step_model(model_dir, os_helper.ModelType.GENERATOR)
+    discrim_path, discrim_step = os_helper.get_step_model(model_dir, os_helper.ModelType.DISCRIMINATOR)
     ema_path = None
     if gan_model.ema:
         ema_path, _ = os_helper.get_step_model(model_dir, os_helper.ModelType.EMA)
     gan_model.load(generator_path, discrim_path, ema_path)
+    return max(gen_step, discrim_step)
 
 
 # Creates the generator and loads the given values from the model file

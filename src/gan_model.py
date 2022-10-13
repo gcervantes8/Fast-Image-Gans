@@ -53,7 +53,7 @@ class GanModel:
         ema_enabled = model_arch_config.getboolean('generator_ema')
         ema_decay = model_arch_config['ema_decay']
         self.ema = ExponentialMovingAverage(generator.parameters(),
-                                            decay=float(ema_decay)).to(device) if ema_enabled else None
+                                            decay=float(ema_decay)) if ema_enabled else None
 
     def update_minimax(self, real_data, labels):
         b_size = real_data.size(0)
@@ -78,12 +78,11 @@ class GanModel:
         with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
             # Train with all-fake batch
             noise = torch.randn(b_size, self.latent_vector_size, device=self.device)
-            random_class_labels = torch.randint(low=0, high=self.num_classes, size=[b_size], device=self.device, dtype=torch.int64)
             # Generate fake image batch with G
-            fake = self.netG(noise, random_class_labels)
+            fake = self.netG(noise, labels)
             fake_label = torch.full((b_size,), self.fake_label, dtype=real_data.dtype, device=self.device)
             # Classify all fake batch with D
-            fake_output = self.netD(fake.detach(), random_class_labels)
+            fake_output = self.netD(fake.detach(), labels)
             # Calculate D's loss on the all-fake batch
             discrim_on_fake_error = self.criterion(fake_output, fake_label.reshape_as(fake_output))
             discrim_on_fake_error = discrim_on_fake_error / self.accumulation_iterations
@@ -93,7 +92,7 @@ class GanModel:
 
         with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
             self.netD.requires_grad_(requires_grad=False)
-            output_update = self.netD(fake, random_class_labels)
+            output_update = self.netD(fake, labels)
             self.netD.requires_grad_(requires_grad=True)
             generator_error = self.criterion(output_update, real_label)
             if not self.orthogonal_value == 0:

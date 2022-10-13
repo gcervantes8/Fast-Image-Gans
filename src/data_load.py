@@ -8,6 +8,7 @@ Purpose: Functions that are used to generate and transform image data
 """
 
 import torch
+import PIL
 import torchvision.datasets as torch_data_set
 import torchvision.transforms as transforms
 from src import os_helper
@@ -91,3 +92,40 @@ def create_data_loader(data_dir: str, image_height: int, image_width: int, dtype
 # Returns images of size: (batch_size, num_channels, height, width)
 def get_data_batch(data_loader, device):
     return next(iter(data_loader))[0].to(device)
+
+
+# Resize images so width and height are both greater than min_size. Keep images the same if they already are bigger
+# Keeps aspect ratio
+def upscale_images(images, min_size: int):
+    if len(images.size()) != 4:
+        raise ValueError("Could not upscale images.  Images should be tensor of size (batch size, n_channels, w, h)")
+    height = images.size(dim=2)
+    width = images.size(dim=3)
+
+    if width > min_size and height > min_size:
+        return images
+
+    ratio_to_upscale = float(min_size / min(width, height))
+
+    if width < height:
+        new_width = min_size
+        new_height = int(ratio_to_upscale * height)
+        # Safety check
+        new_height = new_height if new_height >= min_size else min_size
+    else:
+        new_width = int(ratio_to_upscale * width)
+        new_height = min_size
+        # Safety check
+        new_width = new_width if new_width >= min_size else min_size
+
+    return _antialias_resize(images, new_width, new_height)
+
+
+# As seen in https://pytorch-ignite.ai/blog/gan-evaluation-with-fid-and-is/#evaluation-metrics
+def _antialias_resize(batch, width, height):
+    arr = []
+    for img in batch:
+        pil_img = transforms.ToPILImage()(img)
+        resized_img = pil_img.resize((width, height), PIL.Image.BILINEAR)
+        arr.append(transforms.ToTensor()(resized_img))
+    return torch.stack(arr)

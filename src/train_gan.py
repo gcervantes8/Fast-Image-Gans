@@ -14,7 +14,7 @@ from src import saver_and_loader, create_model, os_helper
 from src.configs import ini_parser
 from src.data_load import data_loader_from_config, color_transform, normalize, get_data_batch, unnormalize, \
     create_latent_vector, get_num_classes
-from src.metrics import score_metrics
+from src.metrics import Metrics
 
 import argparse
 import shutil
@@ -78,18 +78,17 @@ def train(config_file_path: str):
     num_classes = get_num_classes(data_config)
     logging.info('Number of different image labels: ' + str(num_classes))
     real_images = get_data_batch(data_loader, device)
-
     model_arch_config = config['MODEL ARCHITECTURE']
 
     logging.info('Creating model...')
-    loaded_step_num = 0
 
     gan_model = create_model.create_gan_model(model_arch_config, data_config, train_config, device, n_gpus)
     gan_model.save_architecture(run_dir, data_config)
 
     logging.info('Created GAN model')
+    loaded_step_num = 0
     if will_restore_model:
-        saver_and_loader.load_model(gan_model, model_dir)
+        loaded_step_num = saver_and_loader.load_model(gan_model, model_dir)
         logging.info('Restored model from step ' + str(loaded_step_num))
 
     logging.info('Is GPU available? ' + str(torch.cuda.is_available()) + ' - Running on device:' + str(device))
@@ -98,18 +97,20 @@ def train(config_file_path: str):
     compute_is = metrics_config.getboolean('is_metric')
     compute_fid = metrics_config.getboolean('fid_metric')
 
+    metrics_scorer = None
     if compute_is or compute_fid:
         logging.info('Computing metrics for real images ...')
-        is_score, fid_score = score_metrics(get_data_batch(data_loader, device), compute_is, compute_fid,
-                                            real_images=real_images, device=device)
+        metrics_scorer = Metrics(compute_is, compute_fid, device=device)
+        is_score, fid_score = metrics_scorer.score_metrics(get_data_batch(data_loader, device), compute_is, compute_fid,
+                                                           real_images=real_images)
         if compute_is:
             logging.info('Inception Score for real images: %.2f' % round(is_score, 2))
         if compute_fid:
             logging.info('FID Score for real images: %.2f' % round(fid_score, 2))
 
     fixed_noise = create_latent_vector(data_config, model_arch_config, device)
-    fixed_labels = torch.randint(low=0, high=num_classes, size=[int(data_config['batch_size'])], device=device,
-                                 dtype=torch.int64)
+    fixed_labels = torch.arange(start=0, end=int(data_config['batch_size']), device=device,
+                                dtype=torch.int64) % num_classes
 
     n_epochs, log_steps = int(train_config['num_epochs']), int(train_config['log_steps'])
     save_steps = int(train_config['save_steps'])
@@ -197,16 +198,18 @@ def train(config_file_path: str):
                 logging.info('Time to save images and model: %.2fs ' % (time.time() - save_start_time))
 
             if n_steps % eval_steps == 0:
-                if compute_is or compute_fid:
+                if metrics_scorer:
+                    metric_start_time = time.time()
                     logging.info('Computing metrics for the saved images ...')
                     fake_images = gan_model.generate_images(fixed_noise, fixed_labels)
-                    is_score, fid_score = score_metrics(unnormalize(fake_images), compute_is, compute_fid,
-                                                        real_images=real_images, device=device)
+                    is_score, fid_score = metrics_scorer.score_metrics(unnormalize(fake_images), compute_is,
+                                                                       compute_fid, real_images=real_images)
                     del fake_images
                     if compute_is:
                         logging.info('Inception Score: %.2f' % round(is_score, 2))
                     if compute_fid:
                         logging.info('FID Score: %.2f' % round(fid_score, 2))
+                    logging.info('Time to compute metrics: %.2fs ' % (time.time() - metric_start_time))
             data_start_time = time.time()
             if profiler:
                 profiler.step()
