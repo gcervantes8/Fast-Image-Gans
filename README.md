@@ -18,7 +18,7 @@ python3 -m src.train_gan configs/dcgan_128_96.ini
 ```
 
 ## Models supported
-### 1. [Biggan model](https://arxiv.org/pdf/1809.11096.pdf) and [Deep Biggan model](https://arxiv.org/pdf/1809.11096.pdf)
+### [Biggan model](https://arxiv.org/pdf/1809.11096.pdf) and [Deep Biggan model](https://arxiv.org/pdf/1809.11096.pdf)
 
 **configs/biggan_128_96.ini**
 
@@ -29,7 +29,7 @@ python3 -m src.train_gan configs/dcgan_128_96.ini
 - Batch size 32 - For best results, run with 2048, but this requires a lot of GPU VRAM
 - ngf, ndf 32 - Change to 128 to improve, but the model will take much more VRAM and train slower
 
-### 3. DCGAN
+### DCGAN
 Configuration: **configs/dcgan_128_96.ini**
 - 4:3 Aspect ratio
 - Images of size 128x96
@@ -47,11 +47,9 @@ Configuration: **configs/dcgan_128_96.ini**
 - Base height - height of aspect ratio
 - Upsample Layers - Used to get image height and width, adding 1 to upsample layers doubles the width and height.
 
+$image Width = base Width * 2 ^ {upsample Layers}$
 
-```math
-image width = base_width * 2 ^ upsample Layers
-image height = base_width * 2 ^ upsample Layers
-```
+$image Height = base Height * 2 ^ {upsample Layers}$
 
 #### Machine-specific parameters
 - Number of GPUs
