@@ -183,6 +183,8 @@ def train(config_file_path: str):
                     'Data retrieve time: %.2fs Model updating time: %.2fs' % (data_time, model_time))
 
                 data_time, model_time = 0, 0
+                total_g_error, total_d_error = 0.0, 0.0
+                g_steps, d_steps = 0, 0
                 train_seq_start_time = time.time()
 
             # Save every save_steps or every epoch if save_steps is None
