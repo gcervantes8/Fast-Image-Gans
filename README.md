@@ -3,60 +3,61 @@ With this project, you can train a Generative Adversarial Network.  While this i
 
 ## Requirements
 - Python 3.6
-- Numpy
-- [Pytorch](https://github.com/pytorch/pytorch)
-- [Torch-Summary](https://pypi.org/project/torch-summary/) Tested with version 1.4.5
+- [Pytorch](https://pytorch.org/)
 - [Pytorch-ignite](https://pytorch.org/ignite/index.html)
+- [torchvision](https://pypi.org/project/torchvision/)
+- [torchinfo](https://github.com/TylerYep/torchinfo)
+- [torch-ema](https://github.com/fadel/pytorch_ema)
 - [SciPy](https://scipy.org/install/)
+
 ## Running
 
-Train models using **/src/train_gan.py**
-
-and by modifying the configuration file
-
-From the parent folder, run
+From the parent folder, you can run this command to run with the DCGAN model
 ```
-python3 -m src.train_gan
+python3 -m src.train_gan configs/dcgan_128_96.ini
 ```
 
-Or
+## Models supported
+### 1. [Biggan model](https://arxiv.org/pdf/1809.11096.pdf) and [Deep Biggan model](https://arxiv.org/pdf/1809.11096.pdf)
 
-You could run the bash script **train_gan.sh** to start training
-```
-bash train_gan.sh
-```
+**configs/biggan_128_96.ini**
+
+**configs/deep_biggan_128_96.ini**
+
+- 4:3 Aspect ratio
+- Images of size 128x96
+- Batch size 32 - For best results, run with 2048, but this requires a lot of GPU VRAM
+- ngf, ndf 32 - Change to 128 to improve, but the model will take much more VRAM and train slower
+
+### 3. DCGAN
+Configuration: **configs/dcgan_128_96.ini**
+- 4:3 Aspect ratio
+- Images of size 128x96
 
 ## Configuration File
 
-Configuration parameters: **/model_config.ini**
 
 #### Loading and saving
-- Model name - Name that the model will be saved as.  If there's an existing model, it will try to restore the model instead
-- Model directory - Directory where the models are saved
+- Model name - Name of the model to train or inference from.  Model can be found in the model directory.
+- Model directory - Directory where the models are saved - defaults to **/models**
 
 #### Data
-- Train Directory - Images to train the model with
-- Image width - images will be resized to have this width
-- Image height - images will be resized to have this height
-- Number of channels - For black and white images, this should be 1.  For color images this should be 3
-- Batch Size - Amount of images in a batch, used in training, and image saving 
-- Number of workers - Used for data loading, see [this](https://discuss.pytorch.org/t/guidelines-for-assigning-num-workers-to-dataloader/813) for more info
-#### Machine-specific parameters
+- Train Directory - Images to train the model with.  Example data directory can be found in **data/coil-100**
+- Base width - width of aspect ratio
+- Base height - height of aspect ratio
+- Upsample Layers - Used to get image height and width, adding 1 to upsample layers doubles the width and height.
 
+
+```math
+image width = base_width * 2 ^ upsample Layers
+image height = base_width * 2 ^ upsample Layers
+```
+
+#### Machine-specific parameters
 - Number of GPUs
 
-#### Train Hyper-parameters
-
-- Number of epochs
-- Learning rate
-- Optimizer parameters
-
 #### Model Architecture
-- Latent vector size (Given to the generator)
-- Size of feature maps in the generator and discriminator
-#### Metrics - (RAM Intensive)
-- Inception Score - Computes inception score every epoch.
-- FID Score - Computes FID every epoch using the generated and train data
+- Type of model, possible options are [_deep-biggan_, _biggan_, _dcgan_].  Default parameters for these models will automatically be loaded.  Default configurations for each model can be found in the models directory _src/models/[model_type]/defaults.ini_
 
 ## Images Generated
 
