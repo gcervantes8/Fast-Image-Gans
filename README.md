@@ -12,50 +12,63 @@ With this project, you can train a Generative Adversarial Network.  While this i
 
 ## Running
 
-From the parent folder, you can run this command to run with the DCGAN model
+From the parent folder, you can run this command to start training a DCGAN model
 ```
 python3 -m src.train_gan configs/dcgan_128_96.ini
 ```
 
 ## Models supported
-### [Biggan model](https://arxiv.org/pdf/1809.11096.pdf) and [Deep Biggan model](https://arxiv.org/pdf/1809.11096.pdf)
 
-**configs/biggan_128_96.ini**
 
-**configs/deep_biggan_128_96.ini**
+| Model       | Default Configuration File       |
+|-------------|----------------------------------|
+| DCGAN       | _configs/dcgan_128_96.ini_       |
+| Biggan      | _configs/biggan_128_96.ini_      |
+| Deep Biggan | _configs/deep_biggan_128_96.ini_ |
 
-- 4:3 Aspect ratio
-- Images of size 128x96
-- Batch size 32 - For best results, run with 2048, but this requires a lot of GPU VRAM
-- ngf, ndf 32 - Change to 128 to improve, but the model will take much more VRAM and train slower
-
-### DCGAN
-Configuration: **configs/dcgan_128_96.ini**
-- 4:3 Aspect ratio
-- Images of size 128x96
+The default model configuration files generate images to be _128x96_ and are small version of the models that still
+achieve good results with less GPU power as long as you limit the amount of games/classes.
 
 ## Configuration File
 
 
 #### Loading and saving
-- Model name - Name of the model to train or inference from.  Model can be found in the model directory.
-- Model directory - Directory where the models are saved - defaults to **/models**
+
+
+| Name            | Descriptions                                                   |
+|-----------------|----------------------------------------------------------------|
+| Model name      | Name of the model to train or inference from                   |
+| Model directory | Directory where the models are saved - defaults to **/models** |
 
 #### Data
-- Train Directory - Images to train the model with.  Example data directory can be found in **data/coil-100**
-- Base width - width of aspect ratio
-- Base height - height of aspect ratio
-- Upsample Layers - Used to get image height and width, adding 1 to upsample layers doubles the width and height.
 
+| Name            | Descriptions                                                                                  |
+|-----------------|-----------------------------------------------------------------------------------------------|
+| Train Directory | Images to train the model with.  Example data directory can be found in **data/coil-100**     |
+| Base width      | width of aspect ratio                                                                         |
+| Base height     | height of aspect ratio                                                                        |
+| Upsample Layers | Used to get image height and width, adding 1 to upsample layers doubles the width and height. |
+
+```
 $image Width = base Width * 2 ^ {upsample Layers}$
 
 $image Height = base Height * 2 ^ {upsample Layers}$
+```
 
 #### Machine-specific parameters
-- Number of GPUs
+
+| Name            | Descriptions                                 |
+|-----------------|----------------------------------------------|
+| GPU count       | amount of GPUs to use, use 0 to use CPU only |
+
+
 
 #### Model Architecture
-- Type of model, possible options are [_deep-biggan_, _biggan_, _dcgan_].  Default parameters for these models will automatically be loaded.  Default configurations for each model can be found in the models directory _src/models/[model_type]/defaults.ini_
+| Name          | Descriptions                                                                                                                                                                                                                                                    |
+|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Type of model | possible options are [_deep-biggan_, _biggan_, _dcgan_].  Default parameters for these models will automatically be loaded if not specified.  Default configurations for each model can be found in the models directory _src/models/[model_type]/defaults.ini_ |
+
+
 
 ## Images Generated
 
