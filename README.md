@@ -1,8 +1,9 @@
 # Game Image Generation
-With this project, you can train a Generative Adversarial Network.  While this is a general image GAN framework, this repository focuses on generating fake game images.
+With this project, you can train a Generative Adversarial Network.  While you can train with any time of image, 
+this repository focuses on generating images from games.
 
 ## Requirements
-- Python 3.6
+- Python 3.6+
 - [Pytorch](https://pytorch.org/)
 - [Pytorch-ignite](https://pytorch.org/ignite/index.html)
 - [torchvision](https://pypi.org/project/torchvision/)
@@ -49,11 +50,11 @@ achieve good results with less GPU power as long as you limit the amount of game
 | Base height     | height of aspect ratio                                                                        |
 | Upsample Layers | Used to get image height and width, adding 1 to upsample layers doubles the width and height. |
 
-```
+
 $image Width = base Width * 2 ^ {upsample Layers}$
 
 $image Height = base Height * 2 ^ {upsample Layers}$
-```
+
 
 #### Machine-specific parameters
 
