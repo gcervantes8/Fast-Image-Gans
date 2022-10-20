@@ -107,8 +107,8 @@ class GanModel:
             self.grad_scaler.update()
             if self.ema:
                 self.ema.update()
-            self.netD.zero_grad()
-            self.netG.zero_grad()
+            self.netD.zero_grad(set_to_none=True)
+            self.netG.zero_grad(set_to_none=True)
 
         return (total_discrim_error * self.accumulation_iterations).item(), \
                (generator_error * self.accumulation_iterations).item()
