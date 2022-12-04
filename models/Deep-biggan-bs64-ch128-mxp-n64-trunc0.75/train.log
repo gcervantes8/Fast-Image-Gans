@@ -1,0 +1,1584 @@
+INFO:root:Directory models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75 created, training output will be saved here
+INFO:root:Copied config file!
+INFO:root:Running on: cuda
+INFO:root:Data size is 196111 images
+INFO:root:Number of different image labels: 23
+INFO:root:Creating model...
+INFO:root:Created GAN model
+INFO:root:Is GPU available? True - Running on device:cuda
+INFO:root:Starting Training Loop...
+INFO:root:[0/1000][100/3065]	Loss_D: 2.1326	Loss_G: 1.4536	Time: 105.41s
+INFO:root:Data retrieve time: 31.31s Model updating time: 74.11s
+INFO:root:[0/1000][200/3065]	Loss_D: 2.0244	Loss_G: 1.1576	Time: 69.43s
+INFO:root:Data retrieve time: 0.37s Model updating time: 69.06s
+INFO:root:[0/1000][300/3065]	Loss_D: 1.9510	Loss_G: 1.2337	Time: 69.39s
+INFO:root:Data retrieve time: 0.38s Model updating time: 69.01s
+INFO:root:Directory models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75 created, training output will be saved here
+INFO:root:Copied config file!
+INFO:root:Running on: cuda
+INFO:root:Data size is 196111 images
+INFO:root:Number of different image labels: 23
+INFO:root:Creating model...
+INFO:root:Created GAN model
+INFO:root:Is GPU available? True - Running on device:cuda
+INFO:root:Starting Training Loop...
+INFO:root:[0/1000][100/2043]	Loss_D: 2.1450	Loss_G: 1.5314	Time: 132.98s
+INFO:root:Data retrieve time: 29.76s Model updating time: 103.22s
+INFO:root:[0/1000][200/2043]	Loss_D: 1.9126	Loss_G: 1.2254	Time: 98.88s
+INFO:root:Data retrieve time: 0.46s Model updating time: 98.42s
+INFO:root:[0/1000][300/2043]	Loss_D: 1.8866	Loss_G: 1.2852	Time: 98.82s
+INFO:root:Data retrieve time: 0.46s Model updating time: 98.37s
+INFO:root:Directory models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75 created, training output will be saved here
+INFO:root:Copied config file!
+INFO:root:Running on: cuda
+INFO:root:Data size is 196111 images
+INFO:root:Number of different image labels: 23
+INFO:root:Creating model...
+INFO:root:Created GAN model
+INFO:root:Is GPU available? True - Running on device:cuda
+INFO:root:Starting Training Loop...
+INFO:root:[0/1000][100/2043]	Loss_D: 2.1437	Loss_G: 1.3814	Time: 132.62s
+INFO:root:Data retrieve time: 29.87s Model updating time: 102.76s
+INFO:root:[0/1000][200/2043]	Loss_D: 1.9031	Loss_G: 1.3081	Time: 98.69s
+INFO:root:Data retrieve time: 0.46s Model updating time: 98.23s
+INFO:root:[0/1000][300/2043]	Loss_D: 1.8592	Loss_G: 1.2775	Time: 98.76s
+INFO:root:Data retrieve time: 0.46s Model updating time: 98.29s
+INFO:root:Directory models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75 created, training output will be saved here
+INFO:root:Copied config file!
+INFO:root:Running on: cuda
+INFO:root:Data size is 194460 images
+INFO:root:Number of different image labels: 20
+INFO:root:Creating model...
+INFO:root:Created GAN model
+INFO:root:Is GPU available? True - Running on device:cuda
+INFO:root:Starting Training Loop...
+INFO:root:[0/1000][100/3039]	Loss_D: 2.1468	Loss_G: 1.4467	Time: 108.71s
+INFO:root:Data retrieve time: 32.07s Model updating time: 76.64s
+INFO:root:[0/1000][200/3039]	Loss_D: 1.9709	Loss_G: 1.1881	Time: 71.44s
+INFO:root:Data retrieve time: 0.41s Model updating time: 71.03s
+INFO:root:[0/1000][300/3039]	Loss_D: 1.9388	Loss_G: 1.2048	Time: 71.74s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.33s
+INFO:root:[0/1000][400/3039]	Loss_D: 1.9012	Loss_G: 1.2435	Time: 68.62s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.24s
+INFO:root:[0/1000][500/3039]	Loss_D: 1.8528	Loss_G: 1.2730	Time: 69.39s
+INFO:root:Data retrieve time: 0.38s Model updating time: 69.00s
+INFO:root:[0/1000][600/3039]	Loss_D: 1.8099	Loss_G: 1.3190	Time: 68.22s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.86s
+INFO:root:[0/1000][700/3039]	Loss_D: 1.8260	Loss_G: 1.2877	Time: 68.32s
+INFO:root:Data retrieve time: 0.39s Model updating time: 67.93s
+INFO:root:[0/1000][800/3039]	Loss_D: 1.8115	Loss_G: 1.3461	Time: 72.86s
+INFO:root:Data retrieve time: 0.41s Model updating time: 72.45s
+INFO:root:[0/1000][900/3039]	Loss_D: 1.8077	Loss_G: 1.3113	Time: 71.93s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.53s
+INFO:root:[0/1000][1000/3039]	Loss_D: 1.7478	Loss_G: 1.3755	Time: 72.00s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.60s
+INFO:root:[0/1000][1100/3039]	Loss_D: 1.7672	Loss_G: 1.2803	Time: 71.94s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.53s
+INFO:root:[0/1000][1200/3039]	Loss_D: 1.7750	Loss_G: 1.3451	Time: 71.85s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.45s
+INFO:root:[0/1000][1300/3039]	Loss_D: 1.8247	Loss_G: 1.2323	Time: 71.80s
+INFO:root:Data retrieve time: 0.39s Model updating time: 71.41s
+INFO:root:[0/1000][1400/3039]	Loss_D: 1.7418	Loss_G: 1.2901	Time: 70.69s
+INFO:root:Data retrieve time: 0.38s Model updating time: 70.31s
+INFO:root:[0/1000][1500/3039]	Loss_D: 1.7410	Loss_G: 1.3014	Time: 70.23s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.84s
+INFO:root:[0/1000][1600/3039]	Loss_D: 1.6916	Loss_G: 1.3609	Time: 71.45s
+INFO:root:Data retrieve time: 0.41s Model updating time: 71.05s
+INFO:root:[0/1000][1700/3039]	Loss_D: 1.6714	Loss_G: 1.3619	Time: 72.92s
+INFO:root:Data retrieve time: 0.41s Model updating time: 72.50s
+INFO:root:[0/1000][1800/3039]	Loss_D: 1.6844	Loss_G: 1.3567	Time: 70.36s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.97s
+INFO:root:[0/1000][1900/3039]	Loss_D: 1.6291	Loss_G: 1.4220	Time: 72.26s
+INFO:root:Data retrieve time: 0.39s Model updating time: 71.86s
+INFO:root:[0/1000][2000/3039]	Loss_D: 1.6286	Loss_G: 1.4207	Time: 73.08s
+INFO:root:Data retrieve time: 0.41s Model updating time: 72.67s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_2000.png
+INFO:root:Time to save images and model: 1.40s 
+INFO:root:[0/1000][2100/3039]	Loss_D: 1.6358	Loss_G: 1.4238	Time: 74.43s
+INFO:root:Data retrieve time: 0.40s Model updating time: 72.64s
+INFO:root:[0/1000][2200/3039]	Loss_D: 1.6359	Loss_G: 1.3951	Time: 73.11s
+INFO:root:Data retrieve time: 0.42s Model updating time: 72.69s
+INFO:root:[0/1000][2300/3039]	Loss_D: 1.6209	Loss_G: 1.4526	Time: 73.09s
+INFO:root:Data retrieve time: 0.39s Model updating time: 72.69s
+INFO:root:[0/1000][2400/3039]	Loss_D: 1.5841	Loss_G: 1.4415	Time: 73.23s
+INFO:root:Data retrieve time: 0.41s Model updating time: 72.82s
+INFO:root:[0/1000][2500/3039]	Loss_D: 1.5896	Loss_G: 1.4254	Time: 73.18s
+INFO:root:Data retrieve time: 0.41s Model updating time: 72.76s
+INFO:root:[0/1000][2600/3039]	Loss_D: 1.5926	Loss_G: 1.4594	Time: 73.02s
+INFO:root:Data retrieve time: 0.41s Model updating time: 72.61s
+INFO:root:[0/1000][2700/3039]	Loss_D: 1.5892	Loss_G: 1.4858	Time: 73.01s
+INFO:root:Data retrieve time: 0.42s Model updating time: 72.59s
+INFO:root:[0/1000][2800/3039]	Loss_D: 1.5797	Loss_G: 1.4399	Time: 73.16s
+INFO:root:Data retrieve time: 0.41s Model updating time: 72.74s
+INFO:root:[0/1000][2900/3039]	Loss_D: 1.5582	Loss_G: 1.4860	Time: 73.15s
+INFO:root:Data retrieve time: 0.41s Model updating time: 72.74s
+INFO:root:[0/1000][3000/3039]	Loss_D: 1.5298	Loss_G: 1.4928	Time: 73.00s
+INFO:root:Data retrieve time: 0.42s Model updating time: 72.59s
+INFO:root:[1/1000][61/3039]	Loss_D: 1.5348	Loss_G: 1.4924	Time: 83.91s
+INFO:root:Data retrieve time: 11.19s Model updating time: 72.72s
+INFO:root:[1/1000][161/3039]	Loss_D: 1.5197	Loss_G: 1.5076	Time: 73.08s
+INFO:root:Data retrieve time: 0.40s Model updating time: 72.67s
+INFO:root:[1/1000][261/3039]	Loss_D: 1.5678	Loss_G: 1.5020	Time: 73.45s
+INFO:root:Data retrieve time: 0.41s Model updating time: 73.05s
+INFO:root:[1/1000][361/3039]	Loss_D: 1.4993	Loss_G: 1.5365	Time: 73.32s
+INFO:root:Data retrieve time: 0.42s Model updating time: 72.89s
+INFO:root:[1/1000][461/3039]	Loss_D: 1.4879	Loss_G: 1.5283	Time: 73.03s
+INFO:root:Data retrieve time: 0.41s Model updating time: 72.62s
+INFO:root:[1/1000][561/3039]	Loss_D: 1.4581	Loss_G: 1.5623	Time: 73.09s
+INFO:root:Data retrieve time: 0.40s Model updating time: 72.69s
+INFO:root:[1/1000][661/3039]	Loss_D: 1.4333	Loss_G: 1.5983	Time: 73.10s
+INFO:root:Data retrieve time: 0.40s Model updating time: 72.69s
+INFO:root:[1/1000][761/3039]	Loss_D: 1.4629	Loss_G: 1.5593	Time: 72.57s
+INFO:root:Data retrieve time: 0.42s Model updating time: 72.15s
+INFO:root:[1/1000][861/3039]	Loss_D: 1.4097	Loss_G: 1.5895	Time: 73.42s
+INFO:root:Data retrieve time: 0.41s Model updating time: 73.01s
+INFO:root:[1/1000][961/3039]	Loss_D: 1.4092	Loss_G: 1.6141	Time: 68.92s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.53s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_4000.png
+INFO:root:Time to save images and model: 1.36s 
+INFO:root:[1/1000][1061/3039]	Loss_D: 1.3840	Loss_G: 1.6278	Time: 71.36s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.62s
+INFO:root:[1/1000][1161/3039]	Loss_D: 1.4678	Loss_G: 1.6173	Time: 70.97s
+INFO:root:Data retrieve time: 0.41s Model updating time: 70.56s
+INFO:root:[1/1000][1261/3039]	Loss_D: 1.3537	Loss_G: 1.6613	Time: 69.71s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.32s
+INFO:root:[1/1000][1361/3039]	Loss_D: 1.3654	Loss_G: 1.6806	Time: 72.02s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.61s
+INFO:root:[1/1000][1461/3039]	Loss_D: 1.3130	Loss_G: 1.7118	Time: 72.00s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.61s
+INFO:root:[1/1000][1561/3039]	Loss_D: 1.2754	Loss_G: 1.7332	Time: 71.88s
+INFO:root:Data retrieve time: 0.41s Model updating time: 71.47s
+INFO:root:[1/1000][1661/3039]	Loss_D: 1.2819	Loss_G: 1.7638	Time: 69.20s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.81s
+INFO:root:[1/1000][1761/3039]	Loss_D: 1.2867	Loss_G: 1.7270	Time: 69.98s
+INFO:root:Data retrieve time: 0.38s Model updating time: 69.59s
+INFO:root:[1/1000][1861/3039]	Loss_D: 1.2735	Loss_G: 1.7615	Time: 70.88s
+INFO:root:Data retrieve time: 0.39s Model updating time: 70.49s
+INFO:root:[1/1000][1961/3039]	Loss_D: 1.1825	Loss_G: 1.8138	Time: 70.64s
+INFO:root:Data retrieve time: 0.39s Model updating time: 70.25s
+INFO:root:[1/1000][2061/3039]	Loss_D: 1.2386	Loss_G: 1.7859	Time: 70.03s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.64s
+INFO:root:[1/1000][2161/3039]	Loss_D: 1.2628	Loss_G: 1.7676	Time: 69.51s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.12s
+INFO:root:[1/1000][2261/3039]	Loss_D: 1.2389	Loss_G: 1.7952	Time: 70.36s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.96s
+INFO:root:[1/1000][2361/3039]	Loss_D: 1.2581	Loss_G: 1.7751	Time: 69.25s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.86s
+INFO:root:[1/1000][2461/3039]	Loss_D: 1.1765	Loss_G: 1.8260	Time: 69.35s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.96s
+INFO:root:[1/1000][2561/3039]	Loss_D: 1.2129	Loss_G: 1.7899	Time: 70.38s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.98s
+INFO:root:[1/1000][2661/3039]	Loss_D: 1.2149	Loss_G: 1.7925	Time: 70.49s
+INFO:root:Data retrieve time: 0.39s Model updating time: 70.10s
+INFO:root:[1/1000][2761/3039]	Loss_D: 1.2216	Loss_G: 1.7903	Time: 69.14s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.76s
+INFO:root:[1/1000][2861/3039]	Loss_D: 1.2105	Loss_G: 1.8026	Time: 69.69s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.30s
+INFO:root:[1/1000][2961/3039]	Loss_D: 1.2037	Loss_G: 1.7968	Time: 69.70s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.31s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_6000.png
+INFO:root:Time to save images and model: 1.33s 
+INFO:root:[2/1000][22/3039]	Loss_D: 1.2128	Loss_G: 1.8023	Time: 81.16s
+INFO:root:Data retrieve time: 10.98s Model updating time: 68.86s
+INFO:root:[2/1000][122/3039]	Loss_D: 1.1966	Loss_G: 1.8206	Time: 69.32s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.93s
+INFO:root:[2/1000][222/3039]	Loss_D: 1.1428	Loss_G: 1.8492	Time: 69.12s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.73s
+INFO:root:[2/1000][322/3039]	Loss_D: 1.1647	Loss_G: 1.8474	Time: 68.01s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.65s
+INFO:root:[2/1000][422/3039]	Loss_D: 1.1514	Loss_G: 1.8375	Time: 67.95s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.58s
+INFO:root:[2/1000][522/3039]	Loss_D: 1.1326	Loss_G: 1.8798	Time: 68.01s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.63s
+INFO:root:[2/1000][622/3039]	Loss_D: 1.1590	Loss_G: 1.8684	Time: 68.31s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.94s
+INFO:root:[2/1000][722/3039]	Loss_D: 1.1323	Loss_G: 1.8753	Time: 68.14s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.77s
+INFO:root:[2/1000][822/3039]	Loss_D: 1.1371	Loss_G: 1.8650	Time: 68.05s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.66s
+INFO:root:[2/1000][922/3039]	Loss_D: 1.1347	Loss_G: 1.8707	Time: 68.17s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.78s
+INFO:root:[2/1000][1022/3039]	Loss_D: 1.0866	Loss_G: 1.8743	Time: 68.01s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.65s
+INFO:root:[2/1000][1122/3039]	Loss_D: 1.0812	Loss_G: 1.9210	Time: 68.81s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.43s
+INFO:root:[2/1000][1222/3039]	Loss_D: 1.0964	Loss_G: 1.8832	Time: 69.10s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.71s
+INFO:root:[2/1000][1322/3039]	Loss_D: 1.1256	Loss_G: 1.8842	Time: 69.95s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.55s
+INFO:root:[2/1000][1422/3039]	Loss_D: 1.0926	Loss_G: 1.8936	Time: 69.00s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.62s
+INFO:root:[2/1000][1522/3039]	Loss_D: 1.0997	Loss_G: 1.9061	Time: 67.90s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.53s
+INFO:root:[2/1000][1622/3039]	Loss_D: 1.0760	Loss_G: 1.9129	Time: 67.90s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.53s
+INFO:root:[2/1000][1722/3039]	Loss_D: 1.0642	Loss_G: 1.9392	Time: 68.01s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.63s
+INFO:root:[2/1000][1822/3039]	Loss_D: 1.0383	Loss_G: 1.9505	Time: 68.00s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.63s
+INFO:root:[2/1000][1922/3039]	Loss_D: 1.0745	Loss_G: 1.9299	Time: 67.90s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.53s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_8000.png
+INFO:root:Time to save images and model: 1.30s 
+INFO:root:[2/1000][2022/3039]	Loss_D: 1.0431	Loss_G: 1.9410	Time: 69.20s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.53s
+INFO:root:[2/1000][2122/3039]	Loss_D: 1.0399	Loss_G: 1.9623	Time: 67.93s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.57s
+INFO:root:[2/1000][2222/3039]	Loss_D: 1.0324	Loss_G: 1.9601	Time: 67.91s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.53s
+INFO:root:[2/1000][2322/3039]	Loss_D: 1.0358	Loss_G: 1.9583	Time: 67.95s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.58s
+INFO:root:[2/1000][2422/3039]	Loss_D: 1.0202	Loss_G: 1.9653	Time: 67.93s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.56s
+INFO:root:[2/1000][2522/3039]	Loss_D: 1.0176	Loss_G: 1.9842	Time: 67.91s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.54s
+INFO:root:[2/1000][2622/3039]	Loss_D: 1.0133	Loss_G: 1.9637	Time: 67.91s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.54s
+INFO:root:[2/1000][2722/3039]	Loss_D: 1.0272	Loss_G: 1.9669	Time: 67.88s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.51s
+INFO:root:[2/1000][2822/3039]	Loss_D: 1.0462	Loss_G: 1.9654	Time: 67.94s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.56s
+INFO:root:[2/1000][2922/3039]	Loss_D: 1.0532	Loss_G: 1.9468	Time: 67.96s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.59s
+INFO:root:[2/1000][3022/3039]	Loss_D: 1.0272	Loss_G: 1.9738	Time: 67.89s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.51s
+INFO:root:[3/1000][83/3039]	Loss_D: 1.0027	Loss_G: 1.9895	Time: 78.04s
+INFO:root:Data retrieve time: 10.60s Model updating time: 67.43s
+INFO:root:[3/1000][183/3039]	Loss_D: 1.0173	Loss_G: 1.9863	Time: 67.91s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.53s
+INFO:root:[3/1000][283/3039]	Loss_D: 1.0225	Loss_G: 1.9817	Time: 67.90s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.53s
+INFO:root:[3/1000][383/3039]	Loss_D: 1.0245	Loss_G: 1.9825	Time: 67.94s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.57s
+INFO:root:[3/1000][483/3039]	Loss_D: 0.9899	Loss_G: 2.0137	Time: 67.94s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.56s
+INFO:root:[3/1000][583/3039]	Loss_D: 1.0000	Loss_G: 1.9912	Time: 67.94s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.57s
+INFO:root:[3/1000][683/3039]	Loss_D: 0.9977	Loss_G: 2.0110	Time: 67.93s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.55s
+INFO:root:[3/1000][783/3039]	Loss_D: 0.9755	Loss_G: 2.0167	Time: 67.95s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.58s
+INFO:root:[3/1000][883/3039]	Loss_D: 0.9772	Loss_G: 2.0430	Time: 68.03s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.66s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_10000.png
+INFO:root:Time to save images and model: 2.32s 
+INFO:root:[3/1000][983/3039]	Loss_D: 0.9511	Loss_G: 2.0339	Time: 70.44s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.73s
+INFO:root:[3/1000][1083/3039]	Loss_D: 0.9768	Loss_G: 2.0477	Time: 68.05s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.67s
+INFO:root:[3/1000][1183/3039]	Loss_D: 1.0085	Loss_G: 2.0226	Time: 67.82s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.45s
+INFO:root:[3/1000][1283/3039]	Loss_D: 0.9407	Loss_G: 2.0379	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[3/1000][1383/3039]	Loss_D: 0.9749	Loss_G: 2.0185	Time: 67.85s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.48s
+INFO:root:[3/1000][1483/3039]	Loss_D: 0.9936	Loss_G: 2.0062	Time: 67.85s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.48s
+INFO:root:[3/1000][1583/3039]	Loss_D: 0.9942	Loss_G: 2.0271	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[3/1000][1683/3039]	Loss_D: 0.9425	Loss_G: 2.0570	Time: 67.88s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.50s
+INFO:root:[3/1000][1783/3039]	Loss_D: 0.9721	Loss_G: 2.0481	Time: 67.79s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.41s
+INFO:root:[3/1000][1883/3039]	Loss_D: 0.9498	Loss_G: 2.0558	Time: 67.84s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.47s
+INFO:root:[3/1000][1983/3039]	Loss_D: 0.9721	Loss_G: 2.0477	Time: 67.83s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.46s
+INFO:root:[3/1000][2083/3039]	Loss_D: 0.9597	Loss_G: 2.0565	Time: 67.86s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.49s
+INFO:root:[3/1000][2183/3039]	Loss_D: 0.9689	Loss_G: 2.0395	Time: 67.90s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.53s
+INFO:root:[3/1000][2283/3039]	Loss_D: 0.9261	Loss_G: 2.0926	Time: 67.90s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.52s
+INFO:root:[3/1000][2383/3039]	Loss_D: 0.9275	Loss_G: 2.0810	Time: 67.83s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.47s
+INFO:root:[3/1000][2483/3039]	Loss_D: 0.8947	Loss_G: 2.1043	Time: 67.85s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.47s
+INFO:root:[3/1000][2583/3039]	Loss_D: 0.8835	Loss_G: 2.1175	Time: 67.87s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.50s
+INFO:root:[3/1000][2683/3039]	Loss_D: 0.9011	Loss_G: 2.1142	Time: 67.86s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.49s
+INFO:root:[3/1000][2783/3039]	Loss_D: 0.8968	Loss_G: 2.0954	Time: 67.89s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.53s
+INFO:root:[3/1000][2883/3039]	Loss_D: 0.8764	Loss_G: 2.1178	Time: 67.90s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.52s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_12000.png
+INFO:root:Time to save images and model: 1.30s 
+INFO:root:[3/1000][2983/3039]	Loss_D: 0.8948	Loss_G: 2.1090	Time: 69.16s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.49s
+INFO:root:[4/1000][44/3039]	Loss_D: 0.8756	Loss_G: 2.1528	Time: 80.78s
+INFO:root:Data retrieve time: 13.48s Model updating time: 67.31s
+INFO:root:[4/1000][144/3039]	Loss_D: 0.8834	Loss_G: 2.1287	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[4/1000][244/3039]	Loss_D: 0.8433	Loss_G: 2.1563	Time: 67.81s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.44s
+INFO:root:[4/1000][344/3039]	Loss_D: 0.8940	Loss_G: 2.1341	Time: 67.86s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.49s
+INFO:root:[4/1000][444/3039]	Loss_D: 0.8347	Loss_G: 2.1704	Time: 67.83s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.46s
+INFO:root:[4/1000][544/3039]	Loss_D: 0.8820	Loss_G: 2.1258	Time: 67.77s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[4/1000][644/3039]	Loss_D: 0.8528	Loss_G: 2.1635	Time: 67.77s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[4/1000][744/3039]	Loss_D: 0.8644	Loss_G: 2.1557	Time: 67.90s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.52s
+INFO:root:[4/1000][844/3039]	Loss_D: 0.8665	Loss_G: 2.1496	Time: 67.81s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.45s
+INFO:root:[4/1000][944/3039]	Loss_D: 0.8841	Loss_G: 2.1193	Time: 67.90s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.54s
+INFO:root:[4/1000][1044/3039]	Loss_D: 0.8825	Loss_G: 2.1471	Time: 67.90s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.53s
+INFO:root:[4/1000][1144/3039]	Loss_D: 0.8879	Loss_G: 2.1438	Time: 67.84s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.47s
+INFO:root:[4/1000][1244/3039]	Loss_D: 0.8836	Loss_G: 2.1386	Time: 67.84s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.47s
+INFO:root:[4/1000][1344/3039]	Loss_D: 0.8927	Loss_G: 2.1164	Time: 69.30s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.91s
+INFO:root:[4/1000][1444/3039]	Loss_D: 0.8441	Loss_G: 2.1574	Time: 69.13s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.75s
+INFO:root:[4/1000][1544/3039]	Loss_D: 0.9096	Loss_G: 2.1102	Time: 68.64s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.25s
+INFO:root:[4/1000][1644/3039]	Loss_D: 0.8808	Loss_G: 2.1217	Time: 67.98s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.61s
+INFO:root:[4/1000][1744/3039]	Loss_D: 0.8701	Loss_G: 2.1298	Time: 67.98s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.61s
+INFO:root:[4/1000][1844/3039]	Loss_D: 0.8421	Loss_G: 2.1520	Time: 68.01s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.64s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_14000.png
+INFO:root:Time to save images and model: 1.30s 
+INFO:root:[4/1000][1944/3039]	Loss_D: 0.8670	Loss_G: 2.1390	Time: 69.33s
+INFO:root:Data retrieve time: 0.39s Model updating time: 67.64s
+INFO:root:[4/1000][2044/3039]	Loss_D: 0.9036	Loss_G: 2.1121	Time: 68.01s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.64s
+INFO:root:[4/1000][2144/3039]	Loss_D: 0.8600	Loss_G: 2.1530	Time: 67.98s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.61s
+INFO:root:[4/1000][2244/3039]	Loss_D: 0.8504	Loss_G: 2.1534	Time: 67.97s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.60s
+INFO:root:[4/1000][2344/3039]	Loss_D: 0.8579	Loss_G: 2.1472	Time: 67.98s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.61s
+INFO:root:[4/1000][2444/3039]	Loss_D: 0.9138	Loss_G: 2.0939	Time: 70.33s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.94s
+INFO:root:[4/1000][2544/3039]	Loss_D: 0.8682	Loss_G: 2.1283	Time: 71.44s
+INFO:root:Data retrieve time: 0.39s Model updating time: 71.05s
+INFO:root:[4/1000][2644/3039]	Loss_D: 0.8610	Loss_G: 2.1427	Time: 71.74s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.34s
+INFO:root:[4/1000][2744/3039]	Loss_D: 0.8589	Loss_G: 2.1530	Time: 70.80s
+INFO:root:Data retrieve time: 0.39s Model updating time: 70.41s
+INFO:root:[4/1000][2844/3039]	Loss_D: 0.8489	Loss_G: 2.1673	Time: 71.03s
+INFO:root:Data retrieve time: 0.38s Model updating time: 70.65s
+INFO:root:[4/1000][2944/3039]	Loss_D: 0.8314	Loss_G: 2.1772	Time: 70.60s
+INFO:root:Data retrieve time: 0.39s Model updating time: 70.21s
+INFO:root:[5/1000][5/3039]	Loss_D: 0.8244	Loss_G: 2.1818	Time: 78.45s
+INFO:root:Data retrieve time: 10.84s Model updating time: 67.61s
+INFO:root:[5/1000][105/3039]	Loss_D: 0.8288	Loss_G: 2.1994	Time: 67.95s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.57s
+INFO:root:[5/1000][205/3039]	Loss_D: 0.8441	Loss_G: 2.1564	Time: 67.94s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.57s
+INFO:root:[5/1000][305/3039]	Loss_D: 0.8285	Loss_G: 2.1855	Time: 67.99s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.60s
+INFO:root:[5/1000][405/3039]	Loss_D: 0.8151	Loss_G: 2.2015	Time: 68.00s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.63s
+INFO:root:[5/1000][505/3039]	Loss_D: 0.8265	Loss_G: 2.1993	Time: 67.98s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.62s
+INFO:root:[5/1000][605/3039]	Loss_D: 0.8417	Loss_G: 2.1846	Time: 67.95s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.58s
+INFO:root:[5/1000][705/3039]	Loss_D: 0.8537	Loss_G: 2.1663	Time: 67.97s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.60s
+INFO:root:[5/1000][805/3039]	Loss_D: 0.8478	Loss_G: 2.1561	Time: 67.95s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.59s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_16000.png
+INFO:root:Time to save images and model: 1.31s 
+INFO:root:[5/1000][905/3039]	Loss_D: 0.8758	Loss_G: 2.1485	Time: 69.32s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.64s
+INFO:root:[5/1000][1005/3039]	Loss_D: 0.8634	Loss_G: 2.1700	Time: 67.96s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.60s
+INFO:root:[5/1000][1105/3039]	Loss_D: 0.8254	Loss_G: 2.2088	Time: 67.96s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.59s
+INFO:root:[5/1000][1205/3039]	Loss_D: 0.8367	Loss_G: 2.1879	Time: 67.97s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.60s
+INFO:root:[5/1000][1305/3039]	Loss_D: 0.8719	Loss_G: 2.1555	Time: 67.94s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.58s
+INFO:root:[5/1000][1405/3039]	Loss_D: 0.8470	Loss_G: 2.1771	Time: 67.98s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.61s
+INFO:root:[5/1000][1505/3039]	Loss_D: 0.8625	Loss_G: 2.1580	Time: 68.37s
+INFO:root:Data retrieve time: 0.37s Model updating time: 68.00s
+INFO:root:[5/1000][1605/3039]	Loss_D: 0.8021	Loss_G: 2.2148	Time: 71.93s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.53s
+INFO:root:[5/1000][1705/3039]	Loss_D: 0.8201	Loss_G: 2.2010	Time: 71.82s
+INFO:root:Data retrieve time: 0.38s Model updating time: 71.43s
+INFO:root:[5/1000][1805/3039]	Loss_D: 0.8493	Loss_G: 2.1778	Time: 71.68s
+INFO:root:Data retrieve time: 0.39s Model updating time: 71.29s
+INFO:root:[5/1000][1905/3039]	Loss_D: 0.8337	Loss_G: 2.1745	Time: 70.29s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.89s
+INFO:root:[5/1000][2005/3039]	Loss_D: 0.8193	Loss_G: 2.2068	Time: 72.01s
+INFO:root:Data retrieve time: 0.39s Model updating time: 71.62s
+INFO:root:[5/1000][2105/3039]	Loss_D: 0.9725	Loss_G: 2.0830	Time: 71.99s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.60s
+INFO:root:[5/1000][2205/3039]	Loss_D: 0.8461	Loss_G: 2.1750	Time: 71.00s
+INFO:root:Data retrieve time: 0.39s Model updating time: 70.61s
+INFO:root:[5/1000][2305/3039]	Loss_D: 0.8323	Loss_G: 2.1978	Time: 70.29s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.90s
+INFO:root:[5/1000][2405/3039]	Loss_D: 0.8153	Loss_G: 2.2178	Time: 68.05s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.68s
+INFO:root:[5/1000][2505/3039]	Loss_D: 0.8352	Loss_G: 2.1937	Time: 68.04s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.66s
+INFO:root:[5/1000][2605/3039]	Loss_D: 0.7985	Loss_G: 2.2081	Time: 68.15s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.78s
+INFO:root:[5/1000][2705/3039]	Loss_D: 0.8393	Loss_G: 2.1752	Time: 67.99s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.64s
+INFO:root:[5/1000][2805/3039]	Loss_D: 0.7981	Loss_G: 2.2162	Time: 68.27s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.89s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_18000.png
+INFO:root:Time to save images and model: 1.31s 
+INFO:root:[5/1000][2905/3039]	Loss_D: 0.8194	Loss_G: 2.2208	Time: 70.75s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.05s
+INFO:root:[5/1000][3005/3039]	Loss_D: 0.8158	Loss_G: 2.2248	Time: 68.61s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.22s
+INFO:root:[6/1000][66/3039]	Loss_D: 0.7888	Loss_G: 2.2209	Time: 79.30s
+INFO:root:Data retrieve time: 11.04s Model updating time: 68.26s
+INFO:root:[6/1000][166/3039]	Loss_D: 0.7982	Loss_G: 2.2310	Time: 67.96s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.59s
+INFO:root:[6/1000][266/3039]	Loss_D: 0.8093	Loss_G: 2.2317	Time: 67.88s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.51s
+INFO:root:[6/1000][366/3039]	Loss_D: 0.7558	Loss_G: 2.2640	Time: 67.93s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.56s
+INFO:root:[6/1000][466/3039]	Loss_D: 0.7793	Loss_G: 2.2698	Time: 67.93s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.57s
+INFO:root:[6/1000][566/3039]	Loss_D: 0.7757	Loss_G: 2.2745	Time: 67.92s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.55s
+INFO:root:[6/1000][666/3039]	Loss_D: 0.7512	Loss_G: 2.2850	Time: 67.93s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.56s
+INFO:root:[6/1000][766/3039]	Loss_D: 0.7528	Loss_G: 2.2615	Time: 67.88s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.52s
+INFO:root:[6/1000][866/3039]	Loss_D: 0.7807	Loss_G: 2.2630	Time: 67.90s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.54s
+INFO:root:[6/1000][966/3039]	Loss_D: 0.7522	Loss_G: 2.2538	Time: 67.95s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.59s
+INFO:root:[6/1000][1066/3039]	Loss_D: 0.7208	Loss_G: 2.3083	Time: 67.91s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.55s
+INFO:root:[6/1000][1166/3039]	Loss_D: 0.7844	Loss_G: 2.2516	Time: 67.92s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.55s
+INFO:root:[6/1000][1266/3039]	Loss_D: 0.7865	Loss_G: 2.2475	Time: 67.90s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.52s
+INFO:root:[6/1000][1366/3039]	Loss_D: 0.7327	Loss_G: 2.3109	Time: 67.89s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.51s
+INFO:root:[6/1000][1466/3039]	Loss_D: 0.8238	Loss_G: 2.2411	Time: 67.90s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.54s
+INFO:root:[6/1000][1566/3039]	Loss_D: 0.7934	Loss_G: 2.2403	Time: 67.93s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.56s
+INFO:root:[6/1000][1666/3039]	Loss_D: 0.7564	Loss_G: 2.2758	Time: 67.93s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.56s
+INFO:root:[6/1000][1766/3039]	Loss_D: 0.7231	Loss_G: 2.3217	Time: 67.92s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.55s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_20000.png
+INFO:root:Time to save images and model: 1.31s 
+INFO:root:[6/1000][1866/3039]	Loss_D: 0.7374	Loss_G: 2.2944	Time: 69.22s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.54s
+INFO:root:[6/1000][1966/3039]	Loss_D: 0.7844	Loss_G: 2.2600	Time: 67.95s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.58s
+INFO:root:[6/1000][2066/3039]	Loss_D: 0.7581	Loss_G: 2.2938	Time: 67.96s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.58s
+INFO:root:[6/1000][2166/3039]	Loss_D: 0.7268	Loss_G: 2.3084	Time: 67.92s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.56s
+INFO:root:[6/1000][2266/3039]	Loss_D: 0.7457	Loss_G: 2.3113	Time: 67.91s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.54s
+INFO:root:[6/1000][2366/3039]	Loss_D: 0.7569	Loss_G: 2.2839	Time: 67.91s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.54s
+INFO:root:[6/1000][2466/3039]	Loss_D: 0.7621	Loss_G: 2.2711	Time: 67.94s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.57s
+INFO:root:[6/1000][2566/3039]	Loss_D: 0.7441	Loss_G: 2.3462	Time: 68.39s
+INFO:root:Data retrieve time: 0.37s Model updating time: 68.02s
+INFO:root:[6/1000][2666/3039]	Loss_D: 0.7808	Loss_G: 2.2709	Time: 67.92s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.55s
+INFO:root:[6/1000][2766/3039]	Loss_D: 0.9433	Loss_G: 2.1813	Time: 67.94s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.56s
+INFO:root:[6/1000][2866/3039]	Loss_D: 0.8418	Loss_G: 2.1871	Time: 67.94s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.58s
+INFO:root:[6/1000][2966/3039]	Loss_D: 0.7842	Loss_G: 2.2837	Time: 67.93s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.56s
+INFO:root:[7/1000][27/3039]	Loss_D: 0.8019	Loss_G: 2.2325	Time: 78.17s
+INFO:root:Data retrieve time: 10.66s Model updating time: 67.51s
+INFO:root:[7/1000][127/3039]	Loss_D: 0.7374	Loss_G: 2.3106	Time: 67.95s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.59s
+INFO:root:[7/1000][227/3039]	Loss_D: 0.7563	Loss_G: 2.2988	Time: 67.94s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.57s
+INFO:root:[7/1000][327/3039]	Loss_D: 0.7625	Loss_G: 2.3004	Time: 67.92s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.55s
+INFO:root:[7/1000][427/3039]	Loss_D: 0.7114	Loss_G: 2.3514	Time: 67.95s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.58s
+INFO:root:[7/1000][527/3039]	Loss_D: 0.7327	Loss_G: 2.3177	Time: 67.89s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.51s
+INFO:root:[7/1000][627/3039]	Loss_D: 0.7838	Loss_G: 2.2711	Time: 67.90s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.54s
+INFO:root:[7/1000][727/3039]	Loss_D: 0.7636	Loss_G: 2.3021	Time: 67.90s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.54s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_22000.png
+INFO:root:Time to save images and model: 1.31s 
+INFO:root:[7/1000][827/3039]	Loss_D: 0.7278	Loss_G: 2.3357	Time: 69.25s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.58s
+INFO:root:[7/1000][927/3039]	Loss_D: 0.7381	Loss_G: 2.3241	Time: 68.04s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.67s
+INFO:root:[7/1000][1027/3039]	Loss_D: 0.7398	Loss_G: 2.3076	Time: 67.98s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.61s
+INFO:root:[7/1000][1127/3039]	Loss_D: 0.7310	Loss_G: 2.3061	Time: 67.92s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.55s
+INFO:root:[7/1000][1227/3039]	Loss_D: 0.7499	Loss_G: 2.3105	Time: 67.90s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.53s
+INFO:root:[7/1000][1327/3039]	Loss_D: 0.7137	Loss_G: 2.3387	Time: 67.94s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.57s
+INFO:root:[7/1000][1427/3039]	Loss_D: 0.7264	Loss_G: 2.3362	Time: 67.97s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.61s
+INFO:root:[7/1000][1527/3039]	Loss_D: 0.7114	Loss_G: 2.3526	Time: 67.93s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.56s
+INFO:root:[7/1000][1627/3039]	Loss_D: 0.7029	Loss_G: 2.3741	Time: 67.90s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.54s
+INFO:root:[7/1000][1727/3039]	Loss_D: 0.7070	Loss_G: 2.3724	Time: 67.93s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.56s
+INFO:root:[7/1000][1827/3039]	Loss_D: 0.7217	Loss_G: 2.3564	Time: 67.95s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.57s
+INFO:root:[7/1000][1927/3039]	Loss_D: 0.7533	Loss_G: 2.3148	Time: 67.93s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.56s
+INFO:root:[7/1000][2027/3039]	Loss_D: 0.7120	Loss_G: 2.3524	Time: 67.97s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.60s
+INFO:root:[7/1000][2127/3039]	Loss_D: 0.7423	Loss_G: 2.3152	Time: 67.94s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.57s
+INFO:root:[7/1000][2227/3039]	Loss_D: 0.6879	Loss_G: 2.3683	Time: 68.04s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.68s
+INFO:root:[7/1000][2327/3039]	Loss_D: 0.7305	Loss_G: 2.3307	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[7/1000][2427/3039]	Loss_D: 0.7248	Loss_G: 2.3561	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[7/1000][2527/3039]	Loss_D: 0.7531	Loss_G: 2.3138	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[7/1000][2627/3039]	Loss_D: 0.7327	Loss_G: 2.3733	Time: 67.84s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.46s
+INFO:root:[7/1000][2727/3039]	Loss_D: 0.7304	Loss_G: 2.3336	Time: 67.82s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.45s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_24000.png
+INFO:root:Time to save images and model: 1.32s 
+INFO:root:[7/1000][2827/3039]	Loss_D: 0.7156	Loss_G: 2.3730	Time: 69.05s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.36s
+INFO:root:[7/1000][2927/3039]	Loss_D: 0.7241	Loss_G: 2.3502	Time: 67.71s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.34s
+INFO:root:[7/1000][3027/3039]	Loss_D: 0.7647	Loss_G: 2.3340	Time: 67.77s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.39s
+INFO:root:[8/1000][88/3039]	Loss_D: 0.6991	Loss_G: 2.3687	Time: 77.79s
+INFO:root:Data retrieve time: 10.54s Model updating time: 67.25s
+INFO:root:[8/1000][188/3039]	Loss_D: 0.7145	Loss_G: 2.3454	Time: 67.81s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.43s
+INFO:root:[8/1000][288/3039]	Loss_D: 0.7002	Loss_G: 2.3644	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[8/1000][388/3039]	Loss_D: 0.6772	Loss_G: 2.3890	Time: 67.74s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.37s
+INFO:root:[8/1000][488/3039]	Loss_D: 0.7283	Loss_G: 2.3232	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[8/1000][588/3039]	Loss_D: 0.6958	Loss_G: 2.3792	Time: 67.71s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.34s
+INFO:root:[8/1000][688/3039]	Loss_D: 0.7729	Loss_G: 2.3228	Time: 67.83s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.46s
+INFO:root:[8/1000][788/3039]	Loss_D: 0.7352	Loss_G: 2.3667	Time: 67.79s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.41s
+INFO:root:[8/1000][888/3039]	Loss_D: 0.7378	Loss_G: 2.3503	Time: 67.82s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.45s
+INFO:root:[8/1000][988/3039]	Loss_D: 0.7426	Loss_G: 2.3492	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[8/1000][1088/3039]	Loss_D: 0.7184	Loss_G: 2.3648	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[8/1000][1188/3039]	Loss_D: 0.7183	Loss_G: 2.3634	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[8/1000][1288/3039]	Loss_D: 0.7207	Loss_G: 2.3833	Time: 67.82s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[8/1000][1388/3039]	Loss_D: 0.6786	Loss_G: 2.4046	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[8/1000][1488/3039]	Loss_D: 0.6937	Loss_G: 2.4097	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[8/1000][1588/3039]	Loss_D: 0.7130	Loss_G: 2.3955	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[8/1000][1688/3039]	Loss_D: 0.7109	Loss_G: 2.3765	Time: 67.81s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.43s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_26000.png
+INFO:root:Time to save images and model: 1.34s 
+INFO:root:[8/1000][1788/3039]	Loss_D: 0.6823	Loss_G: 2.4098	Time: 69.14s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[8/1000][1888/3039]	Loss_D: 0.7081	Loss_G: 2.4028	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[8/1000][1988/3039]	Loss_D: 0.7046	Loss_G: 2.4101	Time: 67.83s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.46s
+INFO:root:[8/1000][2088/3039]	Loss_D: 0.6730	Loss_G: 2.4267	Time: 67.83s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.46s
+INFO:root:[8/1000][2188/3039]	Loss_D: 0.7100	Loss_G: 2.4287	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[8/1000][2288/3039]	Loss_D: 0.7106	Loss_G: 2.4098	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[8/1000][2388/3039]	Loss_D: 0.7210	Loss_G: 2.3699	Time: 67.84s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.47s
+INFO:root:[8/1000][2488/3039]	Loss_D: 0.6771	Loss_G: 2.4235	Time: 67.82s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.46s
+INFO:root:[8/1000][2588/3039]	Loss_D: 0.6919	Loss_G: 2.4044	Time: 67.85s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.47s
+INFO:root:[8/1000][2688/3039]	Loss_D: 0.6787	Loss_G: 2.4262	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[8/1000][2788/3039]	Loss_D: 0.7291	Loss_G: 2.3704	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[8/1000][2888/3039]	Loss_D: 0.6986	Loss_G: 2.4073	Time: 67.82s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.44s
+INFO:root:[8/1000][2988/3039]	Loss_D: 0.6930	Loss_G: 2.4304	Time: 67.84s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.47s
+INFO:root:[9/1000][49/3039]	Loss_D: 0.6883	Loss_G: 2.4264	Time: 77.85s
+INFO:root:Data retrieve time: 10.52s Model updating time: 67.33s
+INFO:root:[9/1000][149/3039]	Loss_D: 0.6710	Loss_G: 2.4639	Time: 67.84s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.47s
+INFO:root:[9/1000][249/3039]	Loss_D: 0.6434	Loss_G: 2.4603	Time: 67.77s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[9/1000][349/3039]	Loss_D: 0.6645	Loss_G: 2.4717	Time: 67.75s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.39s
+INFO:root:[9/1000][449/3039]	Loss_D: 0.6654	Loss_G: 2.4773	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[9/1000][549/3039]	Loss_D: 0.6856	Loss_G: 2.4596	Time: 67.83s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.46s
+INFO:root:[9/1000][649/3039]	Loss_D: 0.6607	Loss_G: 2.4576	Time: 67.86s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.50s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_28000.png
+INFO:root:Time to save images and model: 1.32s 
+INFO:root:[9/1000][749/3039]	Loss_D: 0.6403	Loss_G: 2.5000	Time: 69.11s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[9/1000][849/3039]	Loss_D: 0.6652	Loss_G: 2.4722	Time: 67.73s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.36s
+INFO:root:[9/1000][949/3039]	Loss_D: 0.7003	Loss_G: 2.4219	Time: 67.74s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.37s
+INFO:root:[9/1000][1049/3039]	Loss_D: 0.7022	Loss_G: 2.3954	Time: 67.73s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.36s
+INFO:root:[9/1000][1149/3039]	Loss_D: 0.6805	Loss_G: 2.4412	Time: 67.78s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.40s
+INFO:root:[9/1000][1249/3039]	Loss_D: 0.6447	Loss_G: 2.4702	Time: 67.78s
+INFO:root:Data retrieve time: 0.35s Model updating time: 67.42s
+INFO:root:[9/1000][1349/3039]	Loss_D: 0.6516	Loss_G: 2.4751	Time: 67.79s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.41s
+INFO:root:[9/1000][1449/3039]	Loss_D: 0.6546	Loss_G: 2.4870	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[9/1000][1549/3039]	Loss_D: 0.6735	Loss_G: 2.4724	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[9/1000][1649/3039]	Loss_D: 0.6449	Loss_G: 2.4661	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[9/1000][1749/3039]	Loss_D: 0.6683	Loss_G: 2.4549	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[9/1000][1849/3039]	Loss_D: 0.6409	Loss_G: 2.4923	Time: 67.82s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.45s
+INFO:root:[9/1000][1949/3039]	Loss_D: 0.6826	Loss_G: 2.4320	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[9/1000][2049/3039]	Loss_D: 0.7018	Loss_G: 2.4396	Time: 67.79s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.41s
+INFO:root:[9/1000][2149/3039]	Loss_D: 0.6764	Loss_G: 2.4587	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[9/1000][2249/3039]	Loss_D: 0.6850	Loss_G: 2.4684	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[9/1000][2349/3039]	Loss_D: 0.6724	Loss_G: 2.4687	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[9/1000][2449/3039]	Loss_D: 0.6593	Loss_G: 2.4931	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[9/1000][2549/3039]	Loss_D: 0.6322	Loss_G: 2.4927	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[9/1000][2649/3039]	Loss_D: 0.6792	Loss_G: 2.4600	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_30000.png
+INFO:root:Time to save images and model: 1.32s 
+INFO:root:[9/1000][2749/3039]	Loss_D: 0.6726	Loss_G: 2.4648	Time: 69.12s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[9/1000][2849/3039]	Loss_D: 0.6773	Loss_G: 2.4739	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[9/1000][2949/3039]	Loss_D: 0.6700	Loss_G: 2.4763	Time: 67.79s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.41s
+INFO:root:[10/1000][10/3039]	Loss_D: 0.6828	Loss_G: 2.4392	Time: 77.76s
+INFO:root:Data retrieve time: 10.39s Model updating time: 67.37s
+INFO:root:[10/1000][110/3039]	Loss_D: 0.6469	Loss_G: 2.5048	Time: 67.76s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.38s
+INFO:root:[10/1000][210/3039]	Loss_D: 0.6234	Loss_G: 2.5086	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[10/1000][310/3039]	Loss_D: 0.6315	Loss_G: 2.5180	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[10/1000][410/3039]	Loss_D: 0.6721	Loss_G: 2.4689	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[10/1000][510/3039]	Loss_D: 0.6613	Loss_G: 2.4985	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[10/1000][610/3039]	Loss_D: 0.6263	Loss_G: 2.5228	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[10/1000][710/3039]	Loss_D: 0.6221	Loss_G: 2.5416	Time: 67.83s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.46s
+INFO:root:[10/1000][810/3039]	Loss_D: 0.6513	Loss_G: 2.5513	Time: 67.77s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.41s
+INFO:root:[10/1000][910/3039]	Loss_D: 0.6642	Loss_G: 2.4915	Time: 67.75s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.38s
+INFO:root:[10/1000][1010/3039]	Loss_D: 0.6197	Loss_G: 2.5370	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[10/1000][1110/3039]	Loss_D: 0.6568	Loss_G: 2.5111	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[10/1000][1210/3039]	Loss_D: 0.6867	Loss_G: 2.4933	Time: 67.82s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.44s
+INFO:root:[10/1000][1310/3039]	Loss_D: 0.6369	Loss_G: 2.5062	Time: 67.81s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.44s
+INFO:root:[10/1000][1410/3039]	Loss_D: 0.6352	Loss_G: 2.5306	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[10/1000][1510/3039]	Loss_D: 0.6548	Loss_G: 2.4972	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[10/1000][1610/3039]	Loss_D: 0.6217	Loss_G: 2.5443	Time: 67.80s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.43s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_32000.png
+INFO:root:Time to save images and model: 1.32s 
+INFO:root:[10/1000][1710/3039]	Loss_D: 0.6702	Loss_G: 2.5151	Time: 69.13s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[10/1000][1810/3039]	Loss_D: 0.6569	Loss_G: 2.5066	Time: 67.84s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.47s
+INFO:root:[10/1000][1910/3039]	Loss_D: 0.6625	Loss_G: 2.4963	Time: 67.78s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.40s
+INFO:root:[10/1000][2010/3039]	Loss_D: 0.6418	Loss_G: 2.5402	Time: 67.79s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.41s
+INFO:root:[10/1000][2110/3039]	Loss_D: 0.6585	Loss_G: 2.5183	Time: 67.78s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.42s
+INFO:root:[10/1000][2210/3039]	Loss_D: 0.6637	Loss_G: 2.5178	Time: 67.76s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[10/1000][2310/3039]	Loss_D: 0.6164	Loss_G: 2.5727	Time: 67.82s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.44s
+INFO:root:[10/1000][2410/3039]	Loss_D: 0.6533	Loss_G: 2.5205	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[10/1000][2510/3039]	Loss_D: 0.6670	Loss_G: 2.5117	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[10/1000][2610/3039]	Loss_D: 0.6612	Loss_G: 2.5154	Time: 67.76s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[10/1000][2710/3039]	Loss_D: 0.6535	Loss_G: 2.5137	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[10/1000][2810/3039]	Loss_D: 0.6480	Loss_G: 2.5238	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[10/1000][2910/3039]	Loss_D: 0.6212	Loss_G: 2.5655	Time: 67.80s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.44s
+INFO:root:[10/1000][3010/3039]	Loss_D: 0.6248	Loss_G: 2.5903	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[11/1000][71/3039]	Loss_D: 0.5985	Loss_G: 2.6202	Time: 77.74s
+INFO:root:Data retrieve time: 10.41s Model updating time: 67.33s
+INFO:root:[11/1000][171/3039]	Loss_D: 0.6021	Loss_G: 2.6092	Time: 67.81s
+INFO:root:Data retrieve time: 0.39s Model updating time: 67.42s
+INFO:root:[11/1000][271/3039]	Loss_D: 0.6104	Loss_G: 2.6326	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[11/1000][371/3039]	Loss_D: 0.6371	Loss_G: 2.5438	Time: 67.76s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.39s
+INFO:root:[11/1000][471/3039]	Loss_D: 0.6498	Loss_G: 2.5554	Time: 67.79s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.42s
+INFO:root:[11/1000][571/3039]	Loss_D: 0.6113	Loss_G: 2.5826	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_34000.png
+INFO:root:Time to save images and model: 1.33s 
+INFO:root:[11/1000][671/3039]	Loss_D: 0.6721	Loss_G: 2.5226	Time: 69.10s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.40s
+INFO:root:[11/1000][771/3039]	Loss_D: 0.6350	Loss_G: 2.5731	Time: 67.77s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[11/1000][871/3039]	Loss_D: 0.6409	Loss_G: 2.5799	Time: 67.82s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.45s
+INFO:root:[11/1000][971/3039]	Loss_D: 0.6323	Loss_G: 2.5631	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[11/1000][1071/3039]	Loss_D: 0.6338	Loss_G: 2.5836	Time: 67.83s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.45s
+INFO:root:[11/1000][1171/3039]	Loss_D: 0.6595	Loss_G: 2.5650	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[11/1000][1271/3039]	Loss_D: 0.6274	Loss_G: 2.6120	Time: 67.84s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.47s
+INFO:root:[11/1000][1371/3039]	Loss_D: 0.6746	Loss_G: 2.5632	Time: 67.76s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.39s
+INFO:root:[11/1000][1471/3039]	Loss_D: 0.6459	Loss_G: 2.5451	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[11/1000][1571/3039]	Loss_D: 0.6394	Loss_G: 2.5597	Time: 67.82s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.45s
+INFO:root:[11/1000][1671/3039]	Loss_D: 0.6307	Loss_G: 2.5950	Time: 67.82s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.45s
+INFO:root:[11/1000][1771/3039]	Loss_D: 0.6264	Loss_G: 2.5964	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.45s
+INFO:root:[11/1000][1871/3039]	Loss_D: 0.6679	Loss_G: 2.5622	Time: 67.77s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[11/1000][1971/3039]	Loss_D: 0.6032	Loss_G: 2.6199	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[11/1000][2071/3039]	Loss_D: 0.6147	Loss_G: 2.6084	Time: 67.84s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.47s
+INFO:root:[11/1000][2171/3039]	Loss_D: 0.6355	Loss_G: 2.5970	Time: 67.77s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.40s
+INFO:root:[11/1000][2271/3039]	Loss_D: 0.5950	Loss_G: 2.6377	Time: 67.78s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.42s
+INFO:root:[11/1000][2371/3039]	Loss_D: 0.6306	Loss_G: 2.5748	Time: 67.79s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.41s
+INFO:root:[11/1000][2471/3039]	Loss_D: 0.6487	Loss_G: 2.6067	Time: 67.77s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.40s
+INFO:root:[11/1000][2571/3039]	Loss_D: 0.6460	Loss_G: 2.5832	Time: 67.75s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.39s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_36000.png
+INFO:root:Time to save images and model: 1.32s 
+INFO:root:[11/1000][2671/3039]	Loss_D: 0.6511	Loss_G: 2.5473	Time: 69.11s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[11/1000][2771/3039]	Loss_D: 0.6107	Loss_G: 2.6425	Time: 67.77s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[11/1000][2871/3039]	Loss_D: 0.6198	Loss_G: 2.6456	Time: 67.77s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[11/1000][2971/3039]	Loss_D: 0.6530	Loss_G: 2.5764	Time: 67.74s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.36s
+INFO:root:[12/1000][32/3039]	Loss_D: 0.6422	Loss_G: 2.6473	Time: 77.77s
+INFO:root:Data retrieve time: 10.49s Model updating time: 67.27s
+INFO:root:[12/1000][132/3039]	Loss_D: 0.6142	Loss_G: 2.6015	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[12/1000][232/3039]	Loss_D: 0.5854	Loss_G: 2.6910	Time: 67.75s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.38s
+INFO:root:[12/1000][332/3039]	Loss_D: 0.6134	Loss_G: 2.6630	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[12/1000][432/3039]	Loss_D: 0.6228	Loss_G: 2.6520	Time: 67.75s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.37s
+INFO:root:[12/1000][532/3039]	Loss_D: 0.6076	Loss_G: 2.6838	Time: 67.73s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.36s
+INFO:root:[12/1000][632/3039]	Loss_D: 0.6090	Loss_G: 2.6380	Time: 67.73s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.36s
+INFO:root:[12/1000][732/3039]	Loss_D: 0.6294	Loss_G: 2.6367	Time: 67.75s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.38s
+INFO:root:[12/1000][832/3039]	Loss_D: 0.5930	Loss_G: 2.6736	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[12/1000][932/3039]	Loss_D: 0.6135	Loss_G: 2.6438	Time: 67.74s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.37s
+INFO:root:[12/1000][1032/3039]	Loss_D: 0.6004	Loss_G: 2.6182	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[12/1000][1132/3039]	Loss_D: 0.5667	Loss_G: 2.6778	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[12/1000][1232/3039]	Loss_D: 0.6122	Loss_G: 2.6550	Time: 67.78s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.40s
+INFO:root:[12/1000][1332/3039]	Loss_D: 0.6217	Loss_G: 2.6433	Time: 67.77s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.40s
+INFO:root:[12/1000][1432/3039]	Loss_D: 0.6031	Loss_G: 2.6571	Time: 67.75s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.39s
+INFO:root:[12/1000][1532/3039]	Loss_D: 0.5876	Loss_G: 2.7415	Time: 67.80s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.42s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_38000.png
+INFO:root:Time to save images and model: 1.33s 
+INFO:root:[12/1000][1632/3039]	Loss_D: 0.5963	Loss_G: 2.6839	Time: 69.12s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[12/1000][1732/3039]	Loss_D: 0.6722	Loss_G: 2.6116	Time: 67.76s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.39s
+INFO:root:[12/1000][1832/3039]	Loss_D: 0.5949	Loss_G: 2.6599	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[12/1000][1932/3039]	Loss_D: 0.5861	Loss_G: 2.7086	Time: 67.86s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.48s
+INFO:root:[12/1000][2032/3039]	Loss_D: 0.6205	Loss_G: 2.6578	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[12/1000][2132/3039]	Loss_D: 0.5889	Loss_G: 2.6796	Time: 67.82s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.45s
+INFO:root:[12/1000][2232/3039]	Loss_D: 0.6049	Loss_G: 2.6772	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[12/1000][2332/3039]	Loss_D: 0.6035	Loss_G: 2.6690	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[12/1000][2432/3039]	Loss_D: 0.6064	Loss_G: 2.6662	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[12/1000][2532/3039]	Loss_D: 0.5911	Loss_G: 2.6493	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[12/1000][2632/3039]	Loss_D: 0.6317	Loss_G: 2.6616	Time: 67.82s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.45s
+INFO:root:[12/1000][2732/3039]	Loss_D: 0.6056	Loss_G: 2.6959	Time: 67.80s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.42s
+INFO:root:[12/1000][2832/3039]	Loss_D: 0.6149	Loss_G: 2.6762	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[12/1000][2932/3039]	Loss_D: 0.6219	Loss_G: 2.6258	Time: 67.80s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.43s
+INFO:root:[12/1000][3032/3039]	Loss_D: 0.6380	Loss_G: 2.6319	Time: 67.80s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.42s
+INFO:root:[13/1000][93/3039]	Loss_D: 0.6289	Loss_G: 2.6444	Time: 79.60s
+INFO:root:Data retrieve time: 10.70s Model updating time: 68.90s
+INFO:root:[13/1000][193/3039]	Loss_D: 0.6157	Loss_G: 2.6373	Time: 67.97s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.60s
+INFO:root:[13/1000][293/3039]	Loss_D: 0.5909	Loss_G: 2.6833	Time: 67.96s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.59s
+INFO:root:[13/1000][393/3039]	Loss_D: 0.5958	Loss_G: 2.7886	Time: 67.99s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.62s
+INFO:root:[13/1000][493/3039]	Loss_D: 0.5784	Loss_G: 2.6995	Time: 67.96s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.59s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_40000.png
+INFO:root:Time to save images and model: 1.33s 
+INFO:root:[13/1000][593/3039]	Loss_D: 0.6172	Loss_G: 2.6531	Time: 69.30s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.60s
+INFO:root:[13/1000][693/3039]	Loss_D: 0.6006	Loss_G: 2.6929	Time: 67.98s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.59s
+INFO:root:[13/1000][793/3039]	Loss_D: 0.6031	Loss_G: 2.6705	Time: 68.00s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.63s
+INFO:root:[13/1000][893/3039]	Loss_D: 0.6011	Loss_G: 2.6993	Time: 68.01s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.63s
+INFO:root:[13/1000][993/3039]	Loss_D: 0.5743	Loss_G: 2.7483	Time: 67.96s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.59s
+INFO:root:[13/1000][1093/3039]	Loss_D: 0.5891	Loss_G: 2.7453	Time: 67.96s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.59s
+INFO:root:[13/1000][1193/3039]	Loss_D: 0.6133	Loss_G: 2.6707	Time: 67.91s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.55s
+INFO:root:[13/1000][1293/3039]	Loss_D: 0.6068	Loss_G: 2.6932	Time: 67.97s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.60s
+INFO:root:[13/1000][1393/3039]	Loss_D: 0.5877	Loss_G: 2.7086	Time: 67.98s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.61s
+INFO:root:[13/1000][1493/3039]	Loss_D: 0.6269	Loss_G: 2.6886	Time: 68.02s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.64s
+INFO:root:[13/1000][1593/3039]	Loss_D: 0.6034	Loss_G: 2.6931	Time: 67.98s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.62s
+INFO:root:[13/1000][1693/3039]	Loss_D: 0.6119	Loss_G: 2.7411	Time: 67.95s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.58s
+INFO:root:[13/1000][1793/3039]	Loss_D: 0.5911	Loss_G: 2.7033	Time: 67.95s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.59s
+INFO:root:[13/1000][1893/3039]	Loss_D: 0.5660	Loss_G: 2.7768	Time: 67.97s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.59s
+INFO:root:[13/1000][1993/3039]	Loss_D: 0.5649	Loss_G: 2.7610	Time: 67.95s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.59s
+INFO:root:[13/1000][2093/3039]	Loss_D: 0.5652	Loss_G: 2.7379	Time: 67.94s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.57s
+INFO:root:[13/1000][2193/3039]	Loss_D: 0.5925	Loss_G: 2.7585	Time: 67.92s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.54s
+INFO:root:[13/1000][2293/3039]	Loss_D: 0.5730	Loss_G: 2.7195	Time: 67.93s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.56s
+INFO:root:[13/1000][2393/3039]	Loss_D: 0.6163	Loss_G: 2.6852	Time: 67.96s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.59s
+INFO:root:[13/1000][2493/3039]	Loss_D: 0.6051	Loss_G: 2.6694	Time: 67.96s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.59s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_42000.png
+INFO:root:Time to save images and model: 1.33s 
+INFO:root:[13/1000][2593/3039]	Loss_D: 0.5951	Loss_G: 2.7074	Time: 69.34s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.64s
+INFO:root:[13/1000][2693/3039]	Loss_D: 0.6269	Loss_G: 2.6663	Time: 67.92s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.55s
+INFO:root:[13/1000][2793/3039]	Loss_D: 0.6236	Loss_G: 2.6508	Time: 67.96s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.59s
+INFO:root:[13/1000][2893/3039]	Loss_D: 0.5987	Loss_G: 2.6868	Time: 67.77s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.40s
+INFO:root:[13/1000][2993/3039]	Loss_D: 0.6287	Loss_G: 2.6879	Time: 67.77s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[14/1000][54/3039]	Loss_D: 0.5836	Loss_G: 2.7514	Time: 78.10s
+INFO:root:Data retrieve time: 10.74s Model updating time: 67.36s
+INFO:root:[14/1000][154/3039]	Loss_D: 0.5845	Loss_G: 2.6948	Time: 67.77s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[14/1000][254/3039]	Loss_D: 0.5735	Loss_G: 2.7532	Time: 67.75s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.38s
+INFO:root:[14/1000][354/3039]	Loss_D: 0.5446	Loss_G: 2.8105	Time: 67.73s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.35s
+INFO:root:[14/1000][454/3039]	Loss_D: 0.5702	Loss_G: 2.7592	Time: 67.75s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.38s
+INFO:root:[14/1000][554/3039]	Loss_D: 0.5790	Loss_G: 2.7770	Time: 67.77s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[14/1000][654/3039]	Loss_D: 0.5531	Loss_G: 2.7684	Time: 67.81s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.43s
+INFO:root:[14/1000][754/3039]	Loss_D: 0.5897	Loss_G: 2.7365	Time: 67.76s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.39s
+INFO:root:[14/1000][854/3039]	Loss_D: 0.5684	Loss_G: 2.7665	Time: 67.78s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.40s
+INFO:root:[14/1000][954/3039]	Loss_D: 0.5842	Loss_G: 2.7578	Time: 67.77s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.41s
+INFO:root:[14/1000][1054/3039]	Loss_D: 0.5800	Loss_G: 2.7439	Time: 67.75s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.38s
+INFO:root:[14/1000][1154/3039]	Loss_D: 0.5662	Loss_G: 2.8000	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[14/1000][1254/3039]	Loss_D: 0.5759	Loss_G: 2.7890	Time: 67.76s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.39s
+INFO:root:[14/1000][1354/3039]	Loss_D: 0.5628	Loss_G: 2.7957	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[14/1000][1454/3039]	Loss_D: 0.5761	Loss_G: 2.7536	Time: 67.73s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.36s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_44000.png
+INFO:root:Time to save images and model: 1.33s 
+INFO:root:[14/1000][1554/3039]	Loss_D: 0.5513	Loss_G: 2.7980	Time: 69.09s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.39s
+INFO:root:[14/1000][1654/3039]	Loss_D: 0.5756	Loss_G: 2.7844	Time: 67.79s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.43s
+INFO:root:[14/1000][1754/3039]	Loss_D: 0.5700	Loss_G: 2.8028	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[14/1000][1854/3039]	Loss_D: 0.5644	Loss_G: 2.7494	Time: 67.74s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.37s
+INFO:root:[14/1000][1954/3039]	Loss_D: 0.5522	Loss_G: 2.8231	Time: 67.76s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.38s
+INFO:root:[14/1000][2054/3039]	Loss_D: 0.5878	Loss_G: 2.7697	Time: 67.75s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.39s
+INFO:root:[14/1000][2154/3039]	Loss_D: 0.5485	Loss_G: 2.8317	Time: 67.80s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.42s
+INFO:root:[14/1000][2254/3039]	Loss_D: 0.5761	Loss_G: 2.7978	Time: 67.79s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.43s
+INFO:root:[14/1000][2354/3039]	Loss_D: 0.5307	Loss_G: 2.8355	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[14/1000][2454/3039]	Loss_D: 0.5695	Loss_G: 2.7916	Time: 67.82s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.45s
+INFO:root:[14/1000][2554/3039]	Loss_D: 0.5708	Loss_G: 2.7700	Time: 67.77s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.40s
+INFO:root:[14/1000][2654/3039]	Loss_D: 0.5705	Loss_G: 2.8275	Time: 67.75s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.38s
+INFO:root:[14/1000][2754/3039]	Loss_D: 0.5663	Loss_G: 2.7755	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[14/1000][2854/3039]	Loss_D: 0.5812	Loss_G: 2.7697	Time: 67.85s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.48s
+INFO:root:[14/1000][2954/3039]	Loss_D: 0.5764	Loss_G: 2.7834	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[15/1000][15/3039]	Loss_D: 0.5647	Loss_G: 2.7825	Time: 78.13s
+INFO:root:Data retrieve time: 10.75s Model updating time: 67.38s
+INFO:root:[15/1000][115/3039]	Loss_D: 0.5558	Loss_G: 2.8281	Time: 67.75s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.39s
+INFO:root:[15/1000][215/3039]	Loss_D: 0.5760	Loss_G: 2.8014	Time: 67.75s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.37s
+INFO:root:[15/1000][315/3039]	Loss_D: 0.5751	Loss_G: 2.7804	Time: 67.77s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.39s
+INFO:root:[15/1000][415/3039]	Loss_D: 0.5938	Loss_G: 2.7784	Time: 67.77s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_46000.png
+INFO:root:Time to save images and model: 1.33s 
+INFO:root:[15/1000][515/3039]	Loss_D: 0.5928	Loss_G: 2.7934	Time: 69.11s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.42s
+INFO:root:[15/1000][615/3039]	Loss_D: 0.5737	Loss_G: 2.7932	Time: 67.78s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.41s
+INFO:root:[15/1000][715/3039]	Loss_D: 0.5645	Loss_G: 2.7555	Time: 67.76s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.38s
+INFO:root:[15/1000][815/3039]	Loss_D: 0.5443	Loss_G: 2.8392	Time: 67.79s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.42s
+INFO:root:[15/1000][915/3039]	Loss_D: 0.5877	Loss_G: 2.7808	Time: 67.76s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[15/1000][1015/3039]	Loss_D: 0.5729	Loss_G: 2.7780	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[15/1000][1115/3039]	Loss_D: 0.5666	Loss_G: 2.8215	Time: 67.76s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.39s
+INFO:root:[15/1000][1215/3039]	Loss_D: 0.5606	Loss_G: 2.8341	Time: 67.82s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.45s
+INFO:root:[15/1000][1315/3039]	Loss_D: 0.5739	Loss_G: 2.7950	Time: 67.75s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.38s
+INFO:root:[15/1000][1415/3039]	Loss_D: 0.6037	Loss_G: 2.7505	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[15/1000][1515/3039]	Loss_D: 0.5779	Loss_G: 2.7448	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[15/1000][1615/3039]	Loss_D: 0.5754	Loss_G: 2.8063	Time: 68.62s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.24s
+INFO:root:[15/1000][1715/3039]	Loss_D: 0.5642	Loss_G: 2.8228	Time: 67.80s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.43s
+INFO:root:[15/1000][1815/3039]	Loss_D: 0.5453	Loss_G: 2.8565	Time: 67.79s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.41s
+INFO:root:[15/1000][1915/3039]	Loss_D: 0.5721	Loss_G: 2.7844	Time: 67.79s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.42s
+INFO:root:[15/1000][2015/3039]	Loss_D: 0.5343	Loss_G: 2.8236	Time: 67.76s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[15/1000][2115/3039]	Loss_D: 0.5947	Loss_G: 2.7989	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.40s
+INFO:root:[15/1000][2215/3039]	Loss_D: 0.5515	Loss_G: 2.8036	Time: 67.84s
+INFO:root:Data retrieve time: 0.36s Model updating time: 67.48s
+INFO:root:[15/1000][2315/3039]	Loss_D: 0.5673	Loss_G: 2.8286	Time: 67.78s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.40s
+INFO:root:[15/1000][2415/3039]	Loss_D: 0.5727	Loss_G: 2.8219	Time: 67.82s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.44s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_48000.png
+INFO:root:Time to save images and model: 1.32s 
+INFO:root:[15/1000][2515/3039]	Loss_D: 0.5926	Loss_G: 2.8151	Time: 69.07s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.38s
+INFO:root:[15/1000][2615/3039]	Loss_D: 0.5851	Loss_G: 2.7629	Time: 67.75s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.38s
+INFO:root:[15/1000][2715/3039]	Loss_D: 0.5712	Loss_G: 2.7939	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[15/1000][2815/3039]	Loss_D: 0.5551	Loss_G: 2.7974	Time: 67.83s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.45s
+INFO:root:[15/1000][2915/3039]	Loss_D: 0.5747	Loss_G: 2.7980	Time: 67.78s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.41s
+INFO:root:[15/1000][3015/3039]	Loss_D: 0.5702	Loss_G: 2.8218	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[16/1000][76/3039]	Loss_D: 0.5609	Loss_G: 2.8126	Time: 78.01s
+INFO:root:Data retrieve time: 10.68s Model updating time: 67.33s
+INFO:root:[16/1000][176/3039]	Loss_D: 0.5467	Loss_G: 2.8287	Time: 67.80s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.43s
+INFO:root:[16/1000][276/3039]	Loss_D: 0.5550	Loss_G: 2.8374	Time: 67.81s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.43s
+INFO:root:[16/1000][376/3039]	Loss_D: 0.5647	Loss_G: 2.8394	Time: 67.81s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.43s
+INFO:root:[16/1000][476/3039]	Loss_D: 0.5485	Loss_G: 2.8415	Time: 67.82s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[16/1000][576/3039]	Loss_D: 0.5567	Loss_G: 2.8750	Time: 67.81s
+INFO:root:Data retrieve time: 0.37s Model updating time: 67.44s
+INFO:root:[16/1000][676/3039]	Loss_D: 0.5429	Loss_G: 2.8679	Time: 68.96s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.59s
+INFO:root:[16/1000][776/3039]	Loss_D: 0.5361	Loss_G: 2.8652	Time: 69.45s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.06s
+INFO:root:[16/1000][876/3039]	Loss_D: 0.5262	Loss_G: 2.8780	Time: 69.42s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.03s
+INFO:root:[16/1000][976/3039]	Loss_D: 0.5391	Loss_G: 2.8574	Time: 69.21s
+INFO:root:Data retrieve time: 0.40s Model updating time: 68.82s
+INFO:root:[16/1000][1076/3039]	Loss_D: 0.5538	Loss_G: 2.8860	Time: 71.74s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.34s
+INFO:root:[16/1000][1176/3039]	Loss_D: 0.5436	Loss_G: 2.8695	Time: 70.92s
+INFO:root:Data retrieve time: 0.40s Model updating time: 70.52s
+INFO:root:[16/1000][1276/3039]	Loss_D: 0.5249	Loss_G: 2.9133	Time: 70.67s
+INFO:root:Data retrieve time: 0.39s Model updating time: 70.28s
+INFO:root:[16/1000][1376/3039]	Loss_D: 0.5347	Loss_G: 2.9395	Time: 69.44s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.05s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_50000.png
+INFO:root:Time to save images and model: 1.38s 
+INFO:root:[16/1000][1476/3039]	Loss_D: 0.5301	Loss_G: 2.9146	Time: 70.55s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.79s
+INFO:root:[16/1000][1576/3039]	Loss_D: 0.5486	Loss_G: 2.8640	Time: 69.63s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.24s
+INFO:root:[16/1000][1676/3039]	Loss_D: 0.5384	Loss_G: 2.8645	Time: 69.56s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.16s
+INFO:root:[16/1000][1776/3039]	Loss_D: 0.5623	Loss_G: 2.8035	Time: 69.24s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.85s
+INFO:root:[16/1000][1876/3039]	Loss_D: 0.5465	Loss_G: 2.8540	Time: 69.25s
+INFO:root:Data retrieve time: 0.40s Model updating time: 68.85s
+INFO:root:[16/1000][1976/3039]	Loss_D: 0.5966	Loss_G: 2.8416	Time: 70.67s
+INFO:root:Data retrieve time: 0.41s Model updating time: 70.26s
+INFO:root:[16/1000][2076/3039]	Loss_D: 0.5426	Loss_G: 2.8777	Time: 69.72s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.32s
+INFO:root:[16/1000][2176/3039]	Loss_D: 0.5292	Loss_G: 2.9155	Time: 69.66s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.26s
+INFO:root:[16/1000][2276/3039]	Loss_D: 0.5152	Loss_G: 2.9558	Time: 69.51s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.11s
+INFO:root:[16/1000][2376/3039]	Loss_D: 0.5538	Loss_G: 2.8887	Time: 69.76s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.36s
+INFO:root:[16/1000][2476/3039]	Loss_D: 0.5242	Loss_G: 2.9006	Time: 69.57s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.18s
+INFO:root:[16/1000][2576/3039]	Loss_D: 0.5382	Loss_G: 2.9117	Time: 70.71s
+INFO:root:Data retrieve time: 0.41s Model updating time: 70.30s
+INFO:root:[16/1000][2676/3039]	Loss_D: 0.5476	Loss_G: 2.9195	Time: 70.83s
+INFO:root:Data retrieve time: 0.40s Model updating time: 70.43s
+INFO:root:[16/1000][2776/3039]	Loss_D: 0.5491	Loss_G: 2.9211	Time: 70.18s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.79s
+INFO:root:[16/1000][2876/3039]	Loss_D: 0.5529	Loss_G: 2.8603	Time: 70.01s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.62s
+INFO:root:[16/1000][2976/3039]	Loss_D: 0.5510	Loss_G: 2.8903	Time: 69.38s
+INFO:root:Data retrieve time: 0.40s Model updating time: 68.98s
+INFO:root:[17/1000][37/3039]	Loss_D: 0.5315	Loss_G: 2.9266	Time: 80.20s
+INFO:root:Data retrieve time: 10.76s Model updating time: 69.44s
+INFO:root:[17/1000][137/3039]	Loss_D: 0.5269	Loss_G: 2.9462	Time: 69.90s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.51s
+INFO:root:[17/1000][237/3039]	Loss_D: 0.5209	Loss_G: 2.9215	Time: 69.35s
+INFO:root:Data retrieve time: 0.40s Model updating time: 68.95s
+INFO:root:[17/1000][337/3039]	Loss_D: 0.5185	Loss_G: 2.9151	Time: 69.61s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.22s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_52000.png
+INFO:root:Time to save images and model: 1.42s 
+INFO:root:[17/1000][437/3039]	Loss_D: 0.5358	Loss_G: 2.9373	Time: 73.39s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.57s
+INFO:root:[17/1000][537/3039]	Loss_D: 0.5525	Loss_G: 2.9063	Time: 72.52s
+INFO:root:Data retrieve time: 0.42s Model updating time: 72.11s
+INFO:root:[17/1000][637/3039]	Loss_D: 0.5701	Loss_G: 2.8666	Time: 71.92s
+INFO:root:Data retrieve time: 0.42s Model updating time: 71.50s
+INFO:root:[17/1000][737/3039]	Loss_D: 0.5185	Loss_G: 2.9316	Time: 71.01s
+INFO:root:Data retrieve time: 0.41s Model updating time: 70.61s
+INFO:root:[17/1000][837/3039]	Loss_D: 0.5372	Loss_G: 2.9560	Time: 71.84s
+INFO:root:Data retrieve time: 0.41s Model updating time: 71.43s
+INFO:root:[17/1000][937/3039]	Loss_D: 0.5452	Loss_G: 2.9458	Time: 70.14s
+INFO:root:Data retrieve time: 0.42s Model updating time: 69.72s
+INFO:root:[17/1000][1037/3039]	Loss_D: 0.5801	Loss_G: 2.8651	Time: 70.92s
+INFO:root:Data retrieve time: 0.41s Model updating time: 70.51s
+INFO:root:[17/1000][1137/3039]	Loss_D: 0.5716	Loss_G: 2.8257	Time: 70.17s
+INFO:root:Data retrieve time: 0.41s Model updating time: 69.76s
+INFO:root:[17/1000][1237/3039]	Loss_D: 0.5719	Loss_G: 2.8287	Time: 71.75s
+INFO:root:Data retrieve time: 0.42s Model updating time: 71.33s
+INFO:root:[17/1000][1337/3039]	Loss_D: 0.5673	Loss_G: 2.8570	Time: 71.87s
+INFO:root:Data retrieve time: 0.41s Model updating time: 71.46s
+INFO:root:[17/1000][1437/3039]	Loss_D: 0.5579	Loss_G: 2.8260	Time: 70.17s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.77s
+INFO:root:[17/1000][1537/3039]	Loss_D: 0.5297	Loss_G: 2.9457	Time: 69.36s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.97s
+INFO:root:[17/1000][1637/3039]	Loss_D: 0.5338	Loss_G: 2.8598	Time: 70.18s
+INFO:root:Data retrieve time: 0.41s Model updating time: 69.77s
+INFO:root:[17/1000][1737/3039]	Loss_D: 0.5355	Loss_G: 2.8942	Time: 70.20s
+INFO:root:Data retrieve time: 0.41s Model updating time: 69.79s
+INFO:root:[17/1000][1837/3039]	Loss_D: 0.5043	Loss_G: 3.0359	Time: 70.26s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.86s
+INFO:root:[17/1000][1937/3039]	Loss_D: 0.5146	Loss_G: 2.9650	Time: 69.67s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.27s
+INFO:root:[17/1000][2037/3039]	Loss_D: 0.5310	Loss_G: 2.9446	Time: 70.18s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.78s
+INFO:root:[17/1000][2137/3039]	Loss_D: 0.5107	Loss_G: 2.9661	Time: 70.04s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.64s
+INFO:root:[17/1000][2237/3039]	Loss_D: 0.5538	Loss_G: 2.8836	Time: 69.44s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.04s
+INFO:root:[17/1000][2337/3039]	Loss_D: 0.5607	Loss_G: 2.9071	Time: 69.36s
+INFO:root:Data retrieve time: 0.40s Model updating time: 68.96s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_54000.png
+INFO:root:Time to save images and model: 1.41s 
+INFO:root:[17/1000][2437/3039]	Loss_D: 0.5423	Loss_G: 2.8947	Time: 71.00s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.19s
+INFO:root:[17/1000][2537/3039]	Loss_D: 0.5491	Loss_G: 2.8797	Time: 70.44s
+INFO:root:Data retrieve time: 0.40s Model updating time: 70.05s
+INFO:root:[17/1000][2637/3039]	Loss_D: 0.5600	Loss_G: 2.8992	Time: 69.28s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.89s
+INFO:root:[17/1000][2737/3039]	Loss_D: 0.5381	Loss_G: 2.9302	Time: 69.63s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.23s
+INFO:root:[17/1000][2837/3039]	Loss_D: 0.5341	Loss_G: 2.9038	Time: 69.65s
+INFO:root:Data retrieve time: 0.41s Model updating time: 69.24s
+INFO:root:[17/1000][2937/3039]	Loss_D: 0.5276	Loss_G: 2.9587	Time: 69.36s
+INFO:root:Data retrieve time: 0.40s Model updating time: 68.96s
+INFO:root:[17/1000][3037/3039]	Loss_D: 0.5531	Loss_G: 2.9223	Time: 70.24s
+INFO:root:Data retrieve time: 0.42s Model updating time: 69.82s
+INFO:root:[18/1000][98/3039]	Loss_D: 0.5146	Loss_G: 2.9810	Time: 81.30s
+INFO:root:Data retrieve time: 11.64s Model updating time: 69.66s
+INFO:root:[18/1000][198/3039]	Loss_D: 0.5162	Loss_G: 2.9595	Time: 72.55s
+INFO:root:Data retrieve time: 0.41s Model updating time: 72.13s
+INFO:root:[18/1000][298/3039]	Loss_D: 0.5053	Loss_G: 2.9951	Time: 70.46s
+INFO:root:Data retrieve time: 0.39s Model updating time: 70.07s
+INFO:root:[18/1000][398/3039]	Loss_D: 0.4994	Loss_G: 2.9920	Time: 69.86s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.46s
+INFO:root:[18/1000][498/3039]	Loss_D: 0.5065	Loss_G: 2.9878	Time: 82.16s
+INFO:root:Data retrieve time: 0.49s Model updating time: 81.68s
+INFO:root:[18/1000][598/3039]	Loss_D: 0.5093	Loss_G: 3.0014	Time: 81.48s
+INFO:root:Data retrieve time: 0.45s Model updating time: 81.02s
+INFO:root:[18/1000][698/3039]	Loss_D: 0.5055	Loss_G: 2.9692	Time: 81.72s
+INFO:root:Data retrieve time: 0.44s Model updating time: 81.28s
+INFO:root:[18/1000][798/3039]	Loss_D: 0.5151	Loss_G: 3.0127	Time: 74.01s
+INFO:root:Data retrieve time: 0.43s Model updating time: 73.58s
+INFO:root:[18/1000][898/3039]	Loss_D: 0.4805	Loss_G: 3.0809	Time: 70.51s
+INFO:root:Data retrieve time: 0.40s Model updating time: 70.10s
+INFO:root:[18/1000][998/3039]	Loss_D: 0.4883	Loss_G: 3.0482	Time: 72.71s
+INFO:root:Data retrieve time: 0.41s Model updating time: 72.30s
+INFO:root:[18/1000][1098/3039]	Loss_D: 0.5031	Loss_G: 3.0018	Time: 73.92s
+INFO:root:Data retrieve time: 0.43s Model updating time: 73.49s
+INFO:root:[18/1000][1198/3039]	Loss_D: 0.5030	Loss_G: 3.0364	Time: 73.08s
+INFO:root:Data retrieve time: 0.42s Model updating time: 72.67s
+INFO:root:[18/1000][1298/3039]	Loss_D: 0.4994	Loss_G: 3.0105	Time: 73.78s
+INFO:root:Data retrieve time: 0.43s Model updating time: 73.35s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_56000.png
+INFO:root:Time to save images and model: 1.42s 
+INFO:root:[18/1000][1398/3039]	Loss_D: 0.5069	Loss_G: 3.0063	Time: 74.70s
+INFO:root:Data retrieve time: 0.41s Model updating time: 72.87s
+INFO:root:[18/1000][1498/3039]	Loss_D: 0.4930	Loss_G: 3.0444	Time: 74.03s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.61s
+INFO:root:[18/1000][1598/3039]	Loss_D: 0.4805	Loss_G: 3.0953	Time: 74.06s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.64s
+INFO:root:[18/1000][1698/3039]	Loss_D: 0.5183	Loss_G: 2.9881	Time: 73.74s
+INFO:root:Data retrieve time: 0.41s Model updating time: 73.33s
+INFO:root:[18/1000][1798/3039]	Loss_D: 0.5126	Loss_G: 3.0429	Time: 74.06s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.64s
+INFO:root:[18/1000][1898/3039]	Loss_D: 0.4826	Loss_G: 3.0310	Time: 74.10s
+INFO:root:Data retrieve time: 0.41s Model updating time: 73.69s
+INFO:root:[18/1000][1998/3039]	Loss_D: 0.5126	Loss_G: 2.9926	Time: 73.81s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.39s
+INFO:root:[18/1000][2098/3039]	Loss_D: 0.4980	Loss_G: 3.0294	Time: 74.16s
+INFO:root:Data retrieve time: 0.43s Model updating time: 73.73s
+INFO:root:[18/1000][2198/3039]	Loss_D: 0.4932	Loss_G: 3.0325	Time: 74.14s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.71s
+INFO:root:[18/1000][2298/3039]	Loss_D: 0.5116	Loss_G: 3.0457	Time: 74.35s
+INFO:root:Data retrieve time: 0.41s Model updating time: 73.94s
+INFO:root:[18/1000][2398/3039]	Loss_D: 0.5014	Loss_G: 3.0097	Time: 73.89s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.47s
+INFO:root:[18/1000][2498/3039]	Loss_D: 0.4873	Loss_G: 3.0557	Time: 73.81s
+INFO:root:Data retrieve time: 0.43s Model updating time: 73.38s
+INFO:root:[18/1000][2598/3039]	Loss_D: 0.5033	Loss_G: 2.9901	Time: 73.87s
+INFO:root:Data retrieve time: 0.43s Model updating time: 73.44s
+INFO:root:[18/1000][2698/3039]	Loss_D: 0.4999	Loss_G: 3.0542	Time: 73.74s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.32s
+INFO:root:[18/1000][2798/3039]	Loss_D: 0.4999	Loss_G: 3.0148	Time: 74.72s
+INFO:root:Data retrieve time: 0.44s Model updating time: 74.28s
+INFO:root:[18/1000][2898/3039]	Loss_D: 0.5133	Loss_G: 2.9716	Time: 74.78s
+INFO:root:Data retrieve time: 0.43s Model updating time: 74.35s
+INFO:root:[18/1000][2998/3039]	Loss_D: 0.4753	Loss_G: 3.0971	Time: 74.03s
+INFO:root:Data retrieve time: 0.43s Model updating time: 73.59s
+INFO:root:[19/1000][59/3039]	Loss_D: 0.5241	Loss_G: 3.0319	Time: 84.99s
+INFO:root:Data retrieve time: 11.67s Model updating time: 73.32s
+INFO:root:[19/1000][159/3039]	Loss_D: 0.5095	Loss_G: 3.0715	Time: 74.12s
+INFO:root:Data retrieve time: 0.43s Model updating time: 73.69s
+INFO:root:[19/1000][259/3039]	Loss_D: 0.4878	Loss_G: 3.0672	Time: 74.07s
+INFO:root:Data retrieve time: 0.43s Model updating time: 73.64s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_58000.png
+INFO:root:Time to save images and model: 1.52s 
+INFO:root:[19/1000][359/3039]	Loss_D: 0.5226	Loss_G: 3.0662	Time: 76.10s
+INFO:root:Data retrieve time: 0.42s Model updating time: 74.15s
+INFO:root:[19/1000][459/3039]	Loss_D: 0.4873	Loss_G: 3.0101	Time: 74.60s
+INFO:root:Data retrieve time: 0.43s Model updating time: 74.17s
+INFO:root:[19/1000][559/3039]	Loss_D: 0.4837	Loss_G: 3.0798	Time: 74.95s
+INFO:root:Data retrieve time: 0.43s Model updating time: 74.52s
+INFO:root:[19/1000][659/3039]	Loss_D: 0.4914	Loss_G: 3.0822	Time: 74.52s
+INFO:root:Data retrieve time: 0.43s Model updating time: 74.10s
+INFO:root:[19/1000][759/3039]	Loss_D: 0.5026	Loss_G: 3.0808	Time: 74.70s
+INFO:root:Data retrieve time: 0.43s Model updating time: 74.27s
+INFO:root:[19/1000][859/3039]	Loss_D: 0.5112	Loss_G: 3.0531	Time: 74.54s
+INFO:root:Data retrieve time: 0.43s Model updating time: 74.11s
+INFO:root:[19/1000][959/3039]	Loss_D: 0.4889	Loss_G: 3.0836	Time: 73.96s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.54s
+INFO:root:[19/1000][1059/3039]	Loss_D: 0.5063	Loss_G: 3.0286	Time: 74.05s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.63s
+INFO:root:[19/1000][1159/3039]	Loss_D: 0.5109	Loss_G: 3.0838	Time: 74.07s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.64s
+INFO:root:[19/1000][1259/3039]	Loss_D: 0.4803	Loss_G: 3.1094	Time: 74.05s
+INFO:root:Data retrieve time: 0.43s Model updating time: 73.62s
+INFO:root:[19/1000][1359/3039]	Loss_D: 0.5092	Loss_G: 3.0678	Time: 74.18s
+INFO:root:Data retrieve time: 0.43s Model updating time: 73.75s
+INFO:root:[19/1000][1459/3039]	Loss_D: 0.4893	Loss_G: 3.0862	Time: 73.89s
+INFO:root:Data retrieve time: 0.43s Model updating time: 73.46s
+INFO:root:[19/1000][1559/3039]	Loss_D: 0.4871	Loss_G: 3.0442	Time: 74.55s
+INFO:root:Data retrieve time: 0.43s Model updating time: 74.13s
+INFO:root:[19/1000][1659/3039]	Loss_D: 0.5144	Loss_G: 3.0717	Time: 74.67s
+INFO:root:Data retrieve time: 0.42s Model updating time: 74.25s
+INFO:root:[19/1000][1759/3039]	Loss_D: 0.4957	Loss_G: 3.0229	Time: 74.55s
+INFO:root:Data retrieve time: 0.42s Model updating time: 74.13s
+INFO:root:[19/1000][1859/3039]	Loss_D: 0.5216	Loss_G: 3.0196	Time: 74.30s
+INFO:root:Data retrieve time: 0.43s Model updating time: 73.87s
+INFO:root:[19/1000][1959/3039]	Loss_D: 0.4835	Loss_G: 3.0833	Time: 74.71s
+INFO:root:Data retrieve time: 0.43s Model updating time: 74.28s
+INFO:root:[19/1000][2059/3039]	Loss_D: 0.4954	Loss_G: 3.0830	Time: 74.62s
+INFO:root:Data retrieve time: 0.42s Model updating time: 74.19s
+INFO:root:[19/1000][2159/3039]	Loss_D: 0.4996	Loss_G: 3.0426	Time: 74.09s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.67s
+INFO:root:[19/1000][2259/3039]	Loss_D: 0.4983	Loss_G: 3.0521	Time: 74.03s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.61s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_60000.png
+INFO:root:Time to save images and model: 1.46s 
+INFO:root:[19/1000][2359/3039]	Loss_D: 0.4980	Loss_G: 3.0579	Time: 75.45s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.57s
+INFO:root:[19/1000][2459/3039]	Loss_D: 0.5005	Loss_G: 3.0756	Time: 74.38s
+INFO:root:Data retrieve time: 0.44s Model updating time: 73.94s
+INFO:root:[19/1000][2559/3039]	Loss_D: 0.4963	Loss_G: 3.0919	Time: 74.31s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.89s
+INFO:root:[19/1000][2659/3039]	Loss_D: 0.5242	Loss_G: 3.0315	Time: 74.39s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.97s
+INFO:root:[19/1000][2759/3039]	Loss_D: 0.4843	Loss_G: 3.1277	Time: 70.91s
+INFO:root:Data retrieve time: 0.40s Model updating time: 70.51s
+INFO:root:[19/1000][2859/3039]	Loss_D: 0.4995	Loss_G: 3.0733	Time: 70.68s
+INFO:root:Data retrieve time: 0.39s Model updating time: 70.29s
+INFO:root:[19/1000][2959/3039]	Loss_D: 0.4875	Loss_G: 3.0311	Time: 72.16s
+INFO:root:Data retrieve time: 0.41s Model updating time: 71.75s
+INFO:root:[20/1000][20/3039]	Loss_D: 0.5316	Loss_G: 3.0262	Time: 86.03s
+INFO:root:Data retrieve time: 14.43s Model updating time: 71.59s
+INFO:root:[20/1000][120/3039]	Loss_D: 0.4765	Loss_G: 3.0932	Time: 72.11s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.71s
+INFO:root:[20/1000][220/3039]	Loss_D: 0.4857	Loss_G: 3.0805	Time: 72.12s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.71s
+INFO:root:[20/1000][320/3039]	Loss_D: 0.4987	Loss_G: 3.1105	Time: 69.82s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.44s
+INFO:root:[20/1000][420/3039]	Loss_D: 0.4998	Loss_G: 3.0603	Time: 71.47s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.07s
+INFO:root:[20/1000][520/3039]	Loss_D: 0.5475	Loss_G: 2.9805	Time: 71.78s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.38s
+INFO:root:[20/1000][620/3039]	Loss_D: 0.5174	Loss_G: 3.0109	Time: 71.82s
+INFO:root:Data retrieve time: 0.41s Model updating time: 71.41s
+INFO:root:[20/1000][720/3039]	Loss_D: 0.4993	Loss_G: 3.0503	Time: 70.40s
+INFO:root:Data retrieve time: 0.40s Model updating time: 70.00s
+INFO:root:[20/1000][820/3039]	Loss_D: 0.4870	Loss_G: 3.0785	Time: 71.85s
+INFO:root:Data retrieve time: 0.42s Model updating time: 71.44s
+INFO:root:[20/1000][920/3039]	Loss_D: 0.5173	Loss_G: 3.0509	Time: 85.19s
+INFO:root:Data retrieve time: 0.46s Model updating time: 84.73s
+INFO:root:[20/1000][1020/3039]	Loss_D: 0.5179	Loss_G: 3.0305	Time: 90.12s
+INFO:root:Data retrieve time: 0.47s Model updating time: 89.65s
+INFO:root:[20/1000][1120/3039]	Loss_D: 0.4812	Loss_G: 3.0710	Time: 90.59s
+INFO:root:Data retrieve time: 0.47s Model updating time: 90.12s
+INFO:root:[20/1000][1220/3039]	Loss_D: 0.5210	Loss_G: 3.0032	Time: 90.73s
+INFO:root:Data retrieve time: 0.47s Model updating time: 90.25s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_62000.png
+INFO:root:Time to save images and model: 1.55s 
+INFO:root:[20/1000][1320/3039]	Loss_D: 0.4813	Loss_G: 3.1149	Time: 94.16s
+INFO:root:Data retrieve time: 0.48s Model updating time: 92.13s
+INFO:root:[20/1000][1420/3039]	Loss_D: 0.5104	Loss_G: 3.0541	Time: 91.24s
+INFO:root:Data retrieve time: 0.48s Model updating time: 90.75s
+INFO:root:[20/1000][1520/3039]	Loss_D: 0.4816	Loss_G: 3.1111	Time: 92.54s
+INFO:root:Data retrieve time: 0.49s Model updating time: 92.05s
+INFO:root:[20/1000][1620/3039]	Loss_D: 0.4697	Loss_G: 3.1098	Time: 92.12s
+INFO:root:Data retrieve time: 0.50s Model updating time: 91.61s
+INFO:root:[20/1000][1720/3039]	Loss_D: 0.4832	Loss_G: 3.1106	Time: 91.20s
+INFO:root:Data retrieve time: 0.47s Model updating time: 90.73s
+INFO:root:[20/1000][1820/3039]	Loss_D: 0.4803	Loss_G: 3.1738	Time: 91.13s
+INFO:root:Data retrieve time: 0.47s Model updating time: 90.66s
+INFO:root:[20/1000][1920/3039]	Loss_D: 0.4703	Loss_G: 3.1092	Time: 90.21s
+INFO:root:Data retrieve time: 0.49s Model updating time: 89.72s
+INFO:root:[20/1000][2020/3039]	Loss_D: 0.4800	Loss_G: 3.1412	Time: 92.10s
+INFO:root:Data retrieve time: 0.50s Model updating time: 91.60s
+INFO:root:[20/1000][2120/3039]	Loss_D: 0.4672	Loss_G: 3.1501	Time: 91.69s
+INFO:root:Data retrieve time: 0.49s Model updating time: 91.21s
+INFO:root:[20/1000][2220/3039]	Loss_D: 0.5360	Loss_G: 3.0751	Time: 91.20s
+INFO:root:Data retrieve time: 0.48s Model updating time: 90.72s
+INFO:root:[20/1000][2320/3039]	Loss_D: 0.4757	Loss_G: 3.1009	Time: 91.76s
+INFO:root:Data retrieve time: 0.48s Model updating time: 91.28s
+INFO:root:[20/1000][2420/3039]	Loss_D: 0.4967	Loss_G: 3.1330	Time: 90.73s
+INFO:root:Data retrieve time: 0.48s Model updating time: 90.25s
+INFO:root:[20/1000][2520/3039]	Loss_D: 0.4661	Loss_G: 3.1717	Time: 90.84s
+INFO:root:Data retrieve time: 0.47s Model updating time: 90.37s
+INFO:root:[20/1000][2620/3039]	Loss_D: 0.4857	Loss_G: 3.1070	Time: 91.52s
+INFO:root:Data retrieve time: 0.48s Model updating time: 91.05s
+INFO:root:[20/1000][2720/3039]	Loss_D: 0.4732	Loss_G: 3.1589	Time: 91.25s
+INFO:root:Data retrieve time: 0.48s Model updating time: 90.78s
+INFO:root:[20/1000][2820/3039]	Loss_D: 0.4824	Loss_G: 3.0777	Time: 91.18s
+INFO:root:Data retrieve time: 0.47s Model updating time: 90.71s
+INFO:root:[20/1000][2920/3039]	Loss_D: 0.4994	Loss_G: 3.1173	Time: 91.39s
+INFO:root:Data retrieve time: 0.49s Model updating time: 90.91s
+INFO:root:[20/1000][3020/3039]	Loss_D: 0.5042	Loss_G: 3.1040	Time: 91.56s
+INFO:root:Data retrieve time: 0.48s Model updating time: 91.08s
+INFO:root:[21/1000][81/3039]	Loss_D: 0.4720	Loss_G: 3.0924	Time: 103.75s
+INFO:root:Data retrieve time: 12.01s Model updating time: 91.74s
+INFO:root:[21/1000][181/3039]	Loss_D: 0.4701	Loss_G: 3.1263	Time: 91.96s
+INFO:root:Data retrieve time: 0.48s Model updating time: 91.47s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_64000.png
+INFO:root:Time to save images and model: 1.56s 
+INFO:root:[21/1000][281/3039]	Loss_D: 0.4660	Loss_G: 3.1635	Time: 94.31s
+INFO:root:Data retrieve time: 0.48s Model updating time: 92.27s
+INFO:root:[21/1000][381/3039]	Loss_D: 0.4788	Loss_G: 3.1372	Time: 91.33s
+INFO:root:Data retrieve time: 0.46s Model updating time: 90.87s
+INFO:root:[21/1000][481/3039]	Loss_D: 0.4396	Loss_G: 3.1961	Time: 91.19s
+INFO:root:Data retrieve time: 0.49s Model updating time: 90.70s
+INFO:root:[21/1000][581/3039]	Loss_D: 0.4611	Loss_G: 3.2142	Time: 91.19s
+INFO:root:Data retrieve time: 0.48s Model updating time: 90.72s
+INFO:root:[21/1000][681/3039]	Loss_D: 0.4729	Loss_G: 3.1954	Time: 91.98s
+INFO:root:Data retrieve time: 0.48s Model updating time: 91.50s
+INFO:root:[21/1000][781/3039]	Loss_D: 0.4790	Loss_G: 3.0693	Time: 91.67s
+INFO:root:Data retrieve time: 0.49s Model updating time: 91.18s
+INFO:root:[21/1000][881/3039]	Loss_D: 0.4693	Loss_G: 3.1466	Time: 91.17s
+INFO:root:Data retrieve time: 0.47s Model updating time: 90.70s
+INFO:root:[21/1000][981/3039]	Loss_D: 0.4658	Loss_G: 3.2199	Time: 92.56s
+INFO:root:Data retrieve time: 0.49s Model updating time: 92.07s
+INFO:root:[21/1000][1081/3039]	Loss_D: 0.4746	Loss_G: 3.1396	Time: 93.89s
+INFO:root:Data retrieve time: 0.51s Model updating time: 93.39s
+INFO:root:[21/1000][1181/3039]	Loss_D: 0.4603	Loss_G: 3.1776	Time: 92.48s
+INFO:root:Data retrieve time: 0.48s Model updating time: 92.00s
+INFO:root:[21/1000][1281/3039]	Loss_D: 0.4914	Loss_G: 3.1510	Time: 92.33s
+INFO:root:Data retrieve time: 0.49s Model updating time: 91.84s
+INFO:root:[21/1000][1381/3039]	Loss_D: 0.5185	Loss_G: 3.1471	Time: 91.57s
+INFO:root:Data retrieve time: 0.48s Model updating time: 91.09s
+INFO:root:[21/1000][1481/3039]	Loss_D: 0.4924	Loss_G: 3.0747	Time: 91.68s
+INFO:root:Data retrieve time: 0.48s Model updating time: 91.20s
+INFO:root:[21/1000][1581/3039]	Loss_D: 0.4823	Loss_G: 3.1542	Time: 91.84s
+INFO:root:Data retrieve time: 0.48s Model updating time: 91.36s
+INFO:root:[21/1000][1681/3039]	Loss_D: 0.5026	Loss_G: 3.1445	Time: 91.46s
+INFO:root:Data retrieve time: 0.46s Model updating time: 91.00s
+INFO:root:[21/1000][1781/3039]	Loss_D: 0.4801	Loss_G: 3.1433	Time: 91.50s
+INFO:root:Data retrieve time: 0.48s Model updating time: 91.03s
+INFO:root:[21/1000][1881/3039]	Loss_D: 0.4872	Loss_G: 3.1413	Time: 92.95s
+INFO:root:Data retrieve time: 0.50s Model updating time: 92.45s
+INFO:root:[21/1000][1981/3039]	Loss_D: 0.4723	Loss_G: 3.1962	Time: 91.87s
+INFO:root:Data retrieve time: 0.49s Model updating time: 91.38s
+INFO:root:[21/1000][2081/3039]	Loss_D: 0.4706	Loss_G: 3.1900	Time: 93.27s
+INFO:root:Data retrieve time: 0.50s Model updating time: 92.76s
+INFO:root:[21/1000][2181/3039]	Loss_D: 0.4726	Loss_G: 3.1743	Time: 91.37s
+INFO:root:Data retrieve time: 0.47s Model updating time: 90.89s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_66000.png
+INFO:root:Time to save images and model: 1.63s 
+INFO:root:[21/1000][2281/3039]	Loss_D: 0.4705	Loss_G: 3.1688	Time: 96.28s
+INFO:root:Data retrieve time: 0.50s Model updating time: 94.15s
+INFO:root:[21/1000][2381/3039]	Loss_D: 0.4817	Loss_G: 3.1789	Time: 92.55s
+INFO:root:Data retrieve time: 0.47s Model updating time: 92.07s
+INFO:root:[21/1000][2481/3039]	Loss_D: 0.4707	Loss_G: 3.1185	Time: 92.28s
+INFO:root:Data retrieve time: 0.50s Model updating time: 91.78s
+INFO:root:[21/1000][2581/3039]	Loss_D: 0.4756	Loss_G: 3.1661	Time: 92.61s
+INFO:root:Data retrieve time: 0.49s Model updating time: 92.12s
+INFO:root:[21/1000][2681/3039]	Loss_D: 0.4709	Loss_G: 3.1634	Time: 92.30s
+INFO:root:Data retrieve time: 0.49s Model updating time: 91.81s
+INFO:root:[21/1000][2781/3039]	Loss_D: 0.4970	Loss_G: 3.1812	Time: 86.78s
+INFO:root:Data retrieve time: 0.46s Model updating time: 86.32s
+INFO:root:[21/1000][2881/3039]	Loss_D: 0.4721	Loss_G: 3.1790	Time: 85.12s
+INFO:root:Data retrieve time: 0.44s Model updating time: 84.68s
+INFO:root:[21/1000][2981/3039]	Loss_D: 0.4974	Loss_G: 3.1416	Time: 77.08s
+INFO:root:Data retrieve time: 0.42s Model updating time: 76.66s
+INFO:root:[22/1000][42/3039]	Loss_D: 0.4834	Loss_G: 3.1587	Time: 84.84s
+INFO:root:Data retrieve time: 11.14s Model updating time: 73.70s
+INFO:root:[22/1000][142/3039]	Loss_D: 0.4555	Loss_G: 3.2976	Time: 73.71s
+INFO:root:Data retrieve time: 0.40s Model updating time: 73.31s
+INFO:root:[22/1000][242/3039]	Loss_D: 0.4829	Loss_G: 3.1760	Time: 74.15s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.73s
+INFO:root:[22/1000][342/3039]	Loss_D: 0.4546	Loss_G: 3.1901	Time: 76.14s
+INFO:root:Data retrieve time: 0.44s Model updating time: 75.70s
+INFO:root:[22/1000][442/3039]	Loss_D: 0.4756	Loss_G: 3.1936	Time: 78.79s
+INFO:root:Data retrieve time: 0.44s Model updating time: 78.34s
+INFO:root:[22/1000][542/3039]	Loss_D: 0.4457	Loss_G: 3.2265	Time: 78.71s
+INFO:root:Data retrieve time: 0.45s Model updating time: 78.26s
+INFO:root:[22/1000][642/3039]	Loss_D: 0.4667	Loss_G: 3.2258	Time: 78.73s
+INFO:root:Data retrieve time: 0.44s Model updating time: 78.29s
+INFO:root:[22/1000][742/3039]	Loss_D: 0.4557	Loss_G: 3.2315	Time: 77.08s
+INFO:root:Data retrieve time: 0.45s Model updating time: 76.62s
+INFO:root:[22/1000][842/3039]	Loss_D: 0.4754	Loss_G: 3.1764	Time: 75.59s
+INFO:root:Data retrieve time: 0.41s Model updating time: 75.18s
+INFO:root:[22/1000][942/3039]	Loss_D: 0.4618	Loss_G: 3.2170	Time: 74.83s
+INFO:root:Data retrieve time: 0.41s Model updating time: 74.42s
+INFO:root:[22/1000][1042/3039]	Loss_D: 0.4694	Loss_G: 3.1843	Time: 75.85s
+INFO:root:Data retrieve time: 0.42s Model updating time: 75.43s
+INFO:root:[22/1000][1142/3039]	Loss_D: 0.4591	Loss_G: 3.1863	Time: 75.84s
+INFO:root:Data retrieve time: 0.42s Model updating time: 75.41s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_68000.png
+INFO:root:Time to save images and model: 1.47s 
+INFO:root:[22/1000][1242/3039]	Loss_D: 0.4592	Loss_G: 3.2777	Time: 77.07s
+INFO:root:Data retrieve time: 0.42s Model updating time: 75.18s
+INFO:root:[22/1000][1342/3039]	Loss_D: 0.4449	Loss_G: 3.2838	Time: 74.33s
+INFO:root:Data retrieve time: 0.41s Model updating time: 73.92s
+INFO:root:[22/1000][1442/3039]	Loss_D: 0.4472	Loss_G: 3.3260	Time: 72.70s
+INFO:root:Data retrieve time: 0.42s Model updating time: 72.28s
+INFO:root:[22/1000][1542/3039]	Loss_D: 0.4367	Loss_G: 3.2443	Time: 74.53s
+INFO:root:Data retrieve time: 0.43s Model updating time: 74.10s
+INFO:root:[22/1000][1642/3039]	Loss_D: 0.4455	Loss_G: 3.2813	Time: 75.07s
+INFO:root:Data retrieve time: 0.43s Model updating time: 74.63s
+INFO:root:[22/1000][1742/3039]	Loss_D: 0.4499	Loss_G: 3.2904	Time: 75.29s
+INFO:root:Data retrieve time: 0.43s Model updating time: 74.86s
+INFO:root:[22/1000][1842/3039]	Loss_D: 0.4438	Loss_G: 3.2392	Time: 75.32s
+INFO:root:Data retrieve time: 0.43s Model updating time: 74.88s
+INFO:root:[22/1000][1942/3039]	Loss_D: 0.4486	Loss_G: 3.2125	Time: 74.73s
+INFO:root:Data retrieve time: 0.42s Model updating time: 74.31s
+INFO:root:[22/1000][2042/3039]	Loss_D: 0.4479	Loss_G: 3.1968	Time: 74.87s
+INFO:root:Data retrieve time: 0.41s Model updating time: 74.46s
+INFO:root:[22/1000][2142/3039]	Loss_D: 0.4405	Loss_G: 3.2491	Time: 74.79s
+INFO:root:Data retrieve time: 0.40s Model updating time: 74.39s
+INFO:root:[22/1000][2242/3039]	Loss_D: 0.4570	Loss_G: 3.2308	Time: 73.34s
+INFO:root:Data retrieve time: 0.40s Model updating time: 72.94s
+INFO:root:[22/1000][2342/3039]	Loss_D: 0.4657	Loss_G: 3.2195	Time: 73.98s
+INFO:root:Data retrieve time: 0.42s Model updating time: 73.56s
+INFO:root:[22/1000][2442/3039]	Loss_D: 0.4588	Loss_G: 3.2686	Time: 72.08s
+INFO:root:Data retrieve time: 0.40s Model updating time: 71.68s
+INFO:root:[22/1000][2542/3039]	Loss_D: 0.4722	Loss_G: 3.1658	Time: 68.78s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.40s
+INFO:root:[22/1000][2642/3039]	Loss_D: 0.4652	Loss_G: 3.2566	Time: 68.28s
+INFO:root:Data retrieve time: 0.38s Model updating time: 67.89s
+INFO:root:[22/1000][2742/3039]	Loss_D: 0.4621	Loss_G: 3.2298	Time: 69.15s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.76s
+INFO:root:[22/1000][2842/3039]	Loss_D: 0.4622	Loss_G: 3.2407	Time: 68.93s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.54s
+INFO:root:[22/1000][2942/3039]	Loss_D: 0.4902	Loss_G: 3.1862	Time: 68.53s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.15s
+INFO:root:[23/1000][3/3039]	Loss_D: 0.4454	Loss_G: 3.2921	Time: 78.57s
+INFO:root:Data retrieve time: 10.40s Model updating time: 68.17s
+INFO:root:[23/1000][103/3039]	Loss_D: 0.4245	Loss_G: 3.3262	Time: 69.55s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.16s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_70000.png
+INFO:root:Time to save images and model: 1.38s 
+INFO:root:[23/1000][203/3039]	Loss_D: 0.4373	Loss_G: 3.3436	Time: 72.53s
+INFO:root:Data retrieve time: 0.41s Model updating time: 70.74s
+INFO:root:[23/1000][303/3039]	Loss_D: 0.4429	Loss_G: 3.2975	Time: 71.69s
+INFO:root:Data retrieve time: 0.41s Model updating time: 71.29s
+INFO:root:[23/1000][403/3039]	Loss_D: 0.4287	Loss_G: 3.3673	Time: 70.07s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.67s
+INFO:root:[23/1000][503/3039]	Loss_D: 0.4344	Loss_G: 3.3040	Time: 70.62s
+INFO:root:Data retrieve time: 0.40s Model updating time: 70.22s
+INFO:root:[23/1000][603/3039]	Loss_D: 0.4353	Loss_G: 3.3194	Time: 70.15s
+INFO:root:Data retrieve time: 0.41s Model updating time: 69.74s
+INFO:root:[23/1000][703/3039]	Loss_D: 0.4499	Loss_G: 3.2661	Time: 70.74s
+INFO:root:Data retrieve time: 0.41s Model updating time: 70.33s
+INFO:root:[23/1000][803/3039]	Loss_D: 0.4386	Loss_G: 3.3319	Time: 70.07s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.68s
+INFO:root:[23/1000][903/3039]	Loss_D: 0.4544	Loss_G: 3.2521	Time: 69.36s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.96s
+INFO:root:[23/1000][1003/3039]	Loss_D: 0.4612	Loss_G: 3.2647	Time: 69.08s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.69s
+INFO:root:[23/1000][1103/3039]	Loss_D: 0.4417	Loss_G: 3.3034	Time: 69.37s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.99s
+INFO:root:[23/1000][1203/3039]	Loss_D: 0.4477	Loss_G: 3.2777	Time: 69.80s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.42s
+INFO:root:[23/1000][1303/3039]	Loss_D: 0.4576	Loss_G: 3.2794	Time: 69.81s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.42s
+INFO:root:[23/1000][1403/3039]	Loss_D: 0.4661	Loss_G: 3.2794	Time: 69.47s
+INFO:root:Data retrieve time: 0.38s Model updating time: 69.10s
+INFO:root:[23/1000][1503/3039]	Loss_D: 0.4492	Loss_G: 3.2871	Time: 69.41s
+INFO:root:Data retrieve time: 0.38s Model updating time: 69.02s
+INFO:root:[23/1000][1603/3039]	Loss_D: 0.4510	Loss_G: 3.2545	Time: 70.96s
+INFO:root:Data retrieve time: 0.41s Model updating time: 70.55s
+INFO:root:[23/1000][1703/3039]	Loss_D: 0.4620	Loss_G: 3.2571	Time: 69.20s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.81s
+INFO:root:[23/1000][1803/3039]	Loss_D: 0.4844	Loss_G: 3.1419	Time: 69.24s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.85s
+INFO:root:[23/1000][1903/3039]	Loss_D: 0.4582	Loss_G: 3.2571	Time: 69.68s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.28s
+INFO:root:[23/1000][2003/3039]	Loss_D: 0.4388	Loss_G: 3.3107	Time: 69.29s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.90s
+INFO:root:[23/1000][2103/3039]	Loss_D: 0.4557	Loss_G: 3.3097	Time: 69.76s
+INFO:root:Data retrieve time: 0.41s Model updating time: 69.36s
+INFO:root:Saving fake images: models\Deep-biggan-bs64-ch128-mxp-n64-trunc0.75\images\generated_image_72000.png
+INFO:root:Time to save images and model: 1.38s 
+INFO:root:[23/1000][2203/3039]	Loss_D: 0.4512	Loss_G: 3.2841	Time: 70.34s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.58s
+INFO:root:[23/1000][2303/3039]	Loss_D: 0.4307	Loss_G: 3.2519	Time: 70.47s
+INFO:root:Data retrieve time: 0.39s Model updating time: 70.08s
+INFO:root:[23/1000][2403/3039]	Loss_D: 0.4335	Loss_G: 3.3167	Time: 70.16s
+INFO:root:Data retrieve time: 0.41s Model updating time: 69.75s
+INFO:root:[23/1000][2503/3039]	Loss_D: 0.4521	Loss_G: 3.3114	Time: 69.30s
+INFO:root:Data retrieve time: 0.38s Model updating time: 68.92s
+INFO:root:[23/1000][2603/3039]	Loss_D: 0.4233	Loss_G: 3.3588	Time: 69.15s
+INFO:root:Data retrieve time: 0.39s Model updating time: 68.76s
+INFO:root:[23/1000][2703/3039]	Loss_D: 0.4478	Loss_G: 3.3205	Time: 69.44s
+INFO:root:Data retrieve time: 0.38s Model updating time: 69.06s
+INFO:root:[23/1000][2803/3039]	Loss_D: 0.4473	Loss_G: 3.3599	Time: 70.02s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.63s
+INFO:root:[23/1000][2903/3039]	Loss_D: 0.4468	Loss_G: 3.3694	Time: 69.92s
+INFO:root:Data retrieve time: 0.40s Model updating time: 69.52s
+INFO:root:[23/1000][3003/3039]	Loss_D: 0.4437	Loss_G: 3.3616	Time: 70.12s
+INFO:root:Data retrieve time: 0.39s Model updating time: 69.73s

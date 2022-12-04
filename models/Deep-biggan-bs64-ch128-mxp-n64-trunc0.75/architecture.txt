@@ -1,0 +1,1556 @@
+Generator
+
+=========================================================================================================
+Layer (type:depth-idx)                                  Output Shape              Param #
+=========================================================================================================
+DeepBigganGenerator                                     [1, 3, 96, 128]           --
+├─Embedding: 1-1                                        [1, 128]                  2,560
+├─ModuleList: 1-2                                       --                        10,602,368
+│    └─DeepResUp: 2-11                                  [1, 2048, 3, 4]           (recursive)
+│    │    └─Upsample: 3-1                               --                        --
+│    │    └─ConditionalBatchNorm2d: 3-142               [1, 2048, 3, 4]           (recursive)
+│    │    └─ReLU: 3-143                                 [1, 2048, 3, 4]           --
+│    │    └─ParametrizedConv2d: 3-144                   [1, 512, 3, 4]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-145               [1, 512, 3, 4]            (recursive)
+│    │    └─ReLU: 3-146                                 [1, 512, 3, 4]            --
+│    │    └─Upsample: 3-7                               --                        --
+│    │    └─ParametrizedConv2d: 3-147                   [1, 512, 3, 4]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-148               [1, 512, 3, 4]            (recursive)
+│    │    └─ReLU: 3-149                                 [1, 512, 3, 4]            --
+│    │    └─ParametrizedConv2d: 3-150                   [1, 512, 3, 4]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-151               [1, 512, 3, 4]            (recursive)
+│    │    └─ReLU: 3-152                                 [1, 512, 3, 4]            --
+│    │    └─ParametrizedConv2d: 3-153                   [1, 2048, 3, 4]           (recursive)
+│    └─DeepResUp: 2-12                                  [1, 2048, 6, 8]           (recursive)
+│    │    └─Upsample: 3-154                             [1, 2048, 6, 8]           --
+│    │    └─ConditionalBatchNorm2d: 3-155               [1, 2048, 3, 4]           (recursive)
+│    │    └─ReLU: 3-156                                 [1, 2048, 3, 4]           --
+│    │    └─ParametrizedConv2d: 3-157                   [1, 512, 3, 4]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-158               [1, 512, 3, 4]            (recursive)
+│    │    └─ReLU: 3-159                                 [1, 512, 3, 4]            --
+│    │    └─Upsample: 3-160                             [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-161                   [1, 512, 6, 8]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-162               [1, 512, 6, 8]            (recursive)
+│    │    └─ReLU: 3-163                                 [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-164                   [1, 512, 6, 8]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-165               [1, 512, 6, 8]            (recursive)
+│    │    └─ReLU: 3-166                                 [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-167                   [1, 2048, 6, 8]           (recursive)
+│    └─DeepResUp: 2-13                                  [1, 2048, 6, 8]           (recursive)
+│    │    └─Upsample: 3-29                              --                        --
+│    │    └─ConditionalBatchNorm2d: 3-168               [1, 2048, 6, 8]           (recursive)
+│    │    └─ReLU: 3-169                                 [1, 2048, 6, 8]           --
+│    │    └─ParametrizedConv2d: 3-170                   [1, 512, 6, 8]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-171               [1, 512, 6, 8]            (recursive)
+│    │    └─ReLU: 3-172                                 [1, 512, 6, 8]            --
+│    │    └─Upsample: 3-35                              --                        --
+│    │    └─ParametrizedConv2d: 3-173                   [1, 512, 6, 8]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-174               [1, 512, 6, 8]            (recursive)
+│    │    └─ReLU: 3-175                                 [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-176                   [1, 512, 6, 8]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-177               [1, 512, 6, 8]            (recursive)
+│    │    └─ReLU: 3-178                                 [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-179                   [1, 2048, 6, 8]           (recursive)
+│    └─DeepResUp: 2-14                                  [1, 1024, 12, 16]         (recursive)
+│    │    └─Upsample: 3-180                             [1, 1024, 12, 16]         --
+│    │    └─ConditionalBatchNorm2d: 3-181               [1, 2048, 6, 8]           (recursive)
+│    │    └─ReLU: 3-182                                 [1, 2048, 6, 8]           --
+│    │    └─ParametrizedConv2d: 3-183                   [1, 512, 6, 8]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-184               [1, 512, 6, 8]            (recursive)
+│    │    └─ReLU: 3-185                                 [1, 512, 6, 8]            --
+│    │    └─Upsample: 3-186                             [1, 512, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-187                   [1, 512, 12, 16]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-188               [1, 512, 12, 16]          (recursive)
+│    │    └─ReLU: 3-189                                 [1, 512, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-190                   [1, 512, 12, 16]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-191               [1, 512, 12, 16]          (recursive)
+│    │    └─ReLU: 3-192                                 [1, 512, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-193                   [1, 1024, 12, 16]         (recursive)
+│    └─DeepResUp: 2-15                                  [1, 1024, 12, 16]         (recursive)
+│    │    └─Upsample: 3-57                              --                        --
+│    │    └─ConditionalBatchNorm2d: 3-194               [1, 1024, 12, 16]         (recursive)
+│    │    └─ReLU: 3-195                                 [1, 1024, 12, 16]         --
+│    │    └─ParametrizedConv2d: 3-196                   [1, 256, 12, 16]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-197               [1, 256, 12, 16]          (recursive)
+│    │    └─ReLU: 3-198                                 [1, 256, 12, 16]          --
+│    │    └─Upsample: 3-63                              --                        --
+│    │    └─ParametrizedConv2d: 3-199                   [1, 256, 12, 16]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-200               [1, 256, 12, 16]          (recursive)
+│    │    └─ReLU: 3-201                                 [1, 256, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-202                   [1, 256, 12, 16]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-203               [1, 256, 12, 16]          (recursive)
+│    │    └─ReLU: 3-204                                 [1, 256, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-205                   [1, 1024, 12, 16]         (recursive)
+│    └─DeepResUp: 2-16                                  [1, 512, 24, 32]          (recursive)
+│    │    └─Upsample: 3-206                             [1, 512, 24, 32]          --
+│    │    └─ConditionalBatchNorm2d: 3-207               [1, 1024, 12, 16]         (recursive)
+│    │    └─ReLU: 3-208                                 [1, 1024, 12, 16]         --
+│    │    └─ParametrizedConv2d: 3-209                   [1, 256, 12, 16]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-210               [1, 256, 12, 16]          (recursive)
+│    │    └─ReLU: 3-211                                 [1, 256, 12, 16]          --
+│    │    └─Upsample: 3-212                             [1, 256, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-213                   [1, 256, 24, 32]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-214               [1, 256, 24, 32]          (recursive)
+│    │    └─ReLU: 3-215                                 [1, 256, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-216                   [1, 256, 24, 32]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-217               [1, 256, 24, 32]          (recursive)
+│    │    └─ReLU: 3-218                                 [1, 256, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-219                   [1, 512, 24, 32]          (recursive)
+│    └─DeepResUp: 2-17                                  [1, 512, 24, 32]          (recursive)
+│    │    └─Upsample: 3-85                              --                        --
+│    │    └─ConditionalBatchNorm2d: 3-220               [1, 512, 24, 32]          (recursive)
+│    │    └─ReLU: 3-221                                 [1, 512, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-222                   [1, 128, 24, 32]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-223               [1, 128, 24, 32]          (recursive)
+│    │    └─ReLU: 3-224                                 [1, 128, 24, 32]          --
+│    │    └─Upsample: 3-91                              --                        --
+│    │    └─ParametrizedConv2d: 3-225                   [1, 128, 24, 32]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-226               [1, 128, 24, 32]          (recursive)
+│    │    └─ReLU: 3-227                                 [1, 128, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-228                   [1, 128, 24, 32]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-229               [1, 128, 24, 32]          (recursive)
+│    │    └─ReLU: 3-230                                 [1, 128, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-231                   [1, 512, 24, 32]          (recursive)
+│    └─DeepResUp: 2-18                                  [1, 256, 48, 64]          (recursive)
+│    │    └─Upsample: 3-232                             [1, 256, 48, 64]          --
+│    │    └─ConditionalBatchNorm2d: 3-233               [1, 512, 24, 32]          (recursive)
+│    │    └─ReLU: 3-234                                 [1, 512, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-235                   [1, 128, 24, 32]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-236               [1, 128, 24, 32]          (recursive)
+│    │    └─ReLU: 3-237                                 [1, 128, 24, 32]          --
+│    │    └─Upsample: 3-238                             [1, 128, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-239                   [1, 128, 48, 64]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-240               [1, 128, 48, 64]          (recursive)
+│    │    └─ReLU: 3-241                                 [1, 128, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-242                   [1, 128, 48, 64]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-243               [1, 128, 48, 64]          (recursive)
+│    │    └─ReLU: 3-244                                 [1, 128, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-245                   [1, 256, 48, 64]          (recursive)
+│    └─DeepResUp: 2-26                                  [1, 256, 48, 64]          (recursive)
+│    │    └─Upsample: 3-113                             --                        --
+│    │    └─ConditionalBatchNorm2d: 3-246               [1, 256, 48, 64]          (recursive)
+│    │    └─ReLU: 3-247                                 [1, 256, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-248                   [1, 64, 48, 64]           (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-249               [1, 64, 48, 64]           (recursive)
+│    │    └─ReLU: 3-250                                 [1, 64, 48, 64]           --
+│    │    └─Upsample: 3-119                             --                        --
+│    │    └─ParametrizedConv2d: 3-251                   [1, 64, 48, 64]           (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-252               [1, 64, 48, 64]           (recursive)
+│    │    └─ReLU: 3-253                                 [1, 64, 48, 64]           --
+│    │    └─ParametrizedConv2d: 3-254                   [1, 64, 48, 64]           (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-255               [1, 64, 48, 64]           (recursive)
+│    │    └─ReLU: 3-256                                 [1, 64, 48, 64]           --
+│    │    └─ParametrizedConv2d: 3-257                   [1, 256, 48, 64]          (recursive)
+│    └─DeepResUp: 2-27                                  [1, 128, 96, 128]         (recursive)
+│    │    └─Upsample: 3-258                             [1, 128, 96, 128]         --
+│    │    └─ConditionalBatchNorm2d: 3-259               [1, 256, 48, 64]          (recursive)
+│    │    └─ReLU: 3-260                                 [1, 256, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-261                   [1, 64, 48, 64]           (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-262               [1, 64, 48, 64]           (recursive)
+│    │    └─ReLU: 3-263                                 [1, 64, 48, 64]           --
+│    │    └─Upsample: 3-264                             [1, 64, 96, 128]          --
+│    │    └─ParametrizedConv2d: 3-265                   [1, 64, 96, 128]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-266               [1, 64, 96, 128]          (recursive)
+│    │    └─ReLU: 3-267                                 [1, 64, 96, 128]          --
+│    │    └─ParametrizedConv2d: 3-268                   [1, 64, 96, 128]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-269               [1, 64, 96, 128]          (recursive)
+│    │    └─ReLU: 3-270                                 [1, 64, 96, 128]          --
+│    │    └─ParametrizedConv2d: 3-271                   [1, 128, 96, 128]         (recursive)
+├─ParametrizedLinear: 1-3                               [1, 24576]                24,576
+│    └─ModuleDict: 2                                    --                        --
+│    │    └─ParametrizationList: 3-141                  [24576, 256]              6,291,456
+├─ModuleList: 1-2                                       --                        10,602,368
+│    └─DeepResUp: 2-11                                  [1, 2048, 3, 4]           (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-142               [1, 2048, 3, 4]           (recursive)
+│    │    └─ReLU: 3-143                                 [1, 2048, 3, 4]           --
+│    │    └─ParametrizedConv2d: 3-144                   [1, 512, 3, 4]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-145               [1, 512, 3, 4]            (recursive)
+│    │    └─ReLU: 3-146                                 [1, 512, 3, 4]            --
+│    │    └─ParametrizedConv2d: 3-147                   [1, 512, 3, 4]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-148               [1, 512, 3, 4]            (recursive)
+│    │    └─ReLU: 3-149                                 [1, 512, 3, 4]            --
+│    │    └─ParametrizedConv2d: 3-150                   [1, 512, 3, 4]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-151               [1, 512, 3, 4]            (recursive)
+│    │    └─ReLU: 3-152                                 [1, 512, 3, 4]            --
+│    │    └─ParametrizedConv2d: 3-153                   [1, 2048, 3, 4]           (recursive)
+│    └─DeepResUp: 2-12                                  [1, 2048, 6, 8]           (recursive)
+│    │    └─Upsample: 3-154                             [1, 2048, 6, 8]           --
+│    │    └─ConditionalBatchNorm2d: 3-155               [1, 2048, 3, 4]           (recursive)
+│    │    └─ReLU: 3-156                                 [1, 2048, 3, 4]           --
+│    │    └─ParametrizedConv2d: 3-157                   [1, 512, 3, 4]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-158               [1, 512, 3, 4]            (recursive)
+│    │    └─ReLU: 3-159                                 [1, 512, 3, 4]            --
+│    │    └─Upsample: 3-160                             [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-161                   [1, 512, 6, 8]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-162               [1, 512, 6, 8]            (recursive)
+│    │    └─ReLU: 3-163                                 [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-164                   [1, 512, 6, 8]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-165               [1, 512, 6, 8]            (recursive)
+│    │    └─ReLU: 3-166                                 [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-167                   [1, 2048, 6, 8]           (recursive)
+│    └─DeepResUp: 2-13                                  [1, 2048, 6, 8]           (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-168               [1, 2048, 6, 8]           (recursive)
+│    │    └─ReLU: 3-169                                 [1, 2048, 6, 8]           --
+│    │    └─ParametrizedConv2d: 3-170                   [1, 512, 6, 8]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-171               [1, 512, 6, 8]            (recursive)
+│    │    └─ReLU: 3-172                                 [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-173                   [1, 512, 6, 8]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-174               [1, 512, 6, 8]            (recursive)
+│    │    └─ReLU: 3-175                                 [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-176                   [1, 512, 6, 8]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-177               [1, 512, 6, 8]            (recursive)
+│    │    └─ReLU: 3-178                                 [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-179                   [1, 2048, 6, 8]           (recursive)
+│    └─DeepResUp: 2-14                                  [1, 1024, 12, 16]         (recursive)
+│    │    └─Upsample: 3-180                             [1, 1024, 12, 16]         --
+│    │    └─ConditionalBatchNorm2d: 3-181               [1, 2048, 6, 8]           (recursive)
+│    │    └─ReLU: 3-182                                 [1, 2048, 6, 8]           --
+│    │    └─ParametrizedConv2d: 3-183                   [1, 512, 6, 8]            (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-184               [1, 512, 6, 8]            (recursive)
+│    │    └─ReLU: 3-185                                 [1, 512, 6, 8]            --
+│    │    └─Upsample: 3-186                             [1, 512, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-187                   [1, 512, 12, 16]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-188               [1, 512, 12, 16]          (recursive)
+│    │    └─ReLU: 3-189                                 [1, 512, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-190                   [1, 512, 12, 16]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-191               [1, 512, 12, 16]          (recursive)
+│    │    └─ReLU: 3-192                                 [1, 512, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-193                   [1, 1024, 12, 16]         (recursive)
+│    └─DeepResUp: 2-15                                  [1, 1024, 12, 16]         (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-194               [1, 1024, 12, 16]         (recursive)
+│    │    └─ReLU: 3-195                                 [1, 1024, 12, 16]         --
+│    │    └─ParametrizedConv2d: 3-196                   [1, 256, 12, 16]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-197               [1, 256, 12, 16]          (recursive)
+│    │    └─ReLU: 3-198                                 [1, 256, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-199                   [1, 256, 12, 16]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-200               [1, 256, 12, 16]          (recursive)
+│    │    └─ReLU: 3-201                                 [1, 256, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-202                   [1, 256, 12, 16]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-203               [1, 256, 12, 16]          (recursive)
+│    │    └─ReLU: 3-204                                 [1, 256, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-205                   [1, 1024, 12, 16]         (recursive)
+│    └─DeepResUp: 2-16                                  [1, 512, 24, 32]          (recursive)
+│    │    └─Upsample: 3-206                             [1, 512, 24, 32]          --
+│    │    └─ConditionalBatchNorm2d: 3-207               [1, 1024, 12, 16]         (recursive)
+│    │    └─ReLU: 3-208                                 [1, 1024, 12, 16]         --
+│    │    └─ParametrizedConv2d: 3-209                   [1, 256, 12, 16]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-210               [1, 256, 12, 16]          (recursive)
+│    │    └─ReLU: 3-211                                 [1, 256, 12, 16]          --
+│    │    └─Upsample: 3-212                             [1, 256, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-213                   [1, 256, 24, 32]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-214               [1, 256, 24, 32]          (recursive)
+│    │    └─ReLU: 3-215                                 [1, 256, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-216                   [1, 256, 24, 32]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-217               [1, 256, 24, 32]          (recursive)
+│    │    └─ReLU: 3-218                                 [1, 256, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-219                   [1, 512, 24, 32]          (recursive)
+│    └─DeepResUp: 2-17                                  [1, 512, 24, 32]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-220               [1, 512, 24, 32]          (recursive)
+│    │    └─ReLU: 3-221                                 [1, 512, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-222                   [1, 128, 24, 32]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-223               [1, 128, 24, 32]          (recursive)
+│    │    └─ReLU: 3-224                                 [1, 128, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-225                   [1, 128, 24, 32]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-226               [1, 128, 24, 32]          (recursive)
+│    │    └─ReLU: 3-227                                 [1, 128, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-228                   [1, 128, 24, 32]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-229               [1, 128, 24, 32]          (recursive)
+│    │    └─ReLU: 3-230                                 [1, 128, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-231                   [1, 512, 24, 32]          (recursive)
+│    └─DeepResUp: 2-18                                  [1, 256, 48, 64]          (recursive)
+│    │    └─Upsample: 3-232                             [1, 256, 48, 64]          --
+│    │    └─ConditionalBatchNorm2d: 3-233               [1, 512, 24, 32]          (recursive)
+│    │    └─ReLU: 3-234                                 [1, 512, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-235                   [1, 128, 24, 32]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-236               [1, 128, 24, 32]          (recursive)
+│    │    └─ReLU: 3-237                                 [1, 128, 24, 32]          --
+│    │    └─Upsample: 3-238                             [1, 128, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-239                   [1, 128, 48, 64]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-240               [1, 128, 48, 64]          (recursive)
+│    │    └─ReLU: 3-241                                 [1, 128, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-242                   [1, 128, 48, 64]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-243               [1, 128, 48, 64]          (recursive)
+│    │    └─ReLU: 3-244                                 [1, 128, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-245                   [1, 256, 48, 64]          (recursive)
+├─NonLocalBlock: 1-4                                    [1, 256, 48, 64]          1
+│    └─ParametrizedConv2d: 2-19                         [1, 32, 48, 64]           32
+│    └─ParametrizedConv2d: 2-20                         [1, 32, 48, 64]           32
+│    └─MaxPool2d: 2-21                                  [1, 32, 24, 32]           --
+│    └─Softmax: 2-22                                    [1, 3072, 768]            --
+│    └─ParametrizedConv2d: 2-23                         [1, 128, 48, 64]          128
+│    └─MaxPool2d: 2-24                                  [1, 128, 24, 32]          --
+│    └─ParametrizedConv2d: 2-25                         [1, 256, 48, 64]          256
+├─ModuleList: 1-2                                       --                        10,602,368
+│    └─DeepResUp: 2-26                                  [1, 256, 48, 64]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-246               [1, 256, 48, 64]          (recursive)
+│    │    └─ReLU: 3-247                                 [1, 256, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-248                   [1, 64, 48, 64]           (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-249               [1, 64, 48, 64]           (recursive)
+│    │    └─ReLU: 3-250                                 [1, 64, 48, 64]           --
+│    │    └─ParametrizedConv2d: 3-251                   [1, 64, 48, 64]           (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-252               [1, 64, 48, 64]           (recursive)
+│    │    └─ReLU: 3-253                                 [1, 64, 48, 64]           --
+│    │    └─ParametrizedConv2d: 3-254                   [1, 64, 48, 64]           (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-255               [1, 64, 48, 64]           (recursive)
+│    │    └─ReLU: 3-256                                 [1, 64, 48, 64]           --
+│    │    └─ParametrizedConv2d: 3-257                   [1, 256, 48, 64]          (recursive)
+│    └─DeepResUp: 2-27                                  [1, 128, 96, 128]         (recursive)
+│    │    └─Upsample: 3-258                             [1, 128, 96, 128]         --
+│    │    └─ConditionalBatchNorm2d: 3-259               [1, 256, 48, 64]          (recursive)
+│    │    └─ReLU: 3-260                                 [1, 256, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-261                   [1, 64, 48, 64]           (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-262               [1, 64, 48, 64]           (recursive)
+│    │    └─ReLU: 3-263                                 [1, 64, 48, 64]           --
+│    │    └─Upsample: 3-264                             [1, 64, 96, 128]          --
+│    │    └─ParametrizedConv2d: 3-265                   [1, 64, 96, 128]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-266               [1, 64, 96, 128]          (recursive)
+│    │    └─ReLU: 3-267                                 [1, 64, 96, 128]          --
+│    │    └─ParametrizedConv2d: 3-268                   [1, 64, 96, 128]          (recursive)
+│    │    └─ConditionalBatchNorm2d: 3-269               [1, 64, 96, 128]          (recursive)
+│    │    └─ReLU: 3-270                                 [1, 64, 96, 128]          --
+│    │    └─ParametrizedConv2d: 3-271                   [1, 128, 96, 128]         (recursive)
+├─BatchNorm2d: 1-5                                      [1, 128, 96, 128]         256
+├─ReLU: 1-6                                             [1, 128, 96, 128]         --
+├─Conv2d: 1-7                                           [1, 3, 96, 128]           3,459
+├─Tanh: 1-8                                             [1, 3, 96, 128]           --
+=========================================================================================================
+Total params: 48,046,532
+Trainable params: 48,046,532
+Non-trainable params: 0
+Total mult-adds (M): 63.69
+=========================================================================================================
+Input size (MB): 0.00
+Forward/backward pass size (MB): 12.88
+Params size (MB): 0.03
+Estimated Total Size (MB): 12.90
+=========================================================================================================DeepBigganGenerator(
+  (embeddings): Embedding(20, 128)
+  (generator_layers): ModuleList(
+    (0): DeepResUp(
+      (upsample_a1): Upsample(scale_factor=2.0, mode=nearest)
+      (cond_batch_norm_b1): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=4096, bias=True)
+      )
+      (relu_b2): ReLU()
+      (conv_b3): ParametrizedConv2d(
+        2048, 512, kernel_size=(1, 1), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b4): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b5): ReLU()
+      (upsample_b6): Upsample(scale_factor=2.0, mode=nearest)
+      (conv_b7): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b8): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b9): ReLU()
+      (conv_b10): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b11): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b12): ReLU()
+      (conv_b13): ParametrizedConv2d(
+        512, 2048, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (1): DeepResUp(
+      (upsample_a1): Upsample(scale_factor=2.0, mode=nearest)
+      (cond_batch_norm_b1): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=4096, bias=True)
+      )
+      (relu_b2): ReLU()
+      (conv_b3): ParametrizedConv2d(
+        2048, 512, kernel_size=(1, 1), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b4): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b5): ReLU()
+      (upsample_b6): Upsample(scale_factor=2.0, mode=nearest)
+      (conv_b7): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b8): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b9): ReLU()
+      (conv_b10): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b11): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b12): ReLU()
+      (conv_b13): ParametrizedConv2d(
+        512, 2048, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (2): DeepResUp(
+      (upsample_a1): Upsample(scale_factor=2.0, mode=nearest)
+      (cond_batch_norm_b1): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=4096, bias=True)
+      )
+      (relu_b2): ReLU()
+      (conv_b3): ParametrizedConv2d(
+        2048, 512, kernel_size=(1, 1), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b4): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b5): ReLU()
+      (upsample_b6): Upsample(scale_factor=2.0, mode=nearest)
+      (conv_b7): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b8): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b9): ReLU()
+      (conv_b10): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b11): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b12): ReLU()
+      (conv_b13): ParametrizedConv2d(
+        512, 2048, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (3): DeepResUp(
+      (upsample_a1): Upsample(scale_factor=2.0, mode=nearest)
+      (cond_batch_norm_b1): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(2048, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=4096, bias=True)
+      )
+      (relu_b2): ReLU()
+      (conv_b3): ParametrizedConv2d(
+        2048, 512, kernel_size=(1, 1), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b4): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b5): ReLU()
+      (upsample_b6): Upsample(scale_factor=2.0, mode=nearest)
+      (conv_b7): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b8): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b9): ReLU()
+      (conv_b10): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b11): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b12): ReLU()
+      (conv_b13): ParametrizedConv2d(
+        512, 1024, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (4): DeepResUp(
+      (upsample_a1): Upsample(scale_factor=2.0, mode=nearest)
+      (cond_batch_norm_b1): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=2048, bias=True)
+      )
+      (relu_b2): ReLU()
+      (conv_b3): ParametrizedConv2d(
+        1024, 256, kernel_size=(1, 1), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b4): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=512, bias=True)
+      )
+      (relu_b5): ReLU()
+      (upsample_b6): Upsample(scale_factor=2.0, mode=nearest)
+      (conv_b7): ParametrizedConv2d(
+        256, 256, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b8): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=512, bias=True)
+      )
+      (relu_b9): ReLU()
+      (conv_b10): ParametrizedConv2d(
+        256, 256, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b11): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=512, bias=True)
+      )
+      (relu_b12): ReLU()
+      (conv_b13): ParametrizedConv2d(
+        256, 1024, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (5): DeepResUp(
+      (upsample_a1): Upsample(scale_factor=2.0, mode=nearest)
+      (cond_batch_norm_b1): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(1024, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=2048, bias=True)
+      )
+      (relu_b2): ReLU()
+      (conv_b3): ParametrizedConv2d(
+        1024, 256, kernel_size=(1, 1), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b4): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=512, bias=True)
+      )
+      (relu_b5): ReLU()
+      (upsample_b6): Upsample(scale_factor=2.0, mode=nearest)
+      (conv_b7): ParametrizedConv2d(
+        256, 256, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b8): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=512, bias=True)
+      )
+      (relu_b9): ReLU()
+      (conv_b10): ParametrizedConv2d(
+        256, 256, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b11): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=512, bias=True)
+      )
+      (relu_b12): ReLU()
+      (conv_b13): ParametrizedConv2d(
+        256, 512, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (6): DeepResUp(
+      (upsample_a1): Upsample(scale_factor=2.0, mode=nearest)
+      (cond_batch_norm_b1): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b2): ReLU()
+      (conv_b3): ParametrizedConv2d(
+        512, 128, kernel_size=(1, 1), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b4): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (relu_b5): ReLU()
+      (upsample_b6): Upsample(scale_factor=2.0, mode=nearest)
+      (conv_b7): ParametrizedConv2d(
+        128, 128, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b8): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (relu_b9): ReLU()
+      (conv_b10): ParametrizedConv2d(
+        128, 128, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b11): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (relu_b12): ReLU()
+      (conv_b13): ParametrizedConv2d(
+        128, 512, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (7): DeepResUp(
+      (upsample_a1): Upsample(scale_factor=2.0, mode=nearest)
+      (cond_batch_norm_b1): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=1024, bias=True)
+      )
+      (relu_b2): ReLU()
+      (conv_b3): ParametrizedConv2d(
+        512, 128, kernel_size=(1, 1), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b4): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (relu_b5): ReLU()
+      (upsample_b6): Upsample(scale_factor=2.0, mode=nearest)
+      (conv_b7): ParametrizedConv2d(
+        128, 128, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b8): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (relu_b9): ReLU()
+      (conv_b10): ParametrizedConv2d(
+        128, 128, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b11): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=256, bias=True)
+      )
+      (relu_b12): ReLU()
+      (conv_b13): ParametrizedConv2d(
+        128, 256, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (8): DeepResUp(
+      (upsample_a1): Upsample(scale_factor=2.0, mode=nearest)
+      (cond_batch_norm_b1): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=512, bias=True)
+      )
+      (relu_b2): ReLU()
+      (conv_b3): ParametrizedConv2d(
+        256, 64, kernel_size=(1, 1), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b4): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=128, bias=True)
+      )
+      (relu_b5): ReLU()
+      (upsample_b6): Upsample(scale_factor=2.0, mode=nearest)
+      (conv_b7): ParametrizedConv2d(
+        64, 64, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b8): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=128, bias=True)
+      )
+      (relu_b9): ReLU()
+      (conv_b10): ParametrizedConv2d(
+        64, 64, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b11): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=128, bias=True)
+      )
+      (relu_b12): ReLU()
+      (conv_b13): ParametrizedConv2d(
+        64, 256, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (9): DeepResUp(
+      (upsample_a1): Upsample(scale_factor=2.0, mode=nearest)
+      (cond_batch_norm_b1): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=512, bias=True)
+      )
+      (relu_b2): ReLU()
+      (conv_b3): ParametrizedConv2d(
+        256, 64, kernel_size=(1, 1), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b4): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=128, bias=True)
+      )
+      (relu_b5): ReLU()
+      (upsample_b6): Upsample(scale_factor=2.0, mode=nearest)
+      (conv_b7): ParametrizedConv2d(
+        64, 64, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b8): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=128, bias=True)
+      )
+      (relu_b9): ReLU()
+      (conv_b10): ParametrizedConv2d(
+        64, 64, kernel_size=(3, 3), stride=(1, 1), padding=same, bias=False
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (cond_batch_norm_b11): ConditionalBatchNorm2d(
+        (bn): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=True)
+        (linear): Linear(in_features=256, out_features=128, bias=True)
+      )
+      (relu_b12): ReLU()
+      (conv_b13): ParametrizedConv2d(
+        64, 128, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+  )
+  (initial_linear): ParametrizedLinear(
+    in_features=256, out_features=24576, bias=True
+    (parametrizations): ModuleDict(
+      (weight): ParametrizationList(
+        (0): _SpectralNorm()
+      )
+    )
+  )
+  (nonlocal_block): NonLocalBlock(
+    (conv_delta): ParametrizedConv2d(
+      256, 32, kernel_size=(1, 1), stride=(1, 1), padding=same
+      (parametrizations): ModuleDict(
+        (weight): ParametrizationList(
+          (0): _SpectralNorm()
+        )
+      )
+    )
+    (conv_phi): ParametrizedConv2d(
+      256, 32, kernel_size=(1, 1), stride=(1, 1), padding=same
+      (parametrizations): ModuleDict(
+        (weight): ParametrizationList(
+          (0): _SpectralNorm()
+        )
+      )
+    )
+    (pooling_phi): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (conv_g): ParametrizedConv2d(
+      256, 128, kernel_size=(1, 1), stride=(1, 1), padding=same
+      (parametrizations): ModuleDict(
+        (weight): ParametrizationList(
+          (0): _SpectralNorm()
+        )
+      )
+    )
+    (pooling_g): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+    (softmax): Softmax(dim=-1)
+    (conv_last): ParametrizedConv2d(
+      128, 256, kernel_size=(1, 1), stride=(1, 1), padding=same
+      (parametrizations): ModuleDict(
+        (weight): ParametrizationList(
+          (0): _SpectralNorm()
+        )
+      )
+    )
+  )
+  (batch_norm): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (relu): ReLU()
+  (conv): Conv2d(128, 3, kernel_size=(3, 3), stride=(1, 1), padding=same)
+  (tanh): Tanh()
+)
+
+Discriminator
+
+=========================================================================================================
+Layer (type:depth-idx)                                  Output Shape              Param #
+=========================================================================================================
+DeepBigganDiscriminator                                 [1]                       --
+├─ModuleList: 1                                         --                        --
+│    └─ParametrizedConv2d: 2-1                          [1, 128, 96, 128]         128
+│    └─DeepResDown: 2-2                                 [1, 256, 48, 64]          --
+│    │    └─AvgPool2d: 3-1                              [1, 128, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-2                     [1, 128, 48, 64]          16,512
+│    │    └─ReLU: 3-3                                   [1, 128, 96, 128]         --
+│    │    └─ParametrizedConv2d: 3-4                     [1, 64, 96, 128]          8,256
+│    │    └─ReLU: 3-5                                   [1, 64, 96, 128]          --
+│    │    └─ParametrizedConv2d: 3-6                     [1, 64, 96, 128]          36,928
+│    │    └─ReLU: 3-7                                   [1, 64, 96, 128]          --
+│    │    └─ParametrizedConv2d: 3-8                     [1, 64, 96, 128]          36,928
+│    │    └─ReLU: 3-9                                   [1, 64, 96, 128]          --
+│    │    └─AvgPool2d: 3-10                             [1, 64, 48, 64]           --
+│    │    └─ParametrizedConv2d: 3-11                    [1, 256, 48, 64]          16,640
+│    └─DeepResDown: 2-3                                 [1, 256, 48, 64]          --
+│    │    └─ReLU: 3-12                                  [1, 256, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-13                    [1, 64, 48, 64]           16,448
+│    │    └─ReLU: 3-14                                  [1, 64, 48, 64]           --
+│    │    └─ParametrizedConv2d: 3-15                    [1, 64, 48, 64]           36,928
+│    │    └─ReLU: 3-16                                  [1, 64, 48, 64]           --
+│    │    └─ParametrizedConv2d: 3-17                    [1, 64, 48, 64]           36,928
+│    │    └─ReLU: 3-18                                  [1, 64, 48, 64]           --
+│    │    └─ParametrizedConv2d: 3-19                    [1, 256, 48, 64]          16,640
+│    └─NonLocalBlock: 2-4                               [1, 256, 48, 64]          1
+│    │    └─ParametrizedConv2d: 3-20                    [1, 32, 48, 64]           8,224
+│    │    └─ParametrizedConv2d: 3-21                    [1, 32, 48, 64]           8,224
+│    │    └─MaxPool2d: 3-22                             [1, 32, 24, 32]           --
+│    │    └─Softmax: 3-23                               [1, 3072, 768]            --
+│    │    └─ParametrizedConv2d: 3-24                    [1, 128, 48, 64]          32,896
+│    │    └─MaxPool2d: 3-25                             [1, 128, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-26                    [1, 256, 48, 64]          33,024
+│    └─DeepResDown: 2-5                                 [1, 512, 24, 32]          --
+│    │    └─AvgPool2d: 3-27                             [1, 256, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-28                    [1, 256, 24, 32]          65,792
+│    │    └─ReLU: 3-29                                  [1, 256, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-30                    [1, 128, 48, 64]          32,896
+│    │    └─ReLU: 3-31                                  [1, 128, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-32                    [1, 128, 48, 64]          147,584
+│    │    └─ReLU: 3-33                                  [1, 128, 48, 64]          --
+│    │    └─ParametrizedConv2d: 3-34                    [1, 128, 48, 64]          147,584
+│    │    └─ReLU: 3-35                                  [1, 128, 48, 64]          --
+│    │    └─AvgPool2d: 3-36                             [1, 128, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-37                    [1, 512, 24, 32]          66,048
+│    └─DeepResDown: 2-6                                 [1, 512, 24, 32]          --
+│    │    └─ReLU: 3-38                                  [1, 512, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-39                    [1, 128, 24, 32]          65,664
+│    │    └─ReLU: 3-40                                  [1, 128, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-41                    [1, 128, 24, 32]          147,584
+│    │    └─ReLU: 3-42                                  [1, 128, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-43                    [1, 128, 24, 32]          147,584
+│    │    └─ReLU: 3-44                                  [1, 128, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-45                    [1, 512, 24, 32]          66,048
+│    └─DeepResDown: 2-7                                 [1, 1024, 12, 16]         --
+│    │    └─AvgPool2d: 3-46                             [1, 512, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-47                    [1, 512, 12, 16]          262,656
+│    │    └─ReLU: 3-48                                  [1, 512, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-49                    [1, 256, 24, 32]          131,328
+│    │    └─ReLU: 3-50                                  [1, 256, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-51                    [1, 256, 24, 32]          590,080
+│    │    └─ReLU: 3-52                                  [1, 256, 24, 32]          --
+│    │    └─ParametrizedConv2d: 3-53                    [1, 256, 24, 32]          590,080
+│    │    └─ReLU: 3-54                                  [1, 256, 24, 32]          --
+│    │    └─AvgPool2d: 3-55                             [1, 256, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-56                    [1, 1024, 12, 16]         263,168
+│    └─DeepResDown: 2-8                                 [1, 1024, 12, 16]         --
+│    │    └─ReLU: 3-57                                  [1, 1024, 12, 16]         --
+│    │    └─ParametrizedConv2d: 3-58                    [1, 256, 12, 16]          262,400
+│    │    └─ReLU: 3-59                                  [1, 256, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-60                    [1, 256, 12, 16]          590,080
+│    │    └─ReLU: 3-61                                  [1, 256, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-62                    [1, 256, 12, 16]          590,080
+│    │    └─ReLU: 3-63                                  [1, 256, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-64                    [1, 1024, 12, 16]         263,168
+│    └─DeepResDown: 2-9                                 [1, 2048, 6, 8]           --
+│    │    └─AvgPool2d: 3-65                             [1, 1024, 6, 8]           --
+│    │    └─ParametrizedConv2d: 3-66                    [1, 1024, 6, 8]           1,049,600
+│    │    └─ReLU: 3-67                                  [1, 1024, 12, 16]         --
+│    │    └─ParametrizedConv2d: 3-68                    [1, 512, 12, 16]          524,800
+│    │    └─ReLU: 3-69                                  [1, 512, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-70                    [1, 512, 12, 16]          2,359,808
+│    │    └─ReLU: 3-71                                  [1, 512, 12, 16]          --
+│    │    └─ParametrizedConv2d: 3-72                    [1, 512, 12, 16]          2,359,808
+│    │    └─ReLU: 3-73                                  [1, 512, 12, 16]          --
+│    │    └─AvgPool2d: 3-74                             [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-75                    [1, 2048, 6, 8]           1,050,624
+│    └─DeepResDown: 2-10                                [1, 2048, 6, 8]           --
+│    │    └─ReLU: 3-76                                  [1, 2048, 6, 8]           --
+│    │    └─ParametrizedConv2d: 3-77                    [1, 512, 6, 8]            1,049,088
+│    │    └─ReLU: 3-78                                  [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-79                    [1, 512, 6, 8]            2,359,808
+│    │    └─ReLU: 3-80                                  [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-81                    [1, 512, 6, 8]            2,359,808
+│    │    └─ReLU: 3-82                                  [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-83                    [1, 2048, 6, 8]           1,050,624
+│    └─DeepResDown: 2-11                                [1, 2048, 3, 4]           --
+│    │    └─AvgPool2d: 3-84                             [1, 2048, 3, 4]           --
+│    │    └─ReLU: 3-85                                  [1, 2048, 6, 8]           --
+│    │    └─ParametrizedConv2d: 3-86                    [1, 512, 6, 8]            1,049,088
+│    │    └─ReLU: 3-87                                  [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-88                    [1, 512, 6, 8]            2,359,808
+│    │    └─ReLU: 3-89                                  [1, 512, 6, 8]            --
+│    │    └─ParametrizedConv2d: 3-90                    [1, 512, 6, 8]            2,359,808
+│    │    └─ReLU: 3-91                                  [1, 512, 6, 8]            --
+│    │    └─AvgPool2d: 3-92                             [1, 512, 3, 4]            --
+│    │    └─ParametrizedConv2d: 3-93                    [1, 2048, 3, 4]           1,050,624
+│    └─DeepResDown: 2-12                                [1, 2048, 3, 4]           --
+│    │    └─ReLU: 3-94                                  [1, 2048, 3, 4]           --
+│    │    └─ParametrizedConv2d: 3-95                    [1, 512, 3, 4]            1,049,088
+│    │    └─ReLU: 3-96                                  [1, 512, 3, 4]            --
+│    │    └─ParametrizedConv2d: 3-97                    [1, 512, 3, 4]            2,359,808
+│    │    └─ReLU: 3-98                                  [1, 512, 3, 4]            --
+│    │    └─ParametrizedConv2d: 3-99                    [1, 512, 3, 4]            2,359,808
+│    │    └─ReLU: 3-100                                 [1, 512, 3, 4]            --
+│    │    └─ParametrizedConv2d: 3-101                   [1, 2048, 3, 4]           1,050,624
+│    └─ReLU: 2-13                                       [1, 2048, 3, 4]           --
+├─ParametrizedLinear: 1-1                               [1, 1]                    1
+│    └─ModuleDict: 2                                    --                        --
+│    │    └─ParametrizationList: 3-102                  [1, 2048]                 2,048
+├─Embedding: 1-2                                        [1, 2048]                 40,960
+=========================================================================================================
+Total params: 32,583,618
+Trainable params: 32,583,618
+Non-trainable params: 0
+Total mult-adds (M): 0.04
+=========================================================================================================
+Input size (MB): 0.15
+Forward/backward pass size (MB): 0.02
+Params size (MB): 0.16
+Estimated Total Size (MB): 0.33
+=========================================================================================================DeepBigganDiscriminator(
+  (discrim_layers): ModuleList(
+    (0): ParametrizedConv2d(
+      3, 128, kernel_size=(3, 3), stride=(1, 1), padding=same
+      (parametrizations): ModuleDict(
+        (weight): ParametrizationList(
+          (0): _SpectralNorm()
+        )
+      )
+    )
+    (1): DeepResDown(
+      (relu_b1): ReLU()
+      (conv_b2): ParametrizedConv2d(
+        128, 64, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b3): ReLU()
+      (conv_b4): ParametrizedConv2d(
+        64, 64, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b5): ReLU()
+      (conv_b6): ParametrizedConv2d(
+        64, 64, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b7): ReLU()
+      (conv_b9): ParametrizedConv2d(
+        64, 256, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (avg_pooling_a1): AvgPool2d(kernel_size=2, stride=2, padding=0)
+      (avg_pooling_b8): AvgPool2d(kernel_size=2, stride=2, padding=0)
+      (conv_a2): ParametrizedConv2d(
+        128, 128, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (2): DeepResDown(
+      (relu_b1): ReLU()
+      (conv_b2): ParametrizedConv2d(
+        256, 64, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b3): ReLU()
+      (conv_b4): ParametrizedConv2d(
+        64, 64, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b5): ReLU()
+      (conv_b6): ParametrizedConv2d(
+        64, 64, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b7): ReLU()
+      (conv_b9): ParametrizedConv2d(
+        64, 256, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (3): NonLocalBlock(
+      (conv_delta): ParametrizedConv2d(
+        256, 32, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (conv_phi): ParametrizedConv2d(
+        256, 32, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (pooling_phi): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (conv_g): ParametrizedConv2d(
+        256, 128, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (pooling_g): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (softmax): Softmax(dim=-1)
+      (conv_last): ParametrizedConv2d(
+        128, 256, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (4): DeepResDown(
+      (relu_b1): ReLU()
+      (conv_b2): ParametrizedConv2d(
+        256, 128, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b3): ReLU()
+      (conv_b4): ParametrizedConv2d(
+        128, 128, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b5): ReLU()
+      (conv_b6): ParametrizedConv2d(
+        128, 128, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b7): ReLU()
+      (conv_b9): ParametrizedConv2d(
+        128, 512, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (avg_pooling_a1): AvgPool2d(kernel_size=2, stride=2, padding=0)
+      (avg_pooling_b8): AvgPool2d(kernel_size=2, stride=2, padding=0)
+      (conv_a2): ParametrizedConv2d(
+        256, 256, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (5): DeepResDown(
+      (relu_b1): ReLU()
+      (conv_b2): ParametrizedConv2d(
+        512, 128, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b3): ReLU()
+      (conv_b4): ParametrizedConv2d(
+        128, 128, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b5): ReLU()
+      (conv_b6): ParametrizedConv2d(
+        128, 128, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b7): ReLU()
+      (conv_b9): ParametrizedConv2d(
+        128, 512, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (6): DeepResDown(
+      (relu_b1): ReLU()
+      (conv_b2): ParametrizedConv2d(
+        512, 256, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b3): ReLU()
+      (conv_b4): ParametrizedConv2d(
+        256, 256, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b5): ReLU()
+      (conv_b6): ParametrizedConv2d(
+        256, 256, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b7): ReLU()
+      (conv_b9): ParametrizedConv2d(
+        256, 1024, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (avg_pooling_a1): AvgPool2d(kernel_size=2, stride=2, padding=0)
+      (avg_pooling_b8): AvgPool2d(kernel_size=2, stride=2, padding=0)
+      (conv_a2): ParametrizedConv2d(
+        512, 512, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (7): DeepResDown(
+      (relu_b1): ReLU()
+      (conv_b2): ParametrizedConv2d(
+        1024, 256, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b3): ReLU()
+      (conv_b4): ParametrizedConv2d(
+        256, 256, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b5): ReLU()
+      (conv_b6): ParametrizedConv2d(
+        256, 256, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b7): ReLU()
+      (conv_b9): ParametrizedConv2d(
+        256, 1024, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (8): DeepResDown(
+      (relu_b1): ReLU()
+      (conv_b2): ParametrizedConv2d(
+        1024, 512, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b3): ReLU()
+      (conv_b4): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b5): ReLU()
+      (conv_b6): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b7): ReLU()
+      (conv_b9): ParametrizedConv2d(
+        512, 2048, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (avg_pooling_a1): AvgPool2d(kernel_size=2, stride=2, padding=0)
+      (avg_pooling_b8): AvgPool2d(kernel_size=2, stride=2, padding=0)
+      (conv_a2): ParametrizedConv2d(
+        1024, 1024, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (9): DeepResDown(
+      (relu_b1): ReLU()
+      (conv_b2): ParametrizedConv2d(
+        2048, 512, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b3): ReLU()
+      (conv_b4): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b5): ReLU()
+      (conv_b6): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b7): ReLU()
+      (conv_b9): ParametrizedConv2d(
+        512, 2048, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (10): DeepResDown(
+      (relu_b1): ReLU()
+      (conv_b2): ParametrizedConv2d(
+        2048, 512, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b3): ReLU()
+      (conv_b4): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b5): ReLU()
+      (conv_b6): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b7): ReLU()
+      (conv_b9): ParametrizedConv2d(
+        512, 2048, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (avg_pooling_a1): AvgPool2d(kernel_size=2, stride=2, padding=0)
+      (avg_pooling_b8): AvgPool2d(kernel_size=2, stride=2, padding=0)
+    )
+    (11): DeepResDown(
+      (relu_b1): ReLU()
+      (conv_b2): ParametrizedConv2d(
+        2048, 512, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b3): ReLU()
+      (conv_b4): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b5): ReLU()
+      (conv_b6): ParametrizedConv2d(
+        512, 512, kernel_size=(3, 3), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+      (relu_b7): ReLU()
+      (conv_b9): ParametrizedConv2d(
+        512, 2048, kernel_size=(1, 1), stride=(1, 1), padding=same
+        (parametrizations): ModuleDict(
+          (weight): ParametrizationList(
+            (0): _SpectralNorm()
+          )
+        )
+      )
+    )
+    (12): ReLU()
+  )
+  (embeddings): Embedding(20, 2048)
+  (fc_layer): ParametrizedLinear(
+    in_features=2048, out_features=1, bias=True
+    (parametrizations): ModuleDict(
+      (weight): ParametrizationList(
+        (0): _SpectralNorm()
+      )
+    )
+  )
+)

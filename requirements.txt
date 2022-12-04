@@ -2,5 +2,6 @@ torch >= 1.9
 torchvision >= 0.9
 torchinfo
 torch-ema
+Pillow
 pytorch-ignite >= 0.4.6
 scipy >= 1.7
