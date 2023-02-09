@@ -16,10 +16,13 @@ from src import create_model
 
 
 class DcganDiscriminator(BaseDiscriminator):
-    def __init__(self, base_width, base_height, upsample_layers, ndf, num_channels, num_classes):
+    def __init__(self, base_width, base_height, upsample_layers, ndf, num_channels, num_classes, output_size: int,
+                 project_labels: bool):
         super(DcganDiscriminator, self).__init__(base_width, base_height, upsample_layers, ndf, num_channels,
                                                  num_classes)
 
+        if project_labels or output_size > 1:
+            raise NotImplementedError('Projecting labels or having an output greater than 1 is not supported for dcgan')
         # Input is Batch_size x 3 x image_width x image_height matrix
         self.discrim_layers = nn.ModuleList()
 

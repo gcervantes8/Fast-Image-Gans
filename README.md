@@ -23,6 +23,7 @@ python3 -m src.train_gan configs/dcgan_128_96.ini
 - DCGAN
 - [Biggan](https://arxiv.org/abs/1809.11096)
 - [Deep Biggan](https://arxiv.org/abs/1809.11096)
+- [Omni-GAN](https://arxiv.org/pdf/2011.13074.pdf)
 
 ## Configuration File
 
