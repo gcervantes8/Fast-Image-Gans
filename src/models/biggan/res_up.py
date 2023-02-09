@@ -5,7 +5,7 @@ from src.layers.batchnorm_conditional import ConditionalBatchNorm2d
 
 class ResUp(nn.Module):
 
-    def __init__(self, in_channels, out_channels, latent_embed_vector_size):
+    def __init__(self, in_channels: int, out_channels: int, latent_embed_vector_size: int):
         super(ResUp, self).__init__()
 
         self.upsample_a1 = nn.Upsample(scale_factor=2)

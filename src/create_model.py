@@ -21,6 +21,19 @@ from src.models.biggan.biggan_discriminator import BigganDiscriminator
 from src.models.deep_biggan.deep_biggan_discriminator import DeepBigganDiscriminator
 
 
+# Returns (project_labels: bool, output_size: int)
+def get_omni_loss(loss_type: str, num_classes: int):
+    loss_type = loss_type.lower()
+    losses_supported = {
+        'adversarial': (True, 1),
+        'omni-loss': (False, num_classes + 2),
+    }
+    if loss_type not in losses_supported:
+        raise ValueError("Given loss type in config file is not supported\n" +
+                         'Supported loss types: ' + str(list(losses_supported.keys())))
+    return losses_supported[loss_type]
+
+
 def create_gen_and_discrim(model_name: str):
     model_name = model_name.lower()
     models_supported = {
@@ -47,16 +60,20 @@ def create_gan_instances(model_arch_config, data_config, device, n_gpus=0):
     latent_vector_size = int(model_arch_config['latent_vector_size'])
     ngf = int(model_arch_config['ngf'])
     ndf = int(model_arch_config['ndf'])
+    loss_type = model_arch_config['loss_type']
+
     base_width = int(data_config['base_width'])
     base_height = int(data_config['base_height'])
     upsample_layers = int(data_config['upsample_layers'])
     num_classes = data_load.get_num_classes(data_config)
+
+    project_labels, output_size = get_omni_loss(loss_type, num_classes)
     generator, discriminator = create_gen_and_discrim(model_type)
     # Create the generator and discriminator
     generator = generator(base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels,
                           num_classes).to(device)
     discriminator = discriminator(base_width, base_height, upsample_layers, ndf, num_channels,
-                                  num_classes).to(device)
+                                  num_classes, output_size=output_size, project_labels=project_labels).to(device)
 
     generator = _handle_multiple_gpus(generator, n_gpus, device)
     discriminator = _handle_multiple_gpus(discriminator, n_gpus, device)

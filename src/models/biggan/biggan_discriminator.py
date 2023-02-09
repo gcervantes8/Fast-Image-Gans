@@ -16,7 +16,8 @@ from torch.nn.utils.parametrizations import spectral_norm
 
 
 class BigganDiscriminator(BaseDiscriminator):
-    def __init__(self, base_width, base_height, upsample_layers, ndf, num_channels, num_classes):
+    def __init__(self, base_width: int, base_height: int, upsample_layers: int, ndf: int, num_channels: int, 
+                 num_classes: int, output_size: int, project_labels: bool):
         super(BigganDiscriminator, self).__init__(base_width, base_height, upsample_layers, ndf, num_channels,
                                                   num_classes)
         if upsample_layers == 5:
@@ -27,6 +28,9 @@ class BigganDiscriminator(BaseDiscriminator):
             raise NotImplementedError(str(upsample_layers) + ' layers for biggan discriminator is not supported.  You'
                                                              ' can either use a different amount of layers, or make a'
                                                              ' list with the channels you want with those layers')
+
+        if project_labels and output_size > 1:
+            raise NotImplementedError('Projecting labels and having an output greater than 1 currently not supported')                                                         
         # Input is Batch_size x 3 x image_width x image_height matrix
         self.discrim_layers = nn.ModuleList()
 
@@ -39,25 +43,32 @@ class BigganDiscriminator(BaseDiscriminator):
             previous_out_channel = layer_channel
         self.discrim_layers.append(nn.ReLU())
 
-        self.embeddings = torch.nn.Embedding(num_classes, ndf * 16)
-        nn.init.orthogonal_(self.embeddings.weight)
+        self.project_labels = project_labels
+        
+        if self.project_labels:
+            self.embeddings = torch.nn.Embedding(num_classes, ndf * 16)
+            nn.init.orthogonal_(self.embeddings.weight)
         # Fully connected layer
-        self.fc_layer = spectral_norm(nn.Linear(in_features=ndf*16, out_features=1), eps=1e-04)
+        self.fc_layer = spectral_norm(nn.Linear(in_features=ndf*16, out_features=output_size), eps=1e-04)
         nn.init.orthogonal_(self.fc_layer.weight)
 
+    # Output is of size [Batch size, output_size]
     def forward(self, discriminator_input, labels):
         out = discriminator_input
         for discrim_layer in self.discrim_layers:
             out = discrim_layer(out)
         # ndf * 16 - Global Sum Pooling
         out = torch.sum(out, dim=[2, 3])
-        # Size, [B, 1] - Fully connected layer
+        # Size, [B, output_size] - Fully connected layer
         fc_out = self.fc_layer(out)
-        fc_out = torch.squeeze(fc_out, dim=1)
-        # embed_vector is of size [B, ndf*16]
-        embed_vector = self.embeddings(labels)
-        # out is of size [B, ndf*16]
-        # fc_out is of size
-        # TODO not sure if sum is needed
-        out = fc_out + torch.sum(torch.mul(embed_vector, out), 1)
-        return out
+
+        if self.project_labels:
+            fc_out = torch.squeeze(fc_out, dim=1)
+            # embed_vector is of size [B, ndf*16]
+            embed_vector = self.embeddings(labels)
+            # out is of size [B, ndf*16]
+            # fc_out is of size
+            # TODO not sure if sum is needed
+            out = fc_out + torch.sum(torch.mul(embed_vector, out), 1)
+            return out
+        return fc_out

@@ -23,14 +23,19 @@ class GanModel:
     def __init__(self, generator, discriminator, num_classes, device, model_arch_config, train_config):
         self.netG = generator.to(device)
         self.netD = discriminator.to(device)
+
         self.num_classes = num_classes
         self.device = device
         self.latent_vector_size = int(model_arch_config['latent_vector_size'])
         beta1 = float(train_config['beta1'])
         beta2 = float(train_config['beta2'])
+        generator_wd = float(train_config['generator_wd'])
+        discriminator_wd = float(train_config['discriminator_wd'])
         generator_lr = float(train_config['generator_lr'])
         discriminator_lr = float(train_config['discriminator_lr'])
         self.orthogonal_value = float(model_arch_config['orthogonal_value'])
+        loss_type = model_arch_config['loss_type']
+        self.is_omni_loss = 'omni-loss' == loss_type.lower()
         self.accumulation_iterations = int(train_config['accumulation_iterations'])
         self.mixed_precision = train_config.getboolean('mixed_precision')
         cpu_enabled = self.device.type == 'cpu'
@@ -43,8 +48,10 @@ class GanModel:
             raise ValueError("Loss values options: " + str(supported_losses()))
 
         # Setup Adam optimizers for both G and D
-        self.optimizerD = optim.Adam(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2))
-        self.optimizerG = optim.Adam(generator.parameters(), lr=generator_lr, betas=(beta1, beta2))
+        self.optimizerD = optim.Adam(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
+                                     weight_decay=discriminator_wd)
+        self.optimizerG = optim.Adam(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
+                                     weight_decay=generator_wd)
 
         self.netD.zero_grad()
         self.netG.zero_grad()
@@ -66,9 +73,21 @@ class GanModel:
                 device_type, dtype = ('cuda', torch.float16)
 
         with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
-            real_label = torch.full((b_size,), self.real_label, dtype=real_data.dtype, device=self.device)
+            if self.is_omni_loss:
+                # Real_label is of size [b_size, num_classes]
+                real_label = torch.nn.functional.one_hot(labels, num_classes=self.num_classes)
+                # Adds 2 columns, One with all values 1, the second with all values 0. Size [b_size, num_classes + 2]
+                real_label = torch.concat((real_label, torch.ones(b_size, 1, device=self.device),
+                                           torch.zeros(b_size, 1, device=self.device)), dim=1)
+                # Replace the 0s and 1s with value of the fake_label, or true_label
+                real_label[real_label == 0] = self.fake_label
+                real_label[real_label == 1] = self.real_label
+            else:
+                real_label = torch.full((b_size,), self.real_label, dtype=real_data.dtype, device=self.device)
             discrim_output = self.netD(real_data, labels)
+
             discrim_on_real_error = self.criterion(discrim_output, real_label)
+            
             if not self.orthogonal_value == 0:
                 discrim_on_real_error += self.apply_orthogonal_regularization(self.netD)
             discrim_on_real_error = discrim_on_real_error / self.accumulation_iterations
@@ -80,7 +99,13 @@ class GanModel:
             noise = torch.randn(b_size, self.latent_vector_size, device=self.device)
             # Generate fake image batch with G
             fake = self.netG(noise, labels)
-            fake_label = torch.full((b_size,), self.fake_label, dtype=real_data.dtype, device=self.device)
+
+            if self.is_omni_loss:
+                fake_label = torch.full((b_size, self.num_classes + 1), self.fake_label, dtype=real_data.dtype, device=self.device)
+                fake_label = torch.concat((fake_label, torch.ones(b_size, 1, device=self.device)), dim=1)
+            else:
+                fake_label = torch.full((b_size,), self.fake_label, dtype=real_data.dtype, device=self.device)
+            
             # Classify all fake batch with D
             fake_output = self.netD(fake.detach(), labels)
             # Calculate D's loss on the all-fake batch

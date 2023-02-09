@@ -16,8 +16,8 @@ from torch.nn.utils.parametrizations import spectral_norm
 
 
 class BigganGenerator(BaseGenerator):
-    def __init__(self, base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels,
-                 num_classes):
+    def __init__(self, base_width: int, base_height: int, upsample_layers: int, latent_vector_size: int, ngf: int, 
+                 num_channels: int, num_classes: int):
         super(BigganGenerator, self).__init__(base_width, base_height, upsample_layers, latent_vector_size,
                                               ngf, num_channels, num_classes)
         self.ngf = ngf
