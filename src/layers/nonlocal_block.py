@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torch.nn.utils.parametrizations import spectral_norm
+from torch.nn.utils import spectral_norm
 
 # Attention block based on https://arxiv.org/pdf/1805.08318.pdf
 # And the original paper https://arxiv.org/pdf/1711.07971.pdf

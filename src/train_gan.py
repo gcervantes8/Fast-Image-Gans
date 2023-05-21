@@ -15,6 +15,8 @@ from src.configs import ini_parser
 from src.data_load import data_loader_from_config, color_transform, normalize, get_data_batch, unnormalize, \
     create_latent_vector, get_num_classes
 from src.metrics import Metrics
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 import argparse
 import shutil
@@ -140,6 +142,9 @@ def train(config_file_path: str):
     data_time, model_time = 0.0, 0.0
     data_start_time = time.time()
     train_seq_start_time = time.time()
+    if train_config.getboolean('compile'):
+        logging.info('Compiling model with PyTorch 2.0')
+        gan_model.optimize_models()
     for epoch in range(n_epochs):
         for i, batch in enumerate(data_loader, 0):
 

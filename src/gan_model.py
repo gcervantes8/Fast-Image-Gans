@@ -62,8 +62,12 @@ class GanModel:
         self.ema = ExponentialMovingAverage(generator.parameters(),
                                             decay=float(ema_decay)) if ema_enabled else None
 
+    def optimize_models(self):
+        self.netG = torch.compile(self.netG)
+        self.netD = torch.compile(self.netD)
+
     def update_minimax(self, real_data, labels):
-        b_size = real_data.size(0)
+        b_size = real_data.size(dim=0)
         # device_type and dtype are only used in
         device_type, dtype = self.device.type, None
         if self.mixed_precision:

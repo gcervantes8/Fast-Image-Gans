@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torch.nn.utils.parametrizations import spectral_norm
+from torch.nn.utils import spectral_norm
 
 
 class DeepResDown(nn.Module):

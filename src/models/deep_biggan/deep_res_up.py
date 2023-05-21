@@ -1,5 +1,5 @@
 import torch.nn as nn
-from torch.nn.utils.parametrizations import spectral_norm
+from torch.nn.utils import spectral_norm
 from src.layers.batchnorm_conditional import ConditionalBatchNorm2d
 
 

@@ -12,7 +12,7 @@ import torch.nn as nn
 from src.models.base_discriminator import BaseDiscriminator
 from src.models.deep_biggan.deep_res_down import DeepResDown
 from src.layers.nonlocal_block import NonLocalBlock
-from torch.nn.utils.parametrizations import spectral_norm
+from torch.nn.utils import spectral_norm
 
 
 class DeepBigganDiscriminator(BaseDiscriminator):
@@ -25,14 +25,18 @@ class DeepBigganDiscriminator(BaseDiscriminator):
         initial_conv = spectral_norm(nn.Conv2d(3, ndf, kernel_size=3, padding='same'), eps=1e-04)
         nn.init.orthogonal_(initial_conv.weight)
 
-        n_upsample_layers = 5
-        if n_upsample_layers == 5:
+        if upsample_layers == 5:
             residual_channels = [ndf, ndf * 2, ndf * 2, ndf * 4, ndf * 4, ndf * 8, ndf * 8, ndf * 16, ndf * 16,
                                  ndf * 16, ndf * 16]
             downsample_layers = [True, False, True, False, True, False, True, False, True, False]
             nonlocal_block_index = 1
+        elif upsample_layers == 6:
+            residual_channels = [ndf, ndf * 2, ndf * 2, ndf * 4, ndf * 4, ndf * 8, ndf * 8, ndf * 8, ndf * 8, ndf * 16, ndf * 16,
+                                 ndf * 16, ndf * 16]
+            downsample_layers = [True, False, True, False, True, False, True, False, True, False, True, False]
+            nonlocal_block_index = 3
         else:
-            raise NotImplementedError(str(n_upsample_layers) + ' layers for biggan discriminator is not supported.  You'
+            raise NotImplementedError(str(upsample_layers) + ' layers for biggan discriminator is not supported.  You'
                                                                ' can either use a different amount of layers, or make a'
                                                                ' list with the channels you want with those layers')
 
@@ -40,7 +44,7 @@ class DeepBigganDiscriminator(BaseDiscriminator):
             raise NotImplementedError('Projecting labels and having an output greater than 1 currently not supported')
             
         # Input is Batch_size x 3 x image_width x image_height matrix
-        self.discrim_layers = nn.ModuleList()
+        self.discrim_layers = nn.Sequential()
 
         self.discrim_layers.append(initial_conv)
 
@@ -64,9 +68,9 @@ class DeepBigganDiscriminator(BaseDiscriminator):
 
     # Output is of size [Batch size, output_size]
     def forward(self, discriminator_input, labels):
-        out = discriminator_input
-        for discrim_layer in self.discrim_layers:
-            out = discrim_layer(out)
+
+        out = self.discrim_layers(discriminator_input)
+
         # ndf * 16 - Global Sum Pooling
         out = torch.sum(out, dim=[2, 3])
         # Size, [B, output_size] - Fully connected layer

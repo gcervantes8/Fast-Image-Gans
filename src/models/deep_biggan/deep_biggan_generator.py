@@ -12,7 +12,7 @@ import torch.nn as nn
 from src.models.base_generator import BaseGenerator
 from src.models.deep_biggan.deep_res_up import DeepResUp
 from src.layers.nonlocal_block import NonLocalBlock
-from torch.nn.utils.parametrizations import spectral_norm
+from torch.nn.utils import spectral_norm
 
 
 class DeepBigganGenerator(BaseGenerator):
@@ -28,7 +28,6 @@ class DeepBigganGenerator(BaseGenerator):
         self.embeddings = torch.nn.Embedding(num_classes, embedding_size)
         nn.init.orthogonal_(self.embeddings.weight)
 
-        self.generator_layers = nn.ModuleList()
         latent_embed_vector_size = latent_vector_size + embedding_size
 
         self.initial_linear = spectral_norm(nn.Linear(in_features=latent_embed_vector_size,
@@ -40,11 +39,16 @@ class DeepBigganGenerator(BaseGenerator):
                                  ngf * 2, ngf]
             upsample_layers = [False, True, False, True, False, True, False, True, False, True]
             self.nonlocal_block_index = 7
+        elif upsample_layers == 6:
+            residual_channels = [ngf * 16, ngf * 16, ngf * 16, ngf * 16, ngf * 8, ngf * 8, ngf * 8, ngf * 8, ngf * 4, ngf * 4, ngf * 2,
+                                 ngf * 2, ngf]
+            upsample_layers = [False, True, False, True, False, True, False, True, False, True, False, True]
+            self.nonlocal_block_index = 7
         else:
             raise NotImplementedError(str(upsample_layers) + ' layers for biggan discriminator is not supported.  You'
                                                              ' can either use a different amount of layers, or make a'
                                                              ' list with the channels you want with those layers')
-
+        self.generator_layers = nn.ModuleList()
         self.generator_layers.append(DeepResUp(residual_channels[0], residual_channels[1], latent_embed_vector_size,
                                                upsample=upsample_layers[0]))
         previous_out_channel = residual_channels[1]
@@ -63,8 +67,8 @@ class DeepBigganGenerator(BaseGenerator):
 
     def forward(self, latent_vector, labels):
         # [B, Z] - Z is size of latent vector
-        batch_size = latent_vector.size(dim=0)
-
+        # batch_size = latent_vector.size(dim=0)
+        batch_size = latent_vector.size()[0]
         # [B, embedding_size]
         embed_vector = self.embeddings(labels)
 
@@ -78,18 +82,19 @@ class DeepBigganGenerator(BaseGenerator):
             out = generator_layer(out, latent_embed_vector)
             if i == self.nonlocal_block_index:
                 out = self.nonlocal_block(out)
-        out = self.batch_norm(out)
-        out = self.relu(out)
-        out = self.conv(out)
-        out = self.tanh(out)
-        return out
+        out_1 = self.batch_norm(out)
+        out_2 = self.relu(out_1)
+        out_3 = self.conv(out_2)
+        out_4 = self.tanh(out_3)
+        return out_4
 
     def get_class_embedding(self, label):
         return self.embeddings(label)
 
     def forward_with_class_embeddings(self, latent_vector, class_embeddings):
         # [B, Z] - Z is size of latent vector
-        batch_size = latent_vector.size(dim=0)
+        # batch_size = latent_vector.size(dim=0)
+        batch_size = latent_vector.size()[0]
 
         latent_embed_vector = torch.concat((latent_vector, class_embeddings), axis=1)
         # [B, 4*4*16*ngf]
