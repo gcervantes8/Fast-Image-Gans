@@ -48,22 +48,30 @@ class DeepBigganGenerator(BaseGenerator):
             raise NotImplementedError(str(upsample_layers) + ' layers for biggan discriminator is not supported.  You'
                                                              ' can either use a different amount of layers, or make a'
                                                              ' list with the channels you want with those layers')
-        self.generator_layers = nn.ModuleList()
-        self.generator_layers.append(DeepResUp(residual_channels[0], residual_channels[1], latent_embed_vector_size,
+        self.generator_layers_pre_attn = nn.Sequential()
+        self.generator_layers_post_attn = nn.Sequential()
+        self.generator_layers_pre_attn.append(DeepResUp(residual_channels[0], residual_channels[1], latent_embed_vector_size,
                                                upsample=upsample_layers[0]))
         previous_out_channel = residual_channels[1]
         for i, layer_channel in enumerate(residual_channels[2:]):
             if self.nonlocal_block_index == i:
                 self.nonlocal_block = NonLocalBlock(previous_out_channel)
-            self.generator_layers.append(DeepResUp(previous_out_channel, layer_channel, latent_embed_vector_size,
-                                                   upsample=upsample_layers[i+1]))
+            if i < self.nonlocal_block_index:
+                self.generator_layers_pre_attn.append(DeepResUp(previous_out_channel, layer_channel, latent_embed_vector_size,
+                                        upsample=upsample_layers[i+1]))
+
+            elif i >= self.nonlocal_block_index:
+                self.generator_layers_post_attn.append(DeepResUp(previous_out_channel, layer_channel, latent_embed_vector_size,
+                                                    upsample=upsample_layers[i+1]))
             previous_out_channel = layer_channel
 
-        self.batch_norm = nn.BatchNorm2d(num_features=ngf)
-        self.relu = nn.ReLU()
-        self.conv = nn.Conv2d(ngf, 3, kernel_size=3, padding='same')
-        nn.init.orthogonal_(self.conv.weight)
-        self.tanh = nn.Tanh()
+        self.end_ops = nn.Sequential()
+        self.end_ops.append(nn.BatchNorm2d(num_features=ngf))
+        self.end_ops.append(nn.ReLU())
+        conv_op = nn.Conv2d(ngf, 3, kernel_size=3, padding='same')
+        nn.init.orthogonal_(conv_op.weight)
+        self.end_ops.append(conv_op)
+        self.end_ops.append(nn.Tanh())
 
     def forward(self, latent_vector, labels):
         # [B, Z] - Z is size of latent vector
@@ -78,15 +86,14 @@ class DeepBigganGenerator(BaseGenerator):
 
         # [B, 16 * ngf, 4, 4]
         out = torch.reshape(out, [batch_size, 16 * self.ngf, self.base_height, self.base_width])
-        for i, generator_layer in enumerate(self.generator_layers):
-            out = generator_layer(out, latent_embed_vector)
-            if i == self.nonlocal_block_index:
-                out = self.nonlocal_block(out)
-        out_1 = self.batch_norm(out)
-        out_2 = self.relu(out_1)
-        out_3 = self.conv(out_2)
-        out_4 = self.tanh(out_3)
-        return out_4
+
+        gen_input = out, latent_embed_vector
+        out, _ = self.generator_layers_pre_attn(gen_input)
+        out = self.nonlocal_block(out)
+        gen_input = out, latent_embed_vector
+        out, _ = self.generator_layers_post_attn(gen_input)
+        out = self.end_ops(out)
+        return out
 
     def get_class_embedding(self, label):
         return self.embeddings(label)

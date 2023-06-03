@@ -69,7 +69,7 @@ class BigganGenerator(BaseGenerator):
 
     def forward(self, latent_vector, labels):
         # [B, Z] - Z is size of latent vector
-        batch_size = latent_vector.size(dim=0)
+        batch_size = latent_vector.size()[0]
 
         # [B, embedding_size]
         embed_vector = self.embeddings(labels)

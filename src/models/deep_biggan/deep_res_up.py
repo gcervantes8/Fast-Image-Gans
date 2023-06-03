@@ -35,7 +35,9 @@ class DeepResUp(nn.Module):
         nn.init.orthogonal_(self.conv_b13.weight)
 
     # res_input is of size (B, C, H, W)
-    def forward(self, res_input, latent_embed_vector):
+    def forward(self, forward_input):
+
+        res_input, latent_embed_vector = forward_input
         # (B, out_channels, H, W)
         out_a = res_input[:, :self.out_channels, :, :]
 
@@ -61,4 +63,4 @@ class DeepResUp(nn.Module):
         out_b = self.conv_b13(out_b)
 
         output = out_a + out_b
-        return output
+        return output, latent_embed_vector
