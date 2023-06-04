@@ -1,2 +1,5 @@
 /output/
 /models/
+__pycache__/
+/configs/
+/.vscode/
