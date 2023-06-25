@@ -49,7 +49,7 @@ def train(config_file_path: str):
     )
 
     if not will_restore_model:
-        logging.info('Directory ' + run_dir + ' created, training output will be saved here')
+        logging.info('Directory "' + run_dir + '" created, training output will be saved here')
         # Copies config file
         shutil.copy(config_file_path, os.path.abspath(run_dir))
         logging.info('Copied config file!')
@@ -100,20 +100,28 @@ def train(config_file_path: str):
     compute_fid = metrics_config.getboolean('fid_metric')
 
     metrics_scorer = None
+    eval_bs = 5000
     if compute_is or compute_fid:
         logging.info('Computing metrics for real images ...')
         metrics_scorer = Metrics(compute_is, compute_fid, device=device)
-        is_score, fid_score = metrics_scorer.score_metrics(get_data_batch(data_loader, device), compute_is, compute_fid,
-                                                           real_images=real_images)
-        if compute_is:
-            logging.info('Inception Score for real images: %.2f' % round(is_score, 2))
-        if compute_fid:
-            logging.info('FID Score for real images: %.2f' % round(fid_score, 2))
+        metrics_scorer.aggregate_data_loader_images(data_loader, eval_bs, device, real=True)
+        metrics_scorer.aggregate_data_loader_images(data_loader, eval_bs, device, real=False)
+        is_score, fid_score = metrics_scorer.score_metrics(compute_is, compute_fid)
+        metrics_scorer.reset_metrics()
+        metrics_scorer.log_scores(is_score, fid_score)
 
-    fixed_noise = create_latent_vector(data_config, model_arch_config, device)
-    fixed_labels = torch.arange(start=0, end=int(data_config['batch_size']), device=device,
+    # TODO Add option to be able to generate labels from dataset distribution, instead of sequentially
+    def create_noise_and_labels():
+        noise = create_latent_vector(data_config, model_arch_config, device)
+        labels = torch.arange(start=0, end=int(data_config['batch_size']), device=device,
                                 dtype=torch.int64) % num_classes
+        return noise, labels
+    fixed_noise, fixed_labels = create_noise_and_labels()
 
+    def generate_images():
+        noise, labels = create_noise_and_labels()
+        fake_images = gan_model.generate_images(noise, labels)
+        return fake_images
     n_epochs, log_steps = int(train_config['num_epochs']), int(train_config['log_steps'])
     save_steps = int(train_config['save_steps'])
     save_steps = None if save_steps == 0 else save_steps
@@ -181,7 +189,7 @@ def train(config_file_path: str):
                 d_loss = '{:.4f}'.format((total_d_error / d_steps)) if d_steps else '0 steps'
                 g_loss = '{:.4f}'.format((total_g_error / g_steps)) if g_steps else '0 steps'
 
-                logging.info('[{}/{}][{}/{}]\tLoss_D: {}\tLoss_G: {}\tTime: {:.2f}s'.format(
+                logging.info('[{}/{}][{}/{}]\t Loss_D: {}\t Loss_G: {}\t Time: {:.2f}s'.format(
                     epoch, n_epochs, n_steps % steps_in_epoch, steps_in_epoch, d_loss, g_loss,
                     time.time() - train_seq_start_time))
                 logging.info(
@@ -208,14 +216,11 @@ def train(config_file_path: str):
                 if metrics_scorer:
                     metric_start_time = time.time()
                     logging.info('Computing metrics for the saved images ...')
-                    fake_images = gan_model.generate_images(fixed_noise, fixed_labels)
-                    is_score, fid_score = metrics_scorer.score_metrics(unnormalize(fake_images), compute_is,
-                                                                       compute_fid, real_images=real_images)
-                    del fake_images
-                    if compute_is:
-                        logging.info('Inception Score: %.2f' % round(is_score, 2))
-                    if compute_fid:
-                        logging.info('FID Score: %.2f' % round(fid_score, 2))
+
+                    metrics_scorer.aggregate_images_from_fn(generate_images, eval_bs, real=False)
+                    is_score, fid_score = metrics_scorer.score_metrics(compute_is, compute_fid)
+                    metrics_scorer.reset_metrics()
+                    metrics_scorer.log_scores(is_score, fid_score)
                     logging.info('Time to compute metrics: %.2fs ' % (time.time() - metric_start_time))
             data_start_time = time.time()
             if profiler:

@@ -171,7 +171,7 @@ class GanModel:
                             fake = self.netG(noise, labels)
                 else:
                     fake = self.netG(noise, labels)
-            return fake.detach().cpu()
+            return fake.detach()
 
     def save(self, model_dir, step_num):
         generator_path = os.path.join(model_dir, os_helper.ModelType.GENERATOR.value + '_step_' + str(step_num) + '.pt')
