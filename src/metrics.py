@@ -5,31 +5,18 @@ Created on Thu June 26 00:01:34 2020
 @author: Gerardo Cervantes
 
 Purpose: This metric takes images and returns the inception score (IS)
-        Based on https://pytorch.org/hub/pytorch_vision_inception_v3/
 """
 import torch
-from ignite.engine import Engine
-from ignite.metrics import InceptionScore, FID
 from torchmetrics.image.inception import InceptionScore
 from torchmetrics.image.fid import FrechetInceptionDistance
-from src.data_load import upscale_images, get_data_batch
+from src.data_load import get_data_batch
 from tqdm import tqdm
 import logging
-
-def _create_default_engine():
-    # create default evaluator
-    def eval_step(engine, batch):
-        pred, true = batch
-        return pred, true
-
-    default_evaluator = Engine(eval_step)
-    return default_evaluator
 
 
 class Metrics:
 
     def __init__(self, compute_is, compute_fid, device=None):
-        self.default_evaluator = _create_default_engine()
         self.device = device
         if device is None:
             self.device = torch.device("cpu")
