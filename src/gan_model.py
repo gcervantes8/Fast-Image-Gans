@@ -23,6 +23,10 @@ class GanModel:
     def __init__(self, generator, discriminator, num_classes, device, model_arch_config, train_config):
         self.netG = generator.to(device)
         self.netD = discriminator.to(device)
+        
+        if train_config.getboolean('channels_last'):
+            self.netD.set_channels_last()
+            self.netG.set_channels_last()
 
         self.num_classes = num_classes
         self.device = device

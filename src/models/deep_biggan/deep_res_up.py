@@ -34,7 +34,9 @@ class DeepResUp(nn.Module):
         self.conv_b13 = spectral_norm(nn.Conv2d(int(in_channels/4), out_channels, kernel_size=1, padding='same'), eps=1e-04)
         nn.init.orthogonal_(self.conv_b13.weight)
 
-    # res_input is of size (B, C, H, W)
+    # forward_input a 2-tuple
+    # The first value is of size (B, C, H, W) which is the output from previous layers
+    # Second value is the class and latent embedding vector
     def forward(self, forward_input):
 
         res_input, latent_embed_vector = forward_input

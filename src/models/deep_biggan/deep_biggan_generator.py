@@ -73,9 +73,14 @@ class DeepBigganGenerator(BaseGenerator):
         self.end_ops.append(conv_op)
         self.end_ops.append(nn.Tanh())
 
+    def set_channels_last(self):
+        self.end_ops = self.end_ops.to(memory_format=torch.channels_last)
+        self.generator_layers_pre_attn = self.generator_layers_pre_attn.to(memory_format=torch.channels_last)
+        self.generator_layers_post_attn = self.generator_layers_post_attn.to(memory_format=torch.channels_last)
+        self.nonlocal_block = self.nonlocal_block.to(memory_format=torch.channels_last)
+
     def forward(self, latent_vector, labels):
         # [B, Z] - Z is size of latent vector
-        # batch_size = latent_vector.size(dim=0)
         batch_size = latent_vector.size()[0]
         # [B, embedding_size]
         embed_vector = self.embeddings(labels)
@@ -87,6 +92,7 @@ class DeepBigganGenerator(BaseGenerator):
         # [B, 16 * ngf, 4, 4]
         out = torch.reshape(out, [batch_size, 16 * self.ngf, self.base_height, self.base_width])
 
+        out = out.to(memory_format=torch.channels_last)
         gen_input = out, latent_embed_vector
         out, _ = self.generator_layers_pre_attn(gen_input)
         out = self.nonlocal_block(out)

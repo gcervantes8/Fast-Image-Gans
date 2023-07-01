@@ -172,7 +172,8 @@ def train(config_file_path: str):
 
             data_time += time.time() - data_start_time
             model_start_time = time.time()
-
+            if train_config.getboolean('channels_last'):
+                real_data = real_data.to(memory_format=torch.channels_last)  # Replace with your input
             err_discriminator, err_generator = gan_model.update_minimax(real_data, labels)
 
             if err_generator:
@@ -206,7 +207,7 @@ def train(config_file_path: str):
                 save_identifier = loaded_step_num + n_steps
                 fake_img_output_path = os.path.join(img_dir, 'generated_image_' + str(save_identifier) + '.png')
                 logging.info('Saving fake images: ' + fake_img_output_path)
-                fake_images = gan_model.generate_images(fixed_noise, fixed_labels)
+                fake_images = gan_model.generate_images(fixed_noise, fixed_labels).cpu()
                 saver_and_loader.save_images(fake_images.to(torch.float32), fake_img_output_path)
                 del fake_images
                 gan_model.save(model_dir, save_identifier)

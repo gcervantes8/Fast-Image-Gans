@@ -66,6 +66,9 @@ class DeepBigganDiscriminator(BaseDiscriminator):
         self.fc_layer = spectral_norm(nn.Linear(in_features=ndf * 16, out_features=output_size), eps=1e-04)
         nn.init.orthogonal_(self.fc_layer.weight)
 
+    def set_channels_last(self):
+        self.discrim_layers = self.discrim_layers.to(memory_format=torch.channels_last)
+
     # Output is of size [Batch size, output_size]
     def forward(self, discriminator_input, labels):
 
