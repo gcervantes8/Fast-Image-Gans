@@ -177,12 +177,19 @@ class GanModel:
                     fake = self.netG(noise, labels)
             return fake.detach()
 
-    def save(self, model_dir, step_num):
+    def save(self, model_dir, step_num, compiled=False):
         generator_path = os.path.join(model_dir, os_helper.ModelType.GENERATOR.value + '_step_' + str(step_num) + '.pt')
         discrim_path = os.path.join(model_dir, os_helper.ModelType.DISCRIMINATOR.value + '_step_' +
                                     str(step_num) + '.pt')
-        torch.save(self.netG.state_dict(), generator_path)
-        torch.save(self.netD.state_dict(), discrim_path)
+
+        if compiled:
+            netG = self.netG._orig_mod
+            netD = self.netD._orig_mod
+        else:
+            netG = self.netG
+            netD = self.netD
+        torch.save(netG.state_dict(), generator_path)
+        torch.save(netD.state_dict(), discrim_path)
         if self.ema:
             ema_path = os.path.join(model_dir, os_helper.ModelType.EMA.value + '_step_' + str(step_num) + '.pt')
             torch.save(self.ema.state_dict(), ema_path)

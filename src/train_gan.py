@@ -210,7 +210,7 @@ def train(config_file_path: str):
                 fake_images = gan_model.generate_images(fixed_noise, fixed_labels).cpu()
                 saver_and_loader.save_images(fake_images.to(torch.float32), fake_img_output_path)
                 del fake_images
-                gan_model.save(model_dir, save_identifier)
+                gan_model.save(model_dir, save_identifier, compiled=train_config.getboolean('compile'))
                 logging.info('Time to save images and model: %.2fs ' % (time.time() - save_start_time))
 
             if n_steps % eval_steps == 0:
