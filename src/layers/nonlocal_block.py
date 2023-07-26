@@ -69,7 +69,7 @@ class NonLocalBlock(nn.Module):
         g_out = self.conv_g(nonlocal_input)
 
         # [B, block_channels_2, H/2, W/2]
-        g_out = self.pooling_phi(g_out)
+        g_out = self.pooling_g(g_out)
 
         # [B, H/2, W/2, block_channels_2]
         g_out = torch.permute(g_out, (0, 2, 3, 1))
