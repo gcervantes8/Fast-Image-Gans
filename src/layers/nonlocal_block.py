@@ -41,16 +41,16 @@ class NonLocalBlock(nn.Module):
         height = nonlocal_input.size(2)
         width = nonlocal_input.size(3)
 
-        # conv delta out is [B, block_channels, H, W]
+        # conv delta out is [B, block_channels_1, H, W]
         delta_out = self.conv_delta(nonlocal_input)
         # [B, H, W, block_channels_1]
         delta_out = torch.permute(delta_out, (0, 2, 3, 1))
         # [B, H*W, block_channels_1]
         delta_out = torch.reshape(delta_out, [batch_size, -1, self.block_channels_1])
 
-        # conv phi out is [B, block_channels, H, W]
+        # conv phi out is [B, block_channels_1, H, W]
         phi_out = self.conv_phi(nonlocal_input)
-        # [B, block_channels, H/2, W/2]
+        # [B, block_channels_1, H/2, W/2]
         phi_out = self.pooling_phi(phi_out)
 
         # [block_channels_1, B, H/2, W/2]
@@ -80,7 +80,7 @@ class NonLocalBlock(nn.Module):
         # [B, H*W, block_channels_2]
         mult_out = torch.bmm(mult_out, g_out)
         mult_out = torch.reshape(mult_out, [batch_size, height, width, self.block_channels_2])
-        # [B, C, H, W]
+        # [B, block_channels_2, H, W]
         mult_out = torch.permute(mult_out, (0, 3, 1, 2))
 
         # [B, C, H, W]
