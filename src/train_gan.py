@@ -98,14 +98,14 @@ def train(config_file_path: str):
     metrics_config = config['METRICS']
     compute_is = metrics_config.getboolean('is_metric')
     compute_fid = metrics_config.getboolean('fid_metric')
+    n_images_to_eval = int(metrics_config['n_images_to_eval'])
 
     metrics_scorer = None
-    eval_bs = 5000
     if compute_is or compute_fid:
         logging.info('Computing metrics for real images ...')
         metrics_scorer = Metrics(compute_is, compute_fid, device=device)
-        metrics_scorer.aggregate_data_loader_images(data_loader, eval_bs, device, real=True)
-        metrics_scorer.aggregate_data_loader_images(data_loader, eval_bs, device, real=False)
+        metrics_scorer.aggregate_data_loader_images(data_loader, n_images_to_eval, device, real=True)
+        metrics_scorer.aggregate_data_loader_images(data_loader, n_images_to_eval, device, real=False)
         is_score, fid_score = metrics_scorer.score_metrics(compute_is, compute_fid)
         metrics_scorer.reset_metrics()
         metrics_scorer.log_scores(is_score, fid_score)
@@ -218,7 +218,7 @@ def train(config_file_path: str):
                     metric_start_time = time.time()
                     logging.info('Computing metrics for the saved images ...')
 
-                    metrics_scorer.aggregate_images_from_fn(generate_images, eval_bs, real=False)
+                    metrics_scorer.aggregate_images_from_fn(generate_images, n_images_to_eval, real=False)
                     is_score, fid_score = metrics_scorer.score_metrics(compute_is, compute_fid)
                     metrics_scorer.reset_metrics()
                     metrics_scorer.log_scores(is_score, fid_score)
