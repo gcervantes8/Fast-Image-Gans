@@ -14,7 +14,7 @@ import math
 import PIL
 from src import saver_and_loader, os_helper
 from src.configs import ini_parser
-from src.metrics import score_metrics
+# from src.metrics import score_metrics
 from src.data_load import unnormalize, get_num_classes, create_latent_vector
 from src import create_model
 
@@ -112,8 +112,6 @@ if __name__ == '__main__':
     parser.add_argument('--class_gif', type=bool,
                         help='If true will save a gif of the classes going through each other.  Some models may not '
                              'support this')
-    parser.add_argument('--inception_score', type=bool,
-                        help='If true will calculate the inception score')
     args = parser.parse_args()
 
     if not os.path.exists(args.config_file_path):
@@ -140,13 +138,3 @@ if __name__ == '__main__':
 
         output_path = os.path.join(img_dir, 'fake_images.png')
         saver_and_loader.save_images(fake_imgs, output_path)
-    print('Saved to: ' + str(output_path))
-
-    if args.inception_score:
-        fake_images_unnormalized = unnormalize(fake_imgs)  # Values from 0 to 1
-
-        is_score, _ = score_metrics(fake_images_unnormalized, True, False)
-        logging.info("Inception Score is: " + str(is_score))
-
-
-
