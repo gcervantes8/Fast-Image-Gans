@@ -1,10 +1,13 @@
 # Game Image Generation
+
+
+[![Python](https://img.shields.io/badge/python-3.7_|_3.8_|_3.9_|_3.10_|_3.11-blue)](https://www.python.org/downloads/)
+
 With this project, you can train a Generative Adversarial Network.  While you can train with any time of image, 
 this repository focuses on generating images from games.
 
 ## Requirements
-- Python 3.6+
-- [Pytorch](https://pytorch.org/)
+- [Pytorch](https://pytorch.org/get-started/locally/)
 - [Pytorch-ignite](https://pytorch.org/ignite/index.html)
 - [torchvision](https://pypi.org/project/torchvision/)
 - [torchinfo](https://github.com/TylerYep/torchinfo)
