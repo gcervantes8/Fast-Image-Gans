@@ -73,6 +73,8 @@ def train(config_file_path: str):
         # Avoid if running on CPU since we would need to use bfloat16. Image processing is not supported for bfloat16
         data_dtype = torch.float16
     data_loader = data_loader_from_config(data_config, data_dtype=data_dtype, using_gpu=not running_on_cpu)
+    # Eval data loader is done to keep the same label distribution when evaluating
+    eval_data_loader = data_loader_from_config(data_config, data_dtype=data_dtype, using_gpu=not running_on_cpu)
     logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
 
     # Save training images
@@ -110,16 +112,19 @@ def train(config_file_path: str):
         metrics_scorer.reset_metrics()
         metrics_scorer.log_scores(is_score, fid_score)
 
-    # TODO Add option to be able to generate labels from dataset distribution, instead of sequentially
-    def create_noise_and_labels():
+    def create_noise_and_labels(use_data_distribution=False):
         noise = create_latent_vector(data_config, model_arch_config, device)
-        labels = torch.arange(start=0, end=int(data_config['batch_size']), device=device,
-                                dtype=torch.int64) % num_classes
+        if use_data_distribution:
+            _, labels = next(iter(eval_data_loader))
+            labels = labels.to(device)
+        else:
+            labels = torch.arange(start=0, end=int(data_config['batch_size']), device=device,
+                                    dtype=torch.int64) % num_classes
         return noise, labels
     fixed_noise, fixed_labels = create_noise_and_labels()
 
     def generate_images():
-        noise, labels = create_noise_and_labels()
+        noise, labels = create_noise_and_labels(use_data_distribution=True)
         fake_images = gan_model.generate_images(noise, labels)
         return fake_images
     n_epochs, log_steps = int(train_config['num_epochs']), int(train_config['log_steps'])
