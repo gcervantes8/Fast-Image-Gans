@@ -90,9 +90,8 @@ class DeepBigganGenerator(BaseGenerator):
         out = self.initial_linear(latent_embed_vector)
 
         # [B, 16 * ngf, 4, 4]
-        out = torch.reshape(out, [batch_size, 16 * self.ngf, self.base_height, self.base_width])
+        out = out.view(batch_size, 16 * self.ngf, self.base_height, self.base_width)
 
-        out = out.to(memory_format=torch.channels_last)
         gen_input = out, latent_embed_vector
         out, _ = self.generator_layers_pre_attn(gen_input)
         out = self.nonlocal_block(out)
