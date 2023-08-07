@@ -95,9 +95,6 @@ class GanModel:
             discrim_output = self.netD(real_data, labels)
 
             discrim_on_real_error = self.criterion(discrim_output, real_label)
-            
-            if not self.orthogonal_value == 0:
-                discrim_on_real_error += self.apply_orthogonal_regularization(self.netD)
             discrim_on_real_error = discrim_on_real_error / self.accumulation_iterations
 
             self.grad_scaler.scale(discrim_on_real_error).backward()
@@ -150,7 +147,7 @@ class GanModel:
         model_orthogonal_loss = 0.0
         for name, param in model.named_parameters():
             if len(param.size()) >= 2 and param.requires_grad and 'conv' in name:
-                param = torch.reshape(param, [param.size(dim=0), -1])
+                param = param.view(param.size(dim=0), -1)
                 mult_out = torch.mm(torch.t(param), param)
                 orthogonal_matrix = torch.mul(mult_out, 1 - torch.eye(mult_out.size(dim=0), device=self.device))
                 # Frobenius norm
