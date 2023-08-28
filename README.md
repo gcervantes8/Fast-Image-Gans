@@ -1,32 +1,60 @@
 # Game Image Generation
 
 
-[![Python](https://img.shields.io/badge/python-3.7_|_3.8_|_3.9_|_3.10_|_3.11-blue)](https://www.python.org/downloads/)
+[![Python](https://img.shields.io/badge/Python-3.7--3.11-blue)](https://www.python.org/downloads/) [![License](https://img.shields.io/badge/License-GPL--3.0-yellow)](https://github.com/gcervantes8/Game-Image-Generator/blob/master/LICENSE) [![Python package](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml/badge.svg)](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml)
 
-With this project, you can train a Generative Adversarial Network.  While you can train with any time of image, 
+
+With this project, you can train Generative Adversarial Networks (GANs).  While you can train with any type of image, 
 this repository focuses on generating images from games.
 
+## Features
+
+ - PyTorch 2.0 Compile
+ - Mixed Precision training
+ - Inception Score and FID evaluation
+ - Easy to start training
+ - Testing
+
+## Datasets
+Provided in the code is a sample of the coil-100 dataset, which is used for testing.  You can easily replace this with your own dataset, below are popular datasets used for image generation.
+ - [ImageNet](https://www.kaggle.com/c/imagenet-object-localization-challenge/overview/description) - 1k labels, 1m images, different resolutions
+ - [CIFAR](https://www.cs.toronto.edu/~kriz/cifar.html) - 10 labels or 100 labels, 60k images, 32x32 resolution
+  - [ArtBench-10](https://github.com/liaopeiyuan/artbench#readme) - 60k images of art, 10 styles, 32x32, 256x256, or orginal resolutions
+  - [FFHQ](https://github.com/NVlabs/ffhq-dataset#readme) 70k high quality images of people's faces, 1024x1024 resolution
+  - [LSUN](https://www.yf.io/p/lsun)
+
+
+| Dataset | Number of Images | Number of Labels | Resolutions Available | Description |
+| - | - | - | - | - |
+|[ImageNet](https://www.kaggle.com/c/imagenet-object-localization-challenge/overview/description) | 1m | 1k | varying | Real world objects |
+|[CIFAR](https://www.cs.toronto.edu/~kriz/cifar.html) | 60k | 10 or 100 | 32x32 | Real world objects |
+|[ArtBench-10](https://github.com/liaopeiyuan/artbench#readme) | 60k | 10 | 32x32, 256x256, or original | Art in 10 distinctive styles |
+|[FFHQ](https://github.com/NVlabs/ffhq-dataset#readme) | 70k | 1 | 1024x1024 | High Quality images of people's faces |
+|[LSUN](https://www.yf.io/p/lsun) | 1m | 30 | varying | 10 scenes, and 20 objects |
+
 ## Requirements
-- [Pytorch](https://pytorch.org/get-started/locally/)
-- [Pytorch-ignite](https://pytorch.org/ignite/index.html)
-- [torchvision](https://pypi.org/project/torchvision/)
+The following are the Python packages needed.
+- [Pytorch](https://pytorch.org/get-started/locally/), 1.9+
+- [torchvision](https://pypi.org/project/torchvision/) 0.9+
+- [SciPy](https://scipy.org/install/) 1.7+
+- [TorchMetrics](https://torchmetrics.readthedocs.io/en/stable/)
 - [torchinfo](https://github.com/TylerYep/torchinfo)
 - [torch-ema](https://github.com/fadel/pytorch_ema)
-- [SciPy](https://scipy.org/install/)
+- [tqdm](https://tqdm.github.io/)
 
-## Running
+## Models Available
+
+- [DCGAN (2016)](https://arxiv.org/pdf/1511.06434.pdf)
+- [Biggan (2019)](https://arxiv.org/abs/1809.11096)
+- [Deep Biggan (2019)](https://arxiv.org/abs/1809.11096)
+- [Omni-GAN (2021)](https://arxiv.org/pdf/2011.13074.pdf)
+
+## Training
 
 From the parent folder, you can run this command to start training a DCGAN model
 ```
 python3 -m src.train_gan configs/dcgan_128_96.ini
 ```
-
-## Models supported
-
-- DCGAN
-- [Biggan](https://arxiv.org/abs/1809.11096)
-- [Deep Biggan](https://arxiv.org/abs/1809.11096)
-- [Omni-GAN](https://arxiv.org/pdf/2011.13074.pdf)
 
 ## Configuration File
 
