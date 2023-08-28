@@ -17,12 +17,6 @@ this repository focuses on generating images from games.
 
 ## Datasets
 Provided in the code is a sample of the coil-100 dataset, which is used for testing.  You can easily replace this with your own dataset, below are popular datasets used for image generation.
- - [ImageNet](https://www.kaggle.com/c/imagenet-object-localization-challenge/overview/description) - 1k labels, 1m images, different resolutions
- - [CIFAR](https://www.cs.toronto.edu/~kriz/cifar.html) - 10 labels or 100 labels, 60k images, 32x32 resolution
-  - [ArtBench-10](https://github.com/liaopeiyuan/artbench#readme) - 60k images of art, 10 styles, 32x32, 256x256, or orginal resolutions
-  - [FFHQ](https://github.com/NVlabs/ffhq-dataset#readme) 70k high quality images of people's faces, 1024x1024 resolution
-  - [LSUN](https://www.yf.io/p/lsun)
-
 
 | Dataset | Number of Images | Number of Labels | Resolutions Available | Description |
 | - | - | - | - | - |
@@ -43,7 +37,7 @@ The following are the Python packages needed.
 - [tqdm](https://tqdm.github.io/)
 
 ## Models Available
-
+The following are the current models that are available.  Changing models is as easy as specifying which model to use in the configuration file.
 - [DCGAN (2016)](https://arxiv.org/pdf/1511.06434.pdf)
 - [Biggan (2019)](https://arxiv.org/abs/1809.11096)
 - [Deep Biggan (2019)](https://arxiv.org/abs/1809.11096)
@@ -58,13 +52,13 @@ python3 -m src.train_gan configs/dcgan_128_96.ini
 
 ## Configuration File
 
-Starter model configuration files and configuration README can be found in the _configs_ directory.
+Starter model configuration files and configuration README can be found in the [_configs_](https://github.com/gcervantes8/Game-Image-Generator/tree/master/configs) directory.
 
-### Trained Models
+## Trained Models
 
 [**models/Deep-biggan-bs64-ch128-mxp-n64-trunc0.75**](models/Deep-biggan-bs64-ch128-mxp-n64-trunc0.75)
 
-**Data**
+### Data
 - 194,460 images (84 GB)
 - 20 games
 - Resolution: 128 x 96
@@ -75,3 +69,4 @@ Starter model configuration files and configuration README can be found in the _
   <thead> <th colspan="3"> Generated Images </th> </thead>
 <td colspan="3" align="center"><img src="models/Deep-biggan-bs64-ch128-mxp-n64-trunc0.75/images/generated_image_68000.png" alt="Images of training batch"></td>
 </table>
+Trained with a Deep-Biggan Model.
