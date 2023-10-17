@@ -6,3 +6,4 @@ Pillow
 torchmetrics
 scipy >= 1.7
 tqdm
+tensorboard
