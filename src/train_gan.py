@@ -9,7 +9,8 @@ Purpose: Train the GAN (Generative Adversarial Network) model
 
 import torch
 from torch.profiler import profile, ProfilerActivity
-from src import saver_and_loader, create_model, os_helper
+from torch.utils.tensorboard import SummaryWriter
+from src import saver_and_loader, create_model
 from src.configs import ini_parser
 from src.data_load import data_loader_from_config, color_transform, normalize, \
     create_latent_vector, get_num_classes
@@ -136,7 +137,6 @@ def train(config_file_path: str):
     logging.info("Starting Training Loop...")
 
     def tensorboard_profiler():
-        from torch.utils.tensorboard import SummaryWriter
         profile_devices = [ProfilerActivity.CPU]
         if not running_on_cpu:
             profile_devices.append(ProfilerActivity.CUDA)
@@ -171,14 +171,13 @@ def train(config_file_path: str):
             # Normalization can't be done on bloat16 operators
             is_bfloat16_dtype = running_on_cpu and is_mixed_precision
             if is_bfloat16_dtype:
-                # real_data = normalize(color_transform(real_data))
+                real_data = normalize(color_transform(real_data))
                 real_data = real_data.to(torch.bfloat16)
 
             real_data = real_data.to(device)  # Moving to GPU is a slow operation
             labels = labels.to(device)  # Moving to GPU is a slow operation
             if not is_bfloat16_dtype:
-                # real_data = normalize(color_transform(real_data))
-                pass
+                real_data = normalize(color_transform(real_data))
 
             data_time += time.time() - data_start_time
             model_start_time = time.time()

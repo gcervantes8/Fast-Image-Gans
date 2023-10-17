@@ -14,6 +14,7 @@ from src.losses.loss_functions import supported_losses
 from torch_ema import ExponentialMovingAverage
 from torchinfo import summary
 
+from src.data_load import unnormalize
 from src import os_helper, data_load
 import os
 
@@ -155,7 +156,7 @@ class GanModel:
         return model_orthogonal_loss
 
     # If class_embeddings is provided, then it will ignore labels to generate the images
-    def generate_images(self, noise, labels, class_embeddings=None):
+    def generate_images(self, noise, labels, class_embeddings=None, unnormalize_img=True):
         device_type, dtype = ('cpu', torch.bfloat16) if self.device.type == 'cpu' else ('cuda', torch.float16)
         with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
             with torch.no_grad():
@@ -172,7 +173,11 @@ class GanModel:
                             fake = self.netG(noise, labels)
                 else:
                     fake = self.netG(noise, labels)
-            return fake.detach()
+
+            fake = fake.detach()
+            if unnormalize_img:
+                fake = unnormalize(fake)
+            return fake
 
     def save(self, model_dir, step_num, compiled=False):
         generator_path = os.path.join(model_dir, os_helper.ModelType.GENERATOR.value + '_step_' + str(step_num) + '.pt')
