@@ -1,5 +1,5 @@
 # Game Image Generation
-
+![Example image cropped at the star counter ](logo/FigsName.png) 
 
 [![Python](https://img.shields.io/badge/Python-3.7--3.11-blue)](https://www.python.org/downloads/) [![License](https://img.shields.io/badge/License-GPL--3.0-yellow)](https://github.com/gcervantes8/Game-Image-Generator/blob/master/LICENSE) [![Python package](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml/badge.svg)](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml)
 
