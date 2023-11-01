@@ -233,7 +233,7 @@ def train(config_file_path: str):
             if n_steps % eval_steps == 0:
                 if metrics_scorer:
                     metric_start_time = time.time()
-                    logging.info('Computing metrics for the saved images ...')
+                    logging.info('Computing metrics ...')
 
                     metrics_scorer.aggregate_images_from_fn(generate_images, n_images_to_eval, real=False)
                     is_score, fid_score = metrics_scorer.score_metrics(compute_is, compute_fid)

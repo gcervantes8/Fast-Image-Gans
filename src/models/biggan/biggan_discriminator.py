@@ -20,10 +20,11 @@ class BigganDiscriminator(BaseDiscriminator):
                  num_classes: int, output_size: int, project_labels: bool):
         super(BigganDiscriminator, self).__init__(base_width, base_height, upsample_layers, ndf, num_channels,
                                                   num_classes)
+        
         if upsample_layers == 5:
             layer_channels = [3, ndf, ndf * 2, ndf * 4, ndf * 8, ndf * 16, ndf * 16]
             downsample_layers = [True, True, True, True, True, False]
-            nonlocal_block_index = 1
+            nonlocal_block_index = 0
         else:
             raise NotImplementedError(str(upsample_layers) + ' layers for biggan discriminator is not supported.  You'
                                                              ' can either use a different amount of layers, or make a'
