@@ -16,6 +16,7 @@ from src.data_load import data_loader_from_config, color_transform, normalize, \
     create_latent_vector, get_num_classes
 from src.metrics import Metrics
 from PIL import ImageFile
+from accelerate import Accelerator
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 import argparse
@@ -57,6 +58,7 @@ def train(config_file_path: str):
         logging.info('Directory ' + run_dir + ' loaded, training output will be saved here')
 
     # Set device
+    accelerator = Accelerator()
     n_gpus = int(config['MACHINE']['ngpu'])
     device = create_model.get_device(n_gpus)
     logging.info('Running on: ' + str(device))
@@ -69,9 +71,6 @@ def train(config_file_path: str):
     data_config['image_width'] = str(int(data_config['base_width']) * (2 ** int(data_config['upsample_layers'])))
     is_mixed_precision = train_config.getboolean('mixed_precision')
     data_dtype = torch.float32
-    if is_mixed_precision and not running_on_cpu:
-        # Avoid if running on CPU since we would need to use bfloat16. Image processing is not supported for bfloat16
-        data_dtype = torch.float16
     data_loader = data_loader_from_config(data_config, data_dtype=data_dtype, using_gpu=not running_on_cpu)
     # Eval data loader is done to keep the same label distribution when evaluating
     eval_data_loader = data_loader_from_config(data_config, data_dtype=data_dtype, using_gpu=not running_on_cpu)
@@ -85,7 +84,11 @@ def train(config_file_path: str):
 
     logging.info('Creating model...')
 
-    gan_model = create_model.create_gan_model(model_arch_config, data_config, train_config, device, n_gpus)
+    data_loader, eval_data_loader = accelerator.prepare(
+        data_loader, eval_data_loader
+    )
+    device = accelerator.device
+    gan_model = create_model.create_gan_model(model_arch_config, data_config, train_config, accelerator)
     gan_model.save_architecture(run_dir, data_config)
 
     logging.info('Created GAN model')

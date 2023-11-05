@@ -21,16 +21,14 @@ import os
 
 class GanModel:
 
-    def __init__(self, generator, discriminator, num_classes, device, model_arch_config, train_config):
-        self.netG = generator.to(device)
-        self.netD = discriminator.to(device)
+    def __init__(self, generator, discriminator, num_classes, accelerator, model_arch_config, train_config):
         
         if train_config.getboolean('channels_last'):
             self.netD.set_channels_last()
             self.netG.set_channels_last()
-
+        
         self.num_classes = num_classes
-        self.device = device
+        self.device = accelerator.device
         self.latent_vector_size = int(model_arch_config['latent_vector_size'])
         beta1 = float(train_config['beta1'])
         beta2 = float(train_config['beta2'])
@@ -43,29 +41,32 @@ class GanModel:
         self.is_omni_loss = 'omni-loss' == loss_type.lower()
         self.accumulation_iterations = int(train_config['accumulation_iterations'])
         self.mixed_precision = train_config.getboolean('mixed_precision')
-        cpu_enabled = self.device.type == 'cpu'
-        self.grad_scaler = torch.cuda.amp.GradScaler(enabled=self.mixed_precision and not cpu_enabled)
         self.batch_iterations = 0
 
-        self.criterion, self.fake_label, self.real_label = supported_loss_functions(train_config['loss_function'],
-                                                                                    device=device)
+        self.criterion, self.fake_label, self.real_label = supported_loss_functions(train_config['loss_function'])
         if self.criterion is None:
             raise ValueError("Loss values options: " + str(supported_losses()))
 
         # Setup Adam optimizers for both G and D
-        self.optimizerD = optim.Adam(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
+        optimizerD = optim.Adam(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
                                      weight_decay=discriminator_wd)
-        self.optimizerG = optim.Adam(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
+        optimizerG = optim.Adam(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
                                      weight_decay=generator_wd)
 
-        self.netD.zero_grad()
-        self.netG.zero_grad()
+        discriminator.zero_grad()
+        generator.zero_grad()
 
         # Set EMA
         ema_enabled = model_arch_config.getboolean('generator_ema')
         ema_decay = model_arch_config['ema_decay']
         self.ema = ExponentialMovingAverage(generator.parameters(),
                                             decay=float(ema_decay)) if ema_enabled else None
+        
+        self.netD, self.netG, self.optimizerD, self.optimizerG = accelerator.prepare(
+            discriminator, generator, optimizerD, optimizerG
+        )
+
+        self.accelerator = accelerator
 
     def optimize_models(self):
         self.netG = torch.compile(self.netG)
@@ -73,76 +74,64 @@ class GanModel:
 
     def update_minimax(self, real_data, labels):
         b_size = real_data.size(dim=0)
-        # device_type and dtype are only used in
-        device_type, dtype = self.device.type, None
-        if self.mixed_precision:
-            if self.device.type == 'cpu':
-                device_type, dtype = ('cpu', torch.bfloat16)
-            else:
-                device_type, dtype = ('cuda', torch.float16)
 
-        with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
-            if self.is_omni_loss:
-                # Real_label is of size [b_size, num_classes]
-                real_label = torch.nn.functional.one_hot(labels, num_classes=self.num_classes)
-                # Adds 2 columns, One with all values 1, the second with all values 0. Size [b_size, num_classes + 2]
-                real_label = torch.concat((real_label, torch.ones(b_size, 1, device=self.device),
-                                           torch.zeros(b_size, 1, device=self.device)), dim=1)
-                # Replace the 0s and 1s with value of the fake_label, or true_label
-                real_label[real_label == 0] = self.fake_label
-                real_label[real_label == 1] = self.real_label
-            else:
-                real_label = torch.full((b_size,), self.real_label, dtype=real_data.dtype, device=self.device)
-            discrim_output = self.netD(real_data, labels)
+        if self.is_omni_loss:
+            # Real_label is of size [b_size, num_classes]
+            real_label = torch.nn.functional.one_hot(labels, num_classes=self.num_classes)
+            # Adds 2 columns, One with all values 1, the second with all values 0. Size [b_size, num_classes + 2]
+            real_label = torch.concat((real_label, torch.ones(b_size, 1, device=self.device),
+                                    torch.zeros(b_size, 1, device=self.device)), dim=1)
+            # Replace the 0s and 1s with value of the fake_label, or true_label
+            real_label[real_label == 0] = self.fake_label
+            real_label[real_label == 1] = self.real_label
+        else:
+            real_label = torch.full((b_size,), self.real_label, dtype=real_data.dtype, device=self.device)
+        discrim_output = self.netD(real_data, labels)
 
-            discrim_on_real_error = self.criterion(discrim_output, real_label)
-            discrim_on_real_error = discrim_on_real_error / self.accumulation_iterations
+        discrim_on_real_error = self.criterion(discrim_output, real_label)
+        discrim_on_real_error = discrim_on_real_error / self.accumulation_iterations
+        # self.accelerator.backward(discrim_on_real_error)
 
-            self.grad_scaler.scale(discrim_on_real_error).backward()
+        # Train with all-fake batch
+        noise = torch.randn(b_size, self.latent_vector_size, device=self.device)
+        # Generate fake image batch with G
+        fake = self.netG(noise, labels)
 
-        with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
-            # Train with all-fake batch
-            noise = torch.randn(b_size, self.latent_vector_size, device=self.device)
-            # Generate fake image batch with G
-            fake = self.netG(noise, labels)
+        if self.is_omni_loss:
+            fake_label = torch.full((b_size, self.num_classes + 1), self.fake_label, dtype=real_data.dtype, device=self.device)
+            fake_label = torch.concat((fake_label, torch.ones(b_size, 1, device=self.device)), dim=1)
+        else:
+            fake_label = torch.full((b_size,), self.fake_label, dtype=real_data.dtype, device=self.device)
+        
+        # Classify all fake batch with D
+        fake_output = self.netD(fake.detach(), labels)
+        # Calculate D's loss on the all-fake batch
+        discrim_on_fake_error = self.criterion(fake_output, fake_label.reshape_as(fake_output))
+        discrim_on_fake_error = discrim_on_fake_error / self.accumulation_iterations
 
-            if self.is_omni_loss:
-                fake_label = torch.full((b_size, self.num_classes + 1), self.fake_label, dtype=real_data.dtype, device=self.device)
-                fake_label = torch.concat((fake_label, torch.ones(b_size, 1, device=self.device)), dim=1)
-            else:
-                fake_label = torch.full((b_size,), self.fake_label, dtype=real_data.dtype, device=self.device)
-            
-            # Classify all fake batch with D
-            fake_output = self.netD(fake.detach(), labels)
-            # Calculate D's loss on the all-fake batch
-            discrim_on_fake_error = self.criterion(fake_output, fake_label.reshape_as(fake_output))
-            discrim_on_fake_error = discrim_on_fake_error / self.accumulation_iterations
-
-        self.grad_scaler.scale(discrim_on_fake_error).backward()
         total_discrim_error = discrim_on_real_error + discrim_on_fake_error
+        self.accelerator.backward(total_discrim_error)
 
-        with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
-            self.netD.requires_grad_(requires_grad=False)
-            output_update = self.netD(fake, labels)
-            self.netD.requires_grad_(requires_grad=True)
-            generator_error = self.criterion(output_update, real_label)
-            if not self.orthogonal_value == 0:
-                generator_error += self.apply_orthogonal_regularization(self.netG)
-            generator_error = generator_error / self.accumulation_iterations
-        self.grad_scaler.scale(generator_error).backward()
+        self.netD.requires_grad_(requires_grad=False)
+        output_update = self.netD(fake, labels)
+        self.netD.requires_grad_(requires_grad=True)
+        generator_error = self.criterion(output_update, real_label)
+        if not self.orthogonal_value == 0:
+            generator_error += self.apply_orthogonal_regularization(self.netG)
+        generator_error = generator_error / self.accumulation_iterations
+        self.accelerator.backward(generator_error)
 
         self.batch_iterations += 1
         if self.batch_iterations % self.accumulation_iterations == 0:
-            self.grad_scaler.step(self.optimizerD)
-            self.grad_scaler.step(self.optimizerG)
-            self.grad_scaler.update()
+            self.optimizerD.step()
+            self.optimizerG.step()
             if self.ema:
                 self.ema.update()
-            self.netD.zero_grad(set_to_none=True)
-            self.netG.zero_grad(set_to_none=True)
+            self.optimizerD.zero_grad(set_to_none=True)
+            self.optimizerG.zero_grad(set_to_none=True)
 
         return (total_discrim_error * self.accumulation_iterations).item(), \
-               (generator_error * self.accumulation_iterations).item()
+            (generator_error * self.accumulation_iterations).item()
 
     def apply_orthogonal_regularization(self, model):
         model_orthogonal_loss = 0.0
