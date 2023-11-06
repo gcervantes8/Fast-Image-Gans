@@ -38,13 +38,13 @@ def color_transform(images, brightness=0.1, contrast=0.05, saturation=0.1, hue=0
     return train_transform_augment(images)
 
 
-def data_loader_from_config(data_config, data_dtype=torch.float32, using_gpu=False):
+def data_loader_from_config(data_config, using_gpu=False):
     data_dir = data_config['train_dir']
     os_helper.is_valid_dir(data_dir, 'Invalid training data directory\nPath is an invalid directory: ' + data_dir)
     image_height, image_width = get_image_height_and_width(data_config)
     batch_size = int(data_config['batch_size'])
     n_workers = int(data_config['workers'])
-    return create_data_loader(data_dir, image_height, image_width, dtype=data_dtype, using_gpu=using_gpu,
+    return create_data_loader(data_dir, image_height, image_width, using_gpu=using_gpu,
                               batch_size=batch_size, n_workers=n_workers)
 
 
@@ -70,7 +70,7 @@ def get_num_classes(data_config):
     return len(data_loader.dataset.classes)
 
 
-def create_data_loader(data_dir: str, image_height: int, image_width: int, dtype=torch.float32, using_gpu=False,
+def create_data_loader(data_dir: str, image_height: int, image_width: int, dtype=torch.bfloat16, using_gpu=False,
                        batch_size=1, n_workers=1):
 
     data_transform = transforms.Compose([transforms.Resize((image_height, image_width)),

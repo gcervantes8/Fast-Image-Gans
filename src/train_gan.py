@@ -58,22 +58,27 @@ def train(config_file_path: str):
         logging.info('Directory ' + run_dir + ' loaded, training output will be saved here')
 
     # Set device
-    accelerator = Accelerator()
-    n_gpus = int(config['MACHINE']['ngpu'])
-    device = create_model.get_device(n_gpus)
-    logging.info('Running on: ' + str(device))
-    running_on_cpu = str(device) == 'cpu'
+    train_config = config['TRAIN']
+    precision = train_config['precision'].lower()
+    precision = 'no' if precision == 'fp32' else precision
+    dynamo_backend = 'no'
+    if train_config.getboolean('compile'):
+        dynamo_backend = 'INDUCTOR'
+    accelerator = Accelerator(mixed_precision=precision)
+    # accelerator = Accelerator(mixed_precision=precision, dynamo_backend=dynamo_backend)
 
+    device = accelerator.device
+
+    if device.type == 'cuda':
+        running_on_cpu = False
     # Creates data-loader
     data_config = config['DATA']
-    train_config = config['TRAIN']
     data_config['image_height'] = str(int(data_config['base_height']) * (2 ** int(data_config['upsample_layers'])))
     data_config['image_width'] = str(int(data_config['base_width']) * (2 ** int(data_config['upsample_layers'])))
-    is_mixed_precision = train_config.getboolean('mixed_precision')
-    data_dtype = torch.float32
-    data_loader = data_loader_from_config(data_config, data_dtype=data_dtype, using_gpu=not running_on_cpu)
+
+    data_loader = data_loader_from_config(data_config, using_gpu=not running_on_cpu)
     # Eval data loader is done to keep the same label distribution when evaluating
-    eval_data_loader = data_loader_from_config(data_config, data_dtype=data_dtype, using_gpu=not running_on_cpu)
+    eval_data_loader = data_loader_from_config(data_config, using_gpu=not running_on_cpu)
     logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
 
     # Save training images
@@ -152,41 +157,30 @@ def train(config_file_path: str):
     if profiler:
         profiler.start()
 
-    if train_config.getboolean('compile'):
-        logging.info('Compiling model with PyTorch 2.0')
-        compile_time = time.time()
-        gan_model.optimize_models()
-        logging.info('Compile Time: {:.2f}s'.format(time.time() - compile_time))
+    # if train_config.getboolean('compile'):
+    #     logging.info('Compiling model with PyTorch 2.0')
+    #     compile_time = time.time()
+    #     gan_model.optimize_models()
+    #     logging.info('Compile Time: {:.2f}s'.format(time.time() - compile_time))
 
     n_steps = 0
-    steps_in_epoch = len(data_loader)
+    steps_in_epoch = int(len(data_loader) / int(train_config['accumulation_iterations']))
     total_g_error, total_d_error = 0.0, 0.0
     g_steps, d_steps = 0, 0
     data_time, model_time = 0.0, 0.0
     data_start_time = time.time()
     train_seq_start_time = time.time()
+    logging.info('Started Training Loop')
     for epoch in range(n_epochs):
-        for i, batch in enumerate(data_loader, 0):
-
+        for _ in range(steps_in_epoch):
             n_steps += 1
-            real_data, labels = batch
-
-            # Normalization can't be done on bloat16 operators
-            is_bfloat16_dtype = running_on_cpu and is_mixed_precision
-            if is_bfloat16_dtype:
-                real_data = normalize(color_transform(real_data))
-                real_data = real_data.to(torch.bfloat16)
-
-            real_data = real_data.to(device)  # Moving to GPU is a slow operation
-            labels = labels.to(device)  # Moving to GPU is a slow operation
-            if not is_bfloat16_dtype:
-                real_data = normalize(color_transform(real_data))
 
             data_time += time.time() - data_start_time
             model_start_time = time.time()
             if train_config.getboolean('channels_last'):
                 real_data = real_data.to(memory_format=torch.channels_last)  # Replace with your input
-            err_discriminator, err_generator = gan_model.update_minimax(real_data, labels)
+            # err_discriminator, err_generator = gan_model.update_minimax(real_data, labels)
+            err_discriminator, err_generator = gan_model.train_step(data_loader=data_loader)
 
             if err_generator:
                 total_g_error += err_generator

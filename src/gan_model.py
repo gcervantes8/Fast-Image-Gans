@@ -13,8 +13,7 @@ from src.losses.loss_functions import supported_loss_functions
 from src.losses.loss_functions import supported_losses
 from torch_ema import ExponentialMovingAverage
 from torchinfo import summary
-
-from src.data_load import unnormalize
+from src.data_load import normalize, unnormalize
 from src import os_helper, data_load
 import os
 
@@ -26,7 +25,15 @@ class GanModel:
         if train_config.getboolean('channels_last'):
             self.netD.set_channels_last()
             self.netG.set_channels_last()
-        
+        self.netG = generator
+        self.netD = discriminator
+
+        if train_config.getboolean('compile'):
+            # logging.info('Compiling model with PyTorch 2.0')
+            # compile_time = time.time()
+            self.optimize_models()
+            # logging.info('Compile Time: {:.2f}s'.format(time.time() - compile_time))
+
         self.num_classes = num_classes
         self.device = accelerator.device
         self.latent_vector_size = int(model_arch_config['latent_vector_size'])
@@ -65,6 +72,8 @@ class GanModel:
         self.netD, self.netG, self.optimizerD, self.optimizerG = accelerator.prepare(
             discriminator, generator, optimizerD, optimizerG
         )
+        if self.ema:
+            self.ema = accelerator.prepare(self.ema)
 
         self.accelerator = accelerator
 
@@ -72,9 +81,7 @@ class GanModel:
         self.netG = torch.compile(self.netG)
         self.netD = torch.compile(self.netD)
 
-    def update_minimax(self, real_data, labels):
-        b_size = real_data.size(dim=0)
-
+    def create_real_labels(self, b_size, labels):
         if self.is_omni_loss:
             # Real_label is of size [b_size, num_classes]
             real_label = torch.nn.functional.one_hot(labels, num_classes=self.num_classes)
@@ -85,32 +92,43 @@ class GanModel:
             real_label[real_label == 0] = self.fake_label
             real_label[real_label == 1] = self.real_label
         else:
-            real_label = torch.full((b_size,), self.real_label, dtype=real_data.dtype, device=self.device)
+            real_label = torch.full((b_size,), self.real_label, dtype=labels.dtype, device=self.device)
+        return real_label
+    
+    def create_fake_labels(self, b_size, labels):
+        if self.is_omni_loss:
+            fake_label = torch.full((b_size, self.num_classes + 1), self.fake_label, dtype=labels.dtype, device=self.device)
+            fake_label = torch.concat((fake_label, torch.ones(b_size, 1, device=self.device)), dim=1)
+        else:
+            fake_label = torch.full((b_size,), self.fake_label, dtype=labels.dtype, device=self.device)
+        return fake_label
+    
+    def update_minimax(self, real_data, labels):
+        b_size = real_data.size(dim=0)
+
+        real_label = self.create_real_labels(b_size, labels)
         discrim_output = self.netD(real_data, labels)
 
         discrim_on_real_error = self.criterion(discrim_output, real_label)
         discrim_on_real_error = discrim_on_real_error / self.accumulation_iterations
-        # self.accelerator.backward(discrim_on_real_error)
+
+        self.accelerator.backward(discrim_on_real_error)
 
         # Train with all-fake batch
         noise = torch.randn(b_size, self.latent_vector_size, device=self.device)
         # Generate fake image batch with G
         fake = self.netG(noise, labels)
 
-        if self.is_omni_loss:
-            fake_label = torch.full((b_size, self.num_classes + 1), self.fake_label, dtype=real_data.dtype, device=self.device)
-            fake_label = torch.concat((fake_label, torch.ones(b_size, 1, device=self.device)), dim=1)
-        else:
-            fake_label = torch.full((b_size,), self.fake_label, dtype=real_data.dtype, device=self.device)
-        
         # Classify all fake batch with D
         fake_output = self.netD(fake.detach(), labels)
+
+        fake_label = self.create_fake_labels(b_size, labels)
         # Calculate D's loss on the all-fake batch
         discrim_on_fake_error = self.criterion(fake_output, fake_label.reshape_as(fake_output))
         discrim_on_fake_error = discrim_on_fake_error / self.accumulation_iterations
+        self.accelerator.backward(discrim_on_fake_error)
 
         total_discrim_error = discrim_on_real_error + discrim_on_fake_error
-        self.accelerator.backward(total_discrim_error)
 
         self.netD.requires_grad_(requires_grad=False)
         output_update = self.netD(fake, labels)
@@ -132,6 +150,77 @@ class GanModel:
 
         return (total_discrim_error * self.accumulation_iterations).item(), \
             (generator_error * self.accumulation_iterations).item()
+
+    def train_step(self, data_loader):
+
+        discriminator_loss, accum_labels = self.discriminator_step(data_loader)
+        generator_loss = self.generator_step(accum_labels)
+        if self.ema:
+            self.ema.update()
+        self.netD.requires_grad_(requires_grad=True)
+        return discriminator_loss, generator_loss
+
+    def discriminator_step(self, data_loader):
+        self.netD.requires_grad_(requires_grad=True)
+        self.optimizerD.zero_grad(set_to_none=True)
+        accum_labels = []
+        total_discrim_error = 0
+        for _ in range(self.accumulation_iterations):
+            real_data, labels = next(iter(data_loader))
+            b_size = real_data.size(dim=0)
+            real_data = normalize(real_data)
+            accum_labels.append(labels)
+            
+            discrim_output = self.netD(real_data, labels)
+
+            real_label = self.create_real_labels(b_size, labels)
+            discrim_on_real_error = self.criterion(discrim_output, real_label)
+
+            # Train with all-fake batch
+            noise = torch.randn(b_size, self.latent_vector_size, device=self.device)
+            with torch.no_grad():
+                # Generate fake image batch with G
+                fake = self.netG(noise, labels)
+                
+            # Classify all fake batch with D
+            fake_output = self.netD(fake.detach(), labels)
+
+            # Calculate D's loss on the all-fake batch
+            fake_label = self.create_fake_labels(b_size, labels)
+            discrim_on_fake_error = self.criterion(fake_output, fake_label.reshape_as(fake_output))
+            discrim_error = (discrim_on_fake_error + discrim_on_real_error) / self.accumulation_iterations
+            self.accelerator.backward(discrim_error)
+            total_discrim_error += discrim_error
+        self.optimizerD.step()
+        return total_discrim_error.item(), accum_labels
+
+    def generator_step(self, accum_labels):
+        self.netD.requires_grad_(requires_grad=False)
+        self.optimizerG.zero_grad(set_to_none=True)
+
+        total_generator_error = 0
+        for i in range(self.accumulation_iterations):
+            b_size = accum_labels[i].size(dim=0)
+            # Train with all-fake batch
+            noise = torch.randn(b_size, self.latent_vector_size, device=self.device, requires_grad=True)
+            # Generate fake image batch with G
+            fake = self.netG(noise, accum_labels[i])
+            self.netD.requires_grad_(requires_grad=False)
+            output_update = self.netD(fake, accum_labels[i])
+            self.netD.requires_grad_(requires_grad=True)
+            real_label = self.create_real_labels(b_size, accum_labels[i])
+            generator_error = self.criterion(output_update, real_label) / self.accumulation_iterations
+            self.accelerator.backward(generator_error)
+            total_generator_error += generator_error
+
+        if not self.orthogonal_value == 0:
+            generator_error = self.apply_orthogonal_regularization(self.netG)
+            total_generator_error += generator_error
+            self.accelerator.backward(generator_error)
+        self.optimizerG.step()
+        return total_generator_error.item()
+
+
 
     def apply_orthogonal_regularization(self, model):
         model_orthogonal_loss = 0.0
