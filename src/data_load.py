@@ -70,12 +70,12 @@ def get_num_classes(data_config):
     return len(data_loader.dataset.classes)
 
 
-def create_data_loader(data_dir: str, image_height: int, image_width: int, dtype=torch.bfloat16, using_gpu=False,
+def create_data_loader(data_dir: str, image_height: int, image_width: int, dtype=torch.float16, using_gpu=False,
                        batch_size=1, n_workers=1):
 
     data_transform = transforms.Compose([transforms.Resize((image_height, image_width)),
                                          transforms.ToTensor(),
-                                         transforms.ConvertImageDtype(dtype)
+                                        #  transforms.ConvertImageDtype(dtype)
                                          ])
     try:
         data_set = torch_data_set.ImageFolder(root=data_dir, transform=data_transform)

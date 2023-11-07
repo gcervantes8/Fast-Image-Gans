@@ -64,9 +64,8 @@ def train(config_file_path: str):
     dynamo_backend = 'no'
     if train_config.getboolean('compile'):
         dynamo_backend = 'INDUCTOR'
-    accelerator = Accelerator(mixed_precision=precision)
-    # accelerator = Accelerator(mixed_precision=precision, dynamo_backend=dynamo_backend)
-
+        
+    accelerator = Accelerator(mixed_precision=precision, dynamo_backend=dynamo_backend)
     device = accelerator.device
 
     if device.type == 'cuda':
@@ -156,12 +155,6 @@ def train(config_file_path: str):
     profiler, eval_writer = tensorboard_profiler()
     if profiler:
         profiler.start()
-
-    # if train_config.getboolean('compile'):
-    #     logging.info('Compiling model with PyTorch 2.0')
-    #     compile_time = time.time()
-    #     gan_model.optimize_models()
-    #     logging.info('Compile Time: {:.2f}s'.format(time.time() - compile_time))
 
     n_steps = 0
     steps_in_epoch = int(len(data_loader) / int(train_config['accumulation_iterations']))
