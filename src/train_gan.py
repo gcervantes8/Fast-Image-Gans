@@ -65,7 +65,8 @@ def train(config_file_path: str):
     if train_config.getboolean('compile'):
         dynamo_backend = 'INDUCTOR'
         
-    accelerator = Accelerator(mixed_precision=precision, dynamo_backend=dynamo_backend)
+    # accelerator = Accelerator(mixed_precision=precision, dynamo_backend=dynamo_backend)
+    accelerator = Accelerator(dynamo_backend=dynamo_backend)
     device = accelerator.device
 
     if device.type == 'cuda':
@@ -165,15 +166,16 @@ def train(config_file_path: str):
     train_seq_start_time = time.time()
     logging.info('Started Training Loop')
     for epoch in range(n_epochs):
-        for _ in range(steps_in_epoch):
+        for i, batch in enumerate(data_loader, 0):
             n_steps += 1
+            real_data, labels = batch
 
             data_time += time.time() - data_start_time
             model_start_time = time.time()
             if train_config.getboolean('channels_last'):
                 real_data = real_data.to(memory_format=torch.channels_last)  # Replace with your input
-            # err_discriminator, err_generator = gan_model.update_minimax(real_data, labels)
-            err_discriminator, err_generator = gan_model.train_step(data_loader=data_loader)
+            err_discriminator, err_generator = gan_model.update_minimax(real_data, labels)
+            # err_discriminator, err_generator = gan_model.train_step(real_data, labels)
 
             if err_generator:
                 total_g_error += err_generator
