@@ -219,27 +219,26 @@ class GanModel:
     #     return (total_discrim_error * self.accumulation_iterations).item(), \
     #         (generator_error * self.accumulation_iterations).item()
 
-    def train_step(self, real_data, labels):
+    def train_step(self, batches_accumulated):
 
-        discriminator_loss, accum_labels = self.discriminator_step(real_data, labels)
+        discriminator_loss, accum_labels = self.discriminator_step(batches_accumulated)
         generator_loss = self.generator_step(accum_labels)
         if self.ema:
             self.ema.update()
         self.netD.requires_grad_(requires_grad=True)
         return discriminator_loss, generator_loss
 
-    def discriminator_step(self, real_data, labels):
+    def discriminator_step(self, batches_accumulated):
         
         self.netD.requires_grad_(requires_grad=True)
         self.optimizerD.zero_grad(set_to_none=True)
         accum_labels = []
         total_discrim_error = 0
-        for _ in range(self.accumulation_iterations):
+        for batch in batches_accumulated:
             
             with self.accelerator.autocast():
-                real_data, labels = next(iter(data_loader))
+                real_data, labels = batch
                 b_size = real_data.size(dim=0)
-                real_data = normalize(real_data)
                 accum_labels.append(labels)
                 
                 discrim_output = self.netD(real_data, labels)
@@ -275,17 +274,17 @@ class GanModel:
         self.optimizerG.zero_grad(set_to_none=True)
 
         total_generator_error = 0
-        for i in range(self.accumulation_iterations):
+        for label in accum_labels:
             with self.accelerator.autocast():
-                b_size = accum_labels[i].size(dim=0)
+                b_size = label.size(dim=0)
                 # Train with all-fake batch
                 noise = torch.randn(b_size, self.latent_vector_size, device=self.device, requires_grad=True)
                 # Generate fake image batch with G
-                fake = self.netG(noise, accum_labels[i])
+                fake = self.netG(noise, label)
                 self.netD.requires_grad_(requires_grad=False)
-                output_update = self.netD(fake, accum_labels[i])
+                output_update = self.netD(fake, label)
                 self.netD.requires_grad_(requires_grad=True)
-                real_label = self.create_real_labels(b_size, accum_labels[i])
+                real_label = self.create_real_labels(b_size, label)
                 generator_error = self.criterion(output_update, real_label) / self.accumulation_iterations
             self.accelerator.backward(generator_error)
             total_generator_error += generator_error

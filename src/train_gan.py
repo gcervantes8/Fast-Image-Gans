@@ -65,10 +65,9 @@ def train(config_file_path: str):
     if train_config.getboolean('compile'):
         dynamo_backend = 'INDUCTOR'
         
-    # accelerator = Accelerator(mixed_precision=precision, dynamo_backend=dynamo_backend)
-    accelerator = Accelerator(dynamo_backend=dynamo_backend)
+    accelerator = Accelerator(mixed_precision=precision, dynamo_backend=dynamo_backend)
+    # accelerator = Accelerator(dynamo_backend=dynamo_backend)
     device = accelerator.device
-
     if device.type == 'cuda':
         running_on_cpu = False
     # Creates data-loader
@@ -81,6 +80,7 @@ def train(config_file_path: str):
     eval_data_loader = data_loader_from_config(data_config, using_gpu=not running_on_cpu)
     logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
 
+    data_loader, eval_data_loader = accelerator.prepare(data_loader, eval_data_loader)
     # Save training images
     saver_and_loader.save_train_batch(data_loader, os.path.join(img_dir, 'train_batch.png'))
     num_classes = get_num_classes(data_config)
@@ -165,18 +165,22 @@ def train(config_file_path: str):
     data_start_time = time.time()
     train_seq_start_time = time.time()
     logging.info('Started Training Loop')
+    batches_accumulated = []
     for epoch in range(n_epochs):
         for i, batch in enumerate(data_loader, 0):
             n_steps += 1
-            real_data, labels = batch
+
+            batches_accumulated.append(batch)
 
             data_time += time.time() - data_start_time
             model_start_time = time.time()
             if train_config.getboolean('channels_last'):
                 real_data = real_data.to(memory_format=torch.channels_last)  # Replace with your input
-            err_discriminator, err_generator = gan_model.update_minimax(real_data, labels)
-            # err_discriminator, err_generator = gan_model.train_step(real_data, labels)
-
+            # err_discriminator, err_generator = gan_model.update_minimax(real_data, labels)
+            #TODO fix gradient accumulations, nest train step into an 'if' statement
+            
+            err_discriminator, err_generator = gan_model.train_step(batches_accumulated)
+            batches_accumulated = []
             if err_generator:
                 total_g_error += err_generator
                 g_steps += 1

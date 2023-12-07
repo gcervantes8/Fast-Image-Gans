@@ -10,7 +10,7 @@ Purpose: Functions that are used to generate and transform image data
 import torch
 import PIL
 import torchvision.datasets as torch_data_set
-import torchvision.transforms as transforms
+import torchvision.transforms.v2 as transforms
 from src import os_helper
 
 
@@ -74,11 +74,15 @@ def create_data_loader(data_dir: str, image_height: int, image_width: int, dtype
                        batch_size=1, n_workers=1):
 
     data_transform = transforms.Compose([transforms.Resize((image_height, image_width)),
-                                         transforms.ToTensor(),
-                                        #  transforms.ConvertImageDtype(dtype)
+                                         transforms.ToImageTensor(),
+                                         transforms.ConvertImageDtype(torch.float32), # Converting to float16 is increasing VRAM? Strange.
+                                         transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5]),
+                                         ])
+    label_transform = transforms.Compose([
+                                         transforms.ConvertImageDtype(torch.int16)
                                          ])
     try:
-        data_set = torch_data_set.ImageFolder(root=data_dir, transform=data_transform)
+        data_set = torch_data_set.ImageFolder(root=data_dir, transform=data_transform, target_transform=label_transform)
     except FileNotFoundError:
         raise FileNotFoundError('Data directory provided should contain directories that have images in them, '
                                 'directory provided: ' + data_dir)
