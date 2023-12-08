@@ -10,7 +10,7 @@ Purpose: Functions that can save output into file or loads models.
 import os
 import torch
 import torchvision.utils as torch_utils
-from src.data_load import get_data_batch, color_transform, normalize, get_num_classes
+from src.data_load import get_data_batch, unnormalize
 from src import create_model, os_helper
 
 
@@ -83,7 +83,8 @@ def _get_model_dir(config):
 def save_train_batch(data_loader, save_path: str, device=torch.device('cpu')):
     # Save training images
     batch_images = get_data_batch(data_loader, device)
-    batch_images = color_transform(batch_images.to(torch.float32))
+    batch_images = unnormalize(batch_images).to(torch.float32)
+    # batch_images = color_transform(batch_images.to(torch.float32))
     save_images(batch_images, save_path)
 
 

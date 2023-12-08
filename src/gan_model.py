@@ -20,14 +20,15 @@ import os
 
 class GanModel:
 
-    def __init__(self, generator, discriminator, num_classes, accelerator, model_arch_config, train_config):
+    def __init__(self, generator, discriminator, num_classes, accelerator, torch_dtype, model_arch_config, train_config):
         
         if train_config.getboolean('channels_last'):
-            self.netD.set_channels_last()
-            self.netG.set_channels_last()
+            discriminator.set_channels_last()
+            generator.set_channels_last()
 
         self.num_classes = num_classes
         self.device = accelerator.device
+        self.torch_dtype = torch_dtype
         self.latent_vector_size = int(model_arch_config['latent_vector_size'])
         beta1 = float(train_config['beta1'])
         beta2 = float(train_config['beta2'])
@@ -41,9 +42,7 @@ class GanModel:
         self.accumulation_iterations = int(train_config['accumulation_iterations'])
         self.mixed_precision = train_config.getboolean('mixed_precision')
         self.batch_iterations = 0
-        cpu_enabled = self.device.type == 'cpu'
-        self.grad_scaler = torch.cuda.amp.GradScaler(enabled=self.mixed_precision and not cpu_enabled)
-
+        
         self.criterion, self.fake_label, self.real_label = supported_loss_functions(train_config['loss_function'])
         if self.criterion is None:
             raise ValueError("Loss values options: " + str(supported_losses()))
@@ -60,14 +59,14 @@ class GanModel:
         # Set EMA
         ema_enabled = model_arch_config.getboolean('generator_ema')
         ema_decay = model_arch_config['ema_decay']
-        self.ema = ExponentialMovingAverage(generator.parameters(),
-                                            decay=float(ema_decay)) if ema_enabled else None
-        
         self.netD, self.netG, self.optimizerD, self.optimizerG = accelerator.prepare(
             discriminator, generator, optimizerD, optimizerG
         )
-        if self.ema:
-            self.ema = accelerator.prepare(self.ema)
+        self.ema = ExponentialMovingAverage(generator.parameters(),
+                                            decay=float(ema_decay)) if ema_enabled else None
+    
+        # if self.ema:
+        #     self.ema = accelerator.prepare(self.ema)
 
         self.accelerator = accelerator
 
@@ -97,128 +96,6 @@ class GanModel:
             fake_label = torch.full((b_size,), self.fake_label, dtype=labels.dtype, device=self.device)
         return fake_label
     
-    def update_minimax(self, real_data, labels):
-        b_size = real_data.size(dim=0)
-        # device_type and dtype are only used in
-        device_type, dtype = self.device.type, None
-        if self.mixed_precision:
-            if self.device.type == 'cpu':
-                device_type, dtype = ('cpu', torch.bfloat16)
-            else:
-                device_type, dtype = ('cuda', torch.float16)
-
-        with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
-            if self.is_omni_loss:
-                # Real_label is of size [b_size, num_classes]
-                real_label = torch.nn.functional.one_hot(labels, num_classes=self.num_classes)
-                # Adds 2 columns, One with all values 1, the second with all values 0. Size [b_size, num_classes + 2]
-                real_label = torch.concat((real_label, torch.ones(b_size, 1, device=self.device),
-                                           torch.zeros(b_size, 1, device=self.device)), dim=1)
-                # Replace the 0s and 1s with value of the fake_label, or true_label
-                real_label[real_label == 0] = self.fake_label
-                real_label[real_label == 1] = self.real_label
-            else:
-                real_label = torch.full((b_size,), self.real_label, dtype=real_data.dtype, device=self.device)
-            discrim_output = self.netD(real_data, labels)
-
-            discrim_on_real_error = self.criterion(discrim_output, real_label)
-            discrim_on_real_error = discrim_on_real_error / self.accumulation_iterations
-
-            self.grad_scaler.scale(discrim_on_real_error).backward()
-
-        with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
-            # Train with all-fake batch
-            noise = torch.randn(b_size, self.latent_vector_size, device=self.device)
-            # Generate fake image batch with G
-            fake = self.netG(noise, labels)
-
-            if self.is_omni_loss:
-                fake_label = torch.full((b_size, self.num_classes + 1), self.fake_label, dtype=real_data.dtype, device=self.device)
-                fake_label = torch.concat((fake_label, torch.ones(b_size, 1, device=self.device)), dim=1)
-            else:
-                fake_label = torch.full((b_size,), self.fake_label, dtype=real_data.dtype, device=self.device)
-            
-            # Classify all fake batch with D
-            fake_output = self.netD(fake.detach(), labels)
-            # Calculate D's loss on the all-fake batch
-            discrim_on_fake_error = self.criterion(fake_output, fake_label.reshape_as(fake_output))
-            discrim_on_fake_error = discrim_on_fake_error / self.accumulation_iterations
-
-        self.grad_scaler.scale(discrim_on_fake_error).backward()
-        total_discrim_error = discrim_on_real_error + discrim_on_fake_error
-
-        with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
-            self.netD.requires_grad_(requires_grad=False)
-            output_update = self.netD(fake, labels)
-            self.netD.requires_grad_(requires_grad=True)
-            generator_error = self.criterion(output_update, real_label)
-            if not self.orthogonal_value == 0:
-                generator_error += self.apply_orthogonal_regularization(self.netG)
-            generator_error = generator_error / self.accumulation_iterations
-        self.grad_scaler.scale(generator_error).backward()
-
-        self.batch_iterations += 1
-        if self.batch_iterations % self.accumulation_iterations == 0:
-            self.grad_scaler.step(self.optimizerD)
-            self.grad_scaler.step(self.optimizerG)
-            self.grad_scaler.update()
-            if self.ema:
-                self.ema.update()
-            self.netD.zero_grad(set_to_none=True)
-            self.netG.zero_grad(set_to_none=True)
-
-        return (total_discrim_error * self.accumulation_iterations).item(), \
-               (generator_error * self.accumulation_iterations).item()
-
-    # Update minimax with Accelerator Mixed Precision
-    # def update_minimax(self, real_data, labels):
-    #     b_size = real_data.size(dim=0)
-
-    #     real_label = self.create_real_labels(b_size, labels)
-    #     discrim_output = self.netD(real_data, labels)
-
-    #     discrim_on_real_error = self.criterion(discrim_output, real_label)
-    #     discrim_on_real_error = discrim_on_real_error / self.accumulation_iterations
-
-    #     self.accelerator.backward(discrim_on_real_error)
-
-    #     # Train with all-fake batch
-    #     noise = torch.randn(b_size, self.latent_vector_size, device=self.device)
-    #     # Generate fake image batch with G
-    #     fake = self.netG(noise, labels)
-
-    #     # Classify all fake batch with D
-    #     fake_output = self.netD(fake.detach(), labels)
-
-    #     fake_label = self.create_fake_labels(b_size, labels)
-    #     # Calculate D's loss on the all-fake batch
-    #     discrim_on_fake_error = self.criterion(fake_output, fake_label.reshape_as(fake_output))
-    #     discrim_on_fake_error = discrim_on_fake_error / self.accumulation_iterations
-    #     self.accelerator.backward(discrim_on_fake_error)
-
-    #     total_discrim_error = discrim_on_real_error + discrim_on_fake_error
-
-    #     self.netD.requires_grad_(requires_grad=False)
-    #     output_update = self.netD(fake, labels)
-    #     self.netD.requires_grad_(requires_grad=True)
-    #     generator_error = self.criterion(output_update, real_label)
-    #     if not self.orthogonal_value == 0:
-    #         generator_error += self.apply_orthogonal_regularization(self.netG)
-    #     generator_error = generator_error / self.accumulation_iterations
-    #     self.accelerator.backward(generator_error)
-
-    #     self.batch_iterations += 1
-    #     if self.batch_iterations % self.accumulation_iterations == 0:
-    #         self.optimizerD.step()
-    #         self.optimizerG.step()
-    #         if self.ema:
-    #             self.ema.update()
-    #         self.optimizerD.zero_grad(set_to_none=True)
-    #         self.optimizerG.zero_grad(set_to_none=True)
-
-    #     return (total_discrim_error * self.accumulation_iterations).item(), \
-    #         (generator_error * self.accumulation_iterations).item()
-
     def train_step(self, batches_accumulated):
 
         discriminator_loss, accum_labels = self.discriminator_step(batches_accumulated)
@@ -235,8 +112,8 @@ class GanModel:
         accum_labels = []
         total_discrim_error = 0
         for batch in batches_accumulated:
-            
-            with self.accelerator.autocast():
+            with self.accelerator.no_sync(self.netD):
+                
                 real_data, labels = batch
                 b_size = real_data.size(dim=0)
                 accum_labels.append(labels)
@@ -247,11 +124,10 @@ class GanModel:
                 discrim_on_real_error = self.criterion(discrim_output, real_label)
                 discrim_on_real_error = discrim_on_real_error / self.accumulation_iterations
 
-            self.accelerator.backward(discrim_on_real_error)
+                self.accelerator.backward(discrim_on_real_error)
 
-            with self.accelerator.autocast():
                 # Train with all-fake batch
-                noise = torch.randn(b_size, self.latent_vector_size, device=self.device)
+                noise = torch.randn(b_size, self.latent_vector_size, device=self.device, dtype=real_data.dtype)
                 with torch.no_grad():
                     # Generate fake image batch with G
                     fake = self.netG(noise, labels)
@@ -262,10 +138,10 @@ class GanModel:
                 # Calculate D's loss on the all-fake batch
                 fake_label = self.create_fake_labels(b_size, labels)
                 discrim_on_fake_error = self.criterion(fake_output, fake_label.reshape_as(fake_output))
-                # discrim_error = (discrim_on_fake_error + discrim_on_real_error) / self.accumulation_iterations
                 discrim_on_fake_error = discrim_on_fake_error / self.accumulation_iterations
-            self.accelerator.backward(discrim_on_fake_error)
-            total_discrim_error += discrim_on_real_error + discrim_on_fake_error
+                self.accelerator.backward(discrim_on_fake_error)
+
+                total_discrim_error += discrim_on_real_error + discrim_on_fake_error
         self.optimizerD.step()
         return total_discrim_error.item(), accum_labels
 
@@ -275,10 +151,11 @@ class GanModel:
 
         total_generator_error = 0
         for label in accum_labels:
-            with self.accelerator.autocast():
+            with self.accelerator.no_sync(self.netG):
+                # with self.accelerator.autocast():
                 b_size = label.size(dim=0)
                 # Train with all-fake batch
-                noise = torch.randn(b_size, self.latent_vector_size, device=self.device, requires_grad=True)
+                noise = torch.randn(b_size, self.latent_vector_size, device=self.device, requires_grad=True, dtype=self.torch_dtype)
                 # Generate fake image batch with G
                 fake = self.netG(noise, label)
                 self.netD.requires_grad_(requires_grad=False)
@@ -286,14 +163,15 @@ class GanModel:
                 self.netD.requires_grad_(requires_grad=True)
                 real_label = self.create_real_labels(b_size, label)
                 generator_error = self.criterion(output_update, real_label) / self.accumulation_iterations
-            self.accelerator.backward(generator_error)
-            total_generator_error += generator_error
 
-        if not self.orthogonal_value == 0:
-            with self.accelerator.autocast():
-                generator_error = self.apply_orthogonal_regularization(self.netG)
+                self.accelerator.backward(generator_error)
                 total_generator_error += generator_error
-            self.accelerator.backward(generator_error)
+
+            if not self.orthogonal_value == 0:
+                with self.accelerator.autocast():
+                    generator_error = self.apply_orthogonal_regularization(self.netG)
+                    total_generator_error += generator_error
+                self.accelerator.backward(generator_error)
         self.optimizerG.step()
         return total_generator_error.item()
 
@@ -312,22 +190,22 @@ class GanModel:
 
     # If class_embeddings is provided, then it will ignore labels to generate the images
     def generate_images(self, noise, labels, class_embeddings=None, unnormalize_img=True):
-        device_type, dtype = ('cpu', torch.bfloat16) if self.device.type == 'cpu' else ('cuda', torch.float16)
-        with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
-            with torch.no_grad():
-                if self.ema:
-                    with self.ema.average_parameters():
-                        if class_embeddings:
-                            forward_with_class_embeddings = getattr(self.netG, "forward_with_class_embeddings", None)
-                            if callable(forward_with_class_embeddings):
-                                fake = forward_with_class_embeddings(noise, class_embeddings)
-                            else:
-                                raise ValueError('Given generator model does not support providing class embeddings '
-                                                 'directly.')
+        # device_type, dtype = ('cpu', torch.bfloat16) if self.device.type == 'cpu' else ('cuda', torch.float16)
+        # with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
+        with torch.no_grad():
+            if self.ema:
+                with self.ema.average_parameters():
+                    if class_embeddings:
+                        forward_with_class_embeddings = getattr(self.netG, "forward_with_class_embeddings", None)
+                        if callable(forward_with_class_embeddings):
+                            fake = forward_with_class_embeddings(noise, class_embeddings)
                         else:
-                            fake = self.netG(noise, labels)
-                else:
-                    fake = self.netG(noise, labels)
+                            raise ValueError('Given generator model does not support providing class embeddings '
+                                                'directly.')
+                    else:
+                        fake = self.netG(noise, labels)
+            else:
+                fake = self.netG(noise, labels)
 
             fake = fake.detach()
             if unnormalize_img:

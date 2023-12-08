@@ -65,8 +65,14 @@ def train(config_file_path: str):
     if train_config.getboolean('compile'):
         dynamo_backend = 'INDUCTOR'
         
+    torch_dtype = torch.float32
+    # There is no Torch dtype that is fp8, so cast to float16
+    if precision == 'fp16' or precision == 'fp8':
+        torch_dtype = torch.float16
+    elif precision == 'bf16':
+        torch_dtype = torch.bfloat16
+
     accelerator = Accelerator(mixed_precision=precision, dynamo_backend=dynamo_backend)
-    # accelerator = Accelerator(dynamo_backend=dynamo_backend)
     device = accelerator.device
     if device.type == 'cuda':
         running_on_cpu = False
@@ -93,7 +99,7 @@ def train(config_file_path: str):
         data_loader, eval_data_loader
     )
     device = accelerator.device
-    gan_model = create_model.create_gan_model(model_arch_config, data_config, train_config, accelerator)
+    gan_model = create_model.create_gan_model(model_arch_config, data_config, train_config, accelerator, torch_dtype)
     gan_model.save_architecture(run_dir, data_config)
 
     logging.info('Created GAN model')
@@ -128,7 +134,7 @@ def train(config_file_path: str):
             labels = labels.to(device)
         else:
             labels = torch.arange(start=0, end=int(data_config['batch_size']), device=device,
-                                    dtype=torch.int64) % num_classes
+                                    dtype=torch.int16) % num_classes
         return noise, labels
     fixed_noise, fixed_labels = create_noise_and_labels()
 
@@ -169,25 +175,25 @@ def train(config_file_path: str):
     for epoch in range(n_epochs):
         for i, batch in enumerate(data_loader, 0):
             n_steps += 1
-
             batches_accumulated.append(batch)
 
             data_time += time.time() - data_start_time
             model_start_time = time.time()
             if train_config.getboolean('channels_last'):
                 real_data = real_data.to(memory_format=torch.channels_last)  # Replace with your input
-            # err_discriminator, err_generator = gan_model.update_minimax(real_data, labels)
-            #TODO fix gradient accumulations, nest train step into an 'if' statement
-            
-            err_discriminator, err_generator = gan_model.train_step(batches_accumulated)
-            batches_accumulated = []
-            if err_generator:
-                total_g_error += err_generator
-                g_steps += 1
+            if i % int(train_config['accumulation_iterations']) == int(train_config['accumulation_iterations'])-1:
+                err_discriminator, err_generator = gan_model.train_step(batches_accumulated)
 
-            if err_discriminator:
-                total_d_error += err_discriminator
-                d_steps += 1
+                # Reset amount of batches accumulated
+                batches_accumulated = []
+
+                if err_discriminator:
+                    total_d_error += err_discriminator
+                    d_steps += 1
+
+                if err_generator:
+                    total_g_error += err_generator
+                    g_steps += 1
 
             model_time += time.time() - model_start_time
             total_step_num = loaded_step_num + n_steps

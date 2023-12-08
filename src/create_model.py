@@ -78,10 +78,10 @@ def create_gan_instances(model_arch_config, data_config):
     return generator, discriminator
 
 
-def create_gan_model(model_arch_config, data_config, train_config, accelerator):
+def create_gan_model(model_arch_config, data_config, train_config, accelerator, torch_dtype):
     generator, discriminator = create_gan_instances(model_arch_config, data_config)
     num_classes = data_load.get_num_classes(data_config)
-    return GanModel(generator, discriminator, num_classes, accelerator, model_arch_config, train_config=train_config)
+    return GanModel(generator, discriminator, num_classes, accelerator, torch_dtype, model_arch_config, train_config)
 
 # custom weights initialization, used by the generator and discriminator
 def weights_init(m):
