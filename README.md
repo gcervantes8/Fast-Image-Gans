@@ -1,4 +1,5 @@
 ![Fast Image Gans with a picture of a fig to the left of it](logo/FigsName.png) 
+
 [![Python](https://img.shields.io/badge/Python-3.7--3.11-blue)](https://www.python.org/downloads/) [![License](https://img.shields.io/badge/License-GPL--3.0-yellow)](https://github.com/gcervantes8/Game-Image-Generator/blob/master/LICENSE) [![Python package](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml/badge.svg)](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml)
 
 
@@ -7,8 +8,9 @@ this repository focuses on generating images from games.
 
 ## Features
 
- - PyTorch 2.0 Compile
- - Mixed Precision training
+ - PyTorch 2.0 Compile 
+ - Mixed Precision training (fp16 or bf16)
+ - Gradient Accumulation
  - Inception Score and FID evaluation
  - Easy to start training
  - Testing
