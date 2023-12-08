@@ -72,25 +72,24 @@ def get_num_classes(data_config):
 def to_int16(label):
     return torch.tensor(label, dtype=torch.int16)
 
-def create_data_loader(data_dir: str, image_height: int, image_width: int, dtype=torch.float16, using_gpu=False,
+def create_data_loader(data_dir: str, image_height: int, image_width: int, image_dtype=torch.float16, using_gpu=False,
                        batch_size=1, n_workers=1):
 
     data_transform = transforms.Compose([transforms.Resize((image_height, image_width)),
                                          transforms.ToImageTensor(),
-                                         transforms.ConvertImageDtype(torch.float32), # Converting to float16 is increasing VRAM? Strange.
+                                         transforms.ConvertImageDtype(image_dtype), # Float16 is tiny bit faster, and bit more VRAM. Strange.
                                          transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5]),
                                          ])
     label_transform = to_int16
     try:
-        data_set = torch_data_set.ImageFolder(root=data_dir, transform=data_transform)
-        # data_set = torch_data_set.ImageFolder(root=data_dir, transform=data_transform, target_transform=label_transform)
+        data_set = torch_data_set.ImageFolder(root=data_dir, transform=data_transform, target_transform=label_transform)
     except FileNotFoundError:
         raise FileNotFoundError('Data directory provided should contain directories that have images in them, '
                                 'directory provided: ' + data_dir)
 
     # Create the data-loader
-    torch_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size,
-                                               shuffle=True, num_workers=n_workers, pin_memory=using_gpu)
+    torch_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True, 
+                                               num_workers=n_workers, pin_memory=using_gpu, drop_last=True)
     return torch_loader
 
 

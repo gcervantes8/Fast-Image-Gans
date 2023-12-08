@@ -79,8 +79,8 @@ class GanModel:
             # Real_label is of size [b_size, num_classes]
             real_label = torch.nn.functional.one_hot(labels, num_classes=self.num_classes)
             # Adds 2 columns, One with all values 1, the second with all values 0. Size [b_size, num_classes + 2]
-            real_label = torch.concat((real_label, torch.ones(b_size, 1, device=self.device),
-                                    torch.zeros(b_size, 1, device=self.device)), dim=1)
+            real_label = torch.concat((real_label, torch.ones(b_size, 1, device=self.device, dtype=labels.dtype),
+                                    torch.zeros(b_size, 1, device=self.device, dtype=labels.dtype)), dim=1)
             # Replace the 0s and 1s with value of the fake_label, or true_label
             real_label[real_label == 0] = self.fake_label
             real_label[real_label == 1] = self.real_label
@@ -91,7 +91,7 @@ class GanModel:
     def create_fake_labels(self, b_size, labels):
         if self.is_omni_loss:
             fake_label = torch.full((b_size, self.num_classes + 1), self.fake_label, dtype=labels.dtype, device=self.device)
-            fake_label = torch.concat((fake_label, torch.ones(b_size, 1, device=self.device)), dim=1)
+            fake_label = torch.concat((fake_label, torch.ones(b_size, 1, device=self.device, dtype=labels.dtype)), dim=1)
         else:
             fake_label = torch.full((b_size,), self.fake_label, dtype=labels.dtype, device=self.device)
         return fake_label

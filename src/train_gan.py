@@ -164,7 +164,9 @@ def train(config_file_path: str):
         profiler.start()
 
     n_steps = 0
-    steps_in_epoch = int(len(data_loader) / int(train_config['accumulation_iterations']))
+    accumulation_iterations = int(train_config['accumulation_iterations'])
+    is_channel_last = train_config.getboolean('channels_last')
+    steps_in_epoch = int(len(data_loader) / accumulation_iterations)
     total_g_error, total_d_error = 0.0, 0.0
     g_steps, d_steps = 0, 0
     data_time, model_time = 0.0, 0.0
@@ -174,16 +176,18 @@ def train(config_file_path: str):
     batches_accumulated = []
     for epoch in range(n_epochs):
         for i, batch in enumerate(data_loader, 0):
-            n_steps += 1
+            
+            if is_channel_last:
+                real_data, _ = batch
+                real_data = real_data.to(memory_format=torch.channels_last)  # Replace with your input
+                
             batches_accumulated.append(batch)
 
             data_time += time.time() - data_start_time
             model_start_time = time.time()
-            if train_config.getboolean('channels_last'):
-                real_data = real_data.to(memory_format=torch.channels_last)  # Replace with your input
-            if i % int(train_config['accumulation_iterations']) == int(train_config['accumulation_iterations'])-1:
+            if i % accumulation_iterations == accumulation_iterations-1:
                 err_discriminator, err_generator = gan_model.train_step(batches_accumulated)
-
+                n_steps += 1
                 # Reset amount of batches accumulated
                 batches_accumulated = []
 
@@ -195,61 +199,61 @@ def train(config_file_path: str):
                     total_g_error += err_generator
                     g_steps += 1
 
-            model_time += time.time() - model_start_time
-            total_step_num = loaded_step_num + n_steps
-            # Output training stats
-            if n_steps % log_steps == 0:
-                d_loss_num = (total_d_error / d_steps) if d_steps else 0
-                g_loss_num = (total_g_error / g_steps) if g_steps else 0
-                d_loss = '{:.4f}'.format(d_loss_num) if d_loss_num else '0 steps'
-                g_loss = '{:.4f}'.format(g_loss_num) if g_loss_num else '0 steps'
+                model_time += time.time() - model_start_time
+                total_step_num = loaded_step_num + n_steps
+                # Output training stats
+                if n_steps % log_steps == 0:
+                    d_loss_num = (total_d_error / d_steps) if d_steps else 0
+                    g_loss_num = (total_g_error / g_steps) if g_steps else 0
+                    d_loss = '{:.4f}'.format(d_loss_num) if d_loss_num else '0 steps'
+                    g_loss = '{:.4f}'.format(g_loss_num) if g_loss_num else '0 steps'
 
-                if eval_writer:
-                    eval_writer.add_scalar('Loss/Disciminator/train', d_loss_num, total_step_num)
-                    eval_writer.add_scalar('Loss/Generator/train', g_loss_num, total_step_num)
-                logging.info('[{}/{}][{}/{}]\t Loss_D: {}\t Loss_G: {}\t Time: {:.2f}s'.format(
-                    epoch, n_epochs, n_steps % steps_in_epoch, steps_in_epoch, d_loss, g_loss,
-                    time.time() - train_seq_start_time))
-                
-                logging.info(
-                    'Data retrieve time: %.2fs Model updating time: %.2fs' % (data_time, model_time))
-
-                data_time, model_time = 0, 0
-                total_g_error, total_d_error = 0.0, 0.0
-                g_steps, d_steps = 0, 0
-                train_seq_start_time = time.time()
-
-            # Save every save_steps or every epoch if save_steps is None
-            if n_steps % save_steps == 0:
-                save_start_time = time.time()
-                
-                fake_img_output_path = os.path.join(img_dir, 'generated_image_' + str(total_step_num) + '.png')
-                logging.info('Saving fake images: ' + fake_img_output_path)
-                with torch.no_grad():
-                    fake_images = gan_model.generate_images(fixed_noise, fixed_labels).cpu()
-                    saver_and_loader.save_images(fake_images.to(torch.float32), fake_img_output_path)
-                    del fake_images
-                gan_model.save(model_dir, total_step_num, compiled=train_config.getboolean('compile'))
-                logging.info('Time to save images and model: %.2fs ' % (time.time() - save_start_time))
-
-            if n_steps % eval_steps == 0:
-                if metrics_scorer:
-                    metric_start_time = time.time()
-                    logging.info('Computing metrics ...')
-
-                    metrics_scorer.aggregate_images_from_fn(generate_images, n_images_to_eval, real=False)
-                    is_score, fid_score = metrics_scorer.score_metrics(compute_is, compute_fid)
-                    metrics_scorer.reset_metrics()
-                    metrics_scorer.log_scores(is_score, fid_score)
-                    is_score_avg, is_score_std = is_score
                     if eval_writer:
-                        eval_writer.add_scalar('Inception Score', is_score_avg, total_step_num)
-                        eval_writer.add_scalar('FID', fid_score, total_step_num)
+                        eval_writer.add_scalar('Loss/Disciminator/train', d_loss_num, total_step_num)
+                        eval_writer.add_scalar('Loss/Generator/train', g_loss_num, total_step_num)
+                    logging.info('[{}/{}][{}/{}]\t Loss_D: {}\t Loss_G: {}\t Time: {:.2f}s'.format(
+                        epoch, n_epochs, n_steps % steps_in_epoch, steps_in_epoch, d_loss, g_loss,
+                        time.time() - train_seq_start_time))
+                    
+                    logging.info(
+                        'Data retrieve time: %.2fs Model updating time: %.2fs' % (data_time, model_time))
 
-                    logging.info('Time to compute metrics: %.2fs ' % (time.time() - metric_start_time))
-            data_start_time = time.time()
-            if profiler:
-                profiler.step()
+                    data_time, model_time = 0, 0
+                    total_g_error, total_d_error = 0.0, 0.0
+                    g_steps, d_steps = 0, 0
+                    train_seq_start_time = time.time()
+
+                # Save every save_steps or every epoch if save_steps is None
+                if n_steps % save_steps == 0:
+                    save_start_time = time.time()
+                    
+                    fake_img_output_path = os.path.join(img_dir, 'generated_image_' + str(total_step_num) + '.png')
+                    logging.info('Saving fake images: ' + fake_img_output_path)
+                    with torch.no_grad():
+                        fake_images = gan_model.generate_images(fixed_noise, fixed_labels).cpu()
+                        saver_and_loader.save_images(fake_images.to(torch.float32), fake_img_output_path)
+                        del fake_images
+                    gan_model.save(model_dir, total_step_num, compiled=train_config.getboolean('compile'))
+                    logging.info('Time to save images and model: %.2fs ' % (time.time() - save_start_time))
+
+                if n_steps % eval_steps == 0:
+                    if metrics_scorer:
+                        metric_start_time = time.time()
+                        logging.info('Computing metrics ...')
+
+                        metrics_scorer.aggregate_images_from_fn(generate_images, n_images_to_eval, real=False)
+                        is_score, fid_score = metrics_scorer.score_metrics(compute_is, compute_fid)
+                        metrics_scorer.reset_metrics()
+                        metrics_scorer.log_scores(is_score, fid_score)
+                        is_score_avg, is_score_std = is_score
+                        if eval_writer:
+                            eval_writer.add_scalar('Inception Score', is_score_avg, total_step_num)
+                            eval_writer.add_scalar('FID', fid_score, total_step_num)
+
+                        logging.info('Time to compute metrics: %.2fs ' % (time.time() - metric_start_time))
+                data_start_time = time.time()
+                if profiler:
+                    profiler.step()
     profiler.stop()
     logging.info('Training complete! Models and output saved in the output directory:')
     logging.info(run_dir)
