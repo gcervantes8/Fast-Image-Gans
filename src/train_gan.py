@@ -95,9 +95,6 @@ def train(config_file_path: str):
 
     logging.info('Creating model...')
 
-    data_loader, eval_data_loader = accelerator.prepare(
-        data_loader, eval_data_loader
-    )
     device = accelerator.device
     gan_model = create_model.create_gan_model(model_arch_config, data_config, train_config, accelerator, torch_dtype)
     gan_model.save_architecture(run_dir, data_config)
@@ -180,7 +177,7 @@ def train(config_file_path: str):
             if is_channel_last:
                 real_data, _ = batch
                 real_data = real_data.to(memory_format=torch.channels_last)  # Replace with your input
-                
+
             batches_accumulated.append(batch)
 
             data_time += time.time() - data_start_time

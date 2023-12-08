@@ -94,7 +94,9 @@ def create_data_loader(data_dir: str, image_height: int, image_width: int, image
 
 
 # Returns images of size: (batch_size, num_channels, height, width)
-def get_data_batch(data_loader, device):
+def get_data_batch(data_loader, device, unnormalize_batch=False):
+    if unnormalize_batch:
+        return unnormalize(next(iter(data_loader))[0]).to(device)
     return next(iter(data_loader))[0].to(device)
 
 

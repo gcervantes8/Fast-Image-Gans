@@ -40,7 +40,7 @@ class Metrics:
     # Aggregate images for FID or Inception Score with a data loader
     def aggregate_data_loader_images(self, data_loader, eval_bs, device, real=True):
         def get_data_load_images():
-            return get_data_batch(data_loader, device)
+            return get_data_batch(data_loader, device, unnormalize_batch=True)
         self.aggregate_images_from_fn(get_data_load_images, eval_bs, real=real)
 
     def aggregate_images_from_fn(self, fn_for_images, eval_bs, real=True):
