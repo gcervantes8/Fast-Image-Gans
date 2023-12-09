@@ -12,6 +12,7 @@ this repository focuses on generating images from games.
  - Mixed Precision training (fp16 or bf16)
  - Gradient Accumulation
  - Inception Score and FID evaluation
+ - HF🤗 Accelerate - Adds Multi-GPU, and TPU support
  - Easy to start training
  - Testing
 
