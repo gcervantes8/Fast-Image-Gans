@@ -105,6 +105,7 @@ def train(config_file_path: str):
         loaded_step_num = saver_and_loader.load_model(gan_model, model_dir)
         logging.info('Restored model from step ' + str(loaded_step_num))
 
+    gan_model.accelerate_models()
     logging.info('Is GPU available? ' + str(torch.cuda.is_available()) + ' - Running on device:' + str(device))
 
     metrics_config = config['METRICS']

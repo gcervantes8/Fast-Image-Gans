@@ -17,7 +17,6 @@ from src.data_load import normalize, unnormalize
 from src import os_helper, data_load
 import os
 
-
 class GanModel:
 
     def __init__(self, generator, discriminator, num_classes, accelerator, torch_dtype, model_arch_config, train_config):
@@ -48,9 +47,9 @@ class GanModel:
             raise ValueError("Loss values options: " + str(supported_losses()))
 
         # Setup Adam optimizers for both G and D
-        optimizerD = optim.Adam(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
+        self.optimizerD = optim.Adam(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
                                      weight_decay=discriminator_wd)
-        optimizerG = optim.Adam(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
+        self.optimizerG = optim.Adam(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
                                      weight_decay=generator_wd)
 
         discriminator.zero_grad()
@@ -59,20 +58,15 @@ class GanModel:
         # Set EMA
         ema_enabled = model_arch_config.getboolean('generator_ema')
         ema_decay = model_arch_config['ema_decay']
-        self.netD, self.netG, self.optimizerD, self.optimizerG = accelerator.prepare(
-            discriminator, generator, optimizerD, optimizerG
-        )
         self.ema = ExponentialMovingAverage(generator.parameters(),
                                             decay=float(ema_decay)) if ema_enabled else None
     
         # if self.ema:
         #     self.ema = accelerator.prepare(self.ema)
 
+        self.netD, self.netG = discriminator, generator
         self.accelerator = accelerator
 
-    def optimize_models(self):
-        self.netG = torch.compile(self.netG)
-        self.netD = torch.compile(self.netD)
 
     def create_real_labels(self, b_size, labels):
         if self.is_omni_loss:
@@ -175,7 +169,11 @@ class GanModel:
         self.optimizerG.step()
         return total_generator_error.item()
 
-
+    # Accelerate Models should be done after loading the models
+    def accelerate_models(self):
+        self.netD, self.netG, self.optimizerD, self.optimizerG = self.accelerator.prepare(
+            self.netD, self.netG, self.optimizerD, self.optimizerG
+        )
 
     def apply_orthogonal_regularization(self, model):
         model_orthogonal_loss = 0.0
@@ -190,8 +188,6 @@ class GanModel:
 
     # If class_embeddings is provided, then it will ignore labels to generate the images
     def generate_images(self, noise, labels, class_embeddings=None, unnormalize_img=True):
-        # device_type, dtype = ('cpu', torch.bfloat16) if self.device.type == 'cpu' else ('cuda', torch.float16)
-        # with torch.autocast(device_type=device_type, dtype=dtype, enabled=self.mixed_precision):
         with torch.no_grad():
             if self.ema:
                 with self.ema.average_parameters():
@@ -217,6 +213,7 @@ class GanModel:
         discrim_path = os.path.join(model_dir, os_helper.ModelType.DISCRIMINATOR.value + '_step_' +
                                     str(step_num) + '.pt')
 
+        # Save uncompiled model, so you can go from compile to uncompiled
         if compiled:
             netG = self.netG._orig_mod
             netD = self.netD._orig_mod
