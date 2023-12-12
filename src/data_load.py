@@ -76,8 +76,8 @@ def create_data_loader(data_dir: str, image_height: int, image_width: int, image
                        batch_size=1, n_workers=1):
 
     data_transform = transforms.Compose([transforms.Resize((image_height, image_width)),
-                                         transforms.ToImageTensor(),
-                                         transforms.ConvertImageDtype(image_dtype), # Float16 is tiny bit faster, and bit more VRAM. Strange.
+                                         transforms.ToImage(),
+                                         transforms.ToDtype(image_dtype, scale=True), # Float16 is tiny bit faster, and bit more VRAM. Strange.
                                          transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5]),
                                          ])
     label_transform = to_int16
