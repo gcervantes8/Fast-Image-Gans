@@ -8,13 +8,13 @@ Purpose: This will handle having both the generator and discriminator, as well a
 """
 
 import torch
-import torch.optim as optim
+from data import data_load
 from src.losses.loss_functions import supported_loss_functions
 from src.losses.loss_functions import supported_losses
 from torch_ema import ExponentialMovingAverage
 from torchinfo import summary
-from src.data_load import normalize, unnormalize
-from src import os_helper, data_load
+from data.data_load import normalize, unnormalize
+from utils import os_helper
 import os
 
 class GanModel:
@@ -27,6 +27,8 @@ class GanModel:
 
         self.num_classes = num_classes
         self.device = accelerator.device
+        generator = generator.to(self.device)
+        discriminator = discriminator.to(self.device)
         self.torch_dtype = torch_dtype
         self.latent_vector_size = int(model_arch_config['latent_vector_size'])
         beta1 = float(train_config['beta1'])
@@ -47,9 +49,13 @@ class GanModel:
             raise ValueError("Loss values options: " + str(supported_losses()))
 
         # Setup Adam optimizers for both G and D
-        self.optimizerD = optim.Adam(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
+        # self.optimizerD = optim.Adam(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
+        #                              weight_decay=discriminator_wd)
+        # self.optimizerG = optim.Adam(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
+        #                              weight_decay=generator_wd)
+        self.optimizerD = bnb.optim.Adam8bit(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
                                      weight_decay=discriminator_wd)
-        self.optimizerG = optim.Adam(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
+        self.optimizerG = bnb.optim.Adam8bit(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
                                      weight_decay=generator_wd)
 
         discriminator.zero_grad()
@@ -91,7 +97,8 @@ class GanModel:
         return fake_label
     
     def train_step(self, batches_accumulated):
-
+        self.netG.train()
+        self.netD.train()
         discriminator_loss, accum_labels = self.discriminator_step(batches_accumulated)
         generator_loss = self.generator_step(accum_labels)
         if self.ema:
@@ -188,6 +195,7 @@ class GanModel:
 
     # If class_embeddings is provided, then it will ignore labels to generate the images
     def generate_images(self, noise, labels, class_embeddings=None, unnormalize_img=True):
+        self.netG.eval() # Set Generater to Eval mode
         with torch.no_grad():
             if self.ema:
                 with self.ema.average_parameters():

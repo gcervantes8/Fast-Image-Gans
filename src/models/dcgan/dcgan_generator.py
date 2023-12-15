@@ -11,7 +11,7 @@ import torch
 import torch.nn as nn
 from torch.nn.utils import spectral_norm
 from src.models.base_generator import BaseGenerator
-from src import create_model
+from models import create_model
 
 
 class DcganGenerator(BaseGenerator):

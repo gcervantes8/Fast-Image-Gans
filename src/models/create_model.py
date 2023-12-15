@@ -9,8 +9,8 @@ Purpose: Functions that are used to create/init the GAN model
 
 import torch
 import torch.nn as nn
-from src import data_load
-from src.gan_model import GanModel
+from data import data_load
+from models.gan_model import GanModel
 
 from src.models.dcgan.dcgan_generator import DcganGenerator
 from src.models.biggan.biggan_generator import BigganGenerator

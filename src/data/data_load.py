@@ -11,7 +11,7 @@ import torch
 import PIL
 import torchvision.datasets as torch_data_set
 import torchvision.transforms.v2 as transforms
-from src import os_helper
+from utils import os_helper
 
 
 def normalize(images, norm_mean=torch.tensor([0.5, 0.5, 0.5], dtype=torch.float32),

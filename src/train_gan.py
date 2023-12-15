@@ -10,11 +10,12 @@ Purpose: Train the GAN (Generative Adversarial Network) model
 import torch
 from torch.profiler import profile, ProfilerActivity
 from torch.utils.tensorboard import SummaryWriter
-from src import saver_and_loader, create_model
+from models import create_model
+from utils import saver_and_loader
 from src.configs import ini_parser
-from src.data_load import data_loader_from_config, color_transform, normalize, \
+from data.data_load import data_loader_from_config, color_transform, normalize, \
     create_latent_vector, get_num_classes
-from src.metrics import Metrics
+from metrics.metrics import Metrics
 from PIL import ImageFile
 from accelerate import Accelerator
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -25,7 +26,7 @@ import logging
 import os
 import time
 
-
+TORCH_LOGS="dynamo"
 def train(config_file_path: str):
     if not os.path.exists(config_file_path):
         raise OSError('Configuration file path doesn\'t exist:' + config_file_path)
