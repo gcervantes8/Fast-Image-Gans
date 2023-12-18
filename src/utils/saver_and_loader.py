@@ -10,9 +10,9 @@ Purpose: Functions that can save output into file or loads models.
 import os
 import torch
 import torchvision.utils as torch_utils
-from models import create_model
-from data.data_load import get_data_batch, unnormalize
-from utils import os_helper
+from src.models import create_model
+from src.data.data_load import get_data_batch, unnormalize
+from src.utils import os_helper
 
 
 def get_model_directory_names():

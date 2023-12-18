@@ -10,12 +10,13 @@ Purpose: Train the GAN (Generative Adversarial Network) model
 import torch
 from torch.profiler import profile, ProfilerActivity
 from torch.utils.tensorboard import SummaryWriter
-from models import create_model
-from utils import saver_and_loader
+
+from src.models import create_model
+from src.utils import saver_and_loader
 from src.configs import ini_parser
-from data.data_load import data_loader_from_config, color_transform, normalize, \
+from src.data.data_load import data_loader_from_config, color_transform, normalize, \
     create_latent_vector, get_num_classes
-from metrics.metrics import Metrics
+from src.metrics.metrics import Metrics
 from PIL import ImageFile
 from accelerate import Accelerator
 ImageFile.LOAD_TRUNCATED_IMAGES = True

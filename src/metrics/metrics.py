@@ -9,7 +9,7 @@ Purpose: This metric takes images and returns the inception score (IS)
 import torch
 from torchmetrics.image.inception import InceptionScore
 from torchmetrics.image.fid import FrechetInceptionDistance
-from data.data_load import get_data_batch
+from src.data.data_load import get_data_batch
 from tqdm import tqdm
 import logging
 

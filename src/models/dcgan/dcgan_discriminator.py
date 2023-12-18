@@ -12,7 +12,7 @@ import torch
 import torch.nn as nn
 from torch.nn.utils import spectral_norm
 from src.models.base_discriminator import BaseDiscriminator
-from models import create_model
+from src.models import create_model
 
 
 class DcganDiscriminator(BaseDiscriminator):

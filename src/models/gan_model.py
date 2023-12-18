@@ -8,13 +8,14 @@ Purpose: This will handle having both the generator and discriminator, as well a
 """
 
 import torch
-from data import data_load
+from src.data import data_load
 from src.losses.loss_functions import supported_loss_functions
 from src.losses.loss_functions import supported_losses
+from src.optimizers.optim_functions import supported_optimizer_list, optimizer_factory
 from torch_ema import ExponentialMovingAverage
 from torchinfo import summary
-from data.data_load import normalize, unnormalize
-from utils import os_helper
+from src.data.data_load import normalize, unnormalize
+from src.utils import os_helper
 import os
 
 class GanModel:
@@ -47,17 +48,17 @@ class GanModel:
         self.criterion, self.fake_label, self.real_label = supported_loss_functions(train_config['loss_function'])
         if self.criterion is None:
             raise ValueError("Loss values options: " + str(supported_losses()))
-
+        gan_optimizer = optimizer_factory('Adam8')
         # Setup Adam optimizers for both G and D
-        # self.optimizerD = optim.Adam(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
-        #                              weight_decay=discriminator_wd)
-        # self.optimizerG = optim.Adam(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
-        #                              weight_decay=generator_wd)
-        self.optimizerD = bnb.optim.Adam8bit(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
+        self.optimizerD = gan_optimizer(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
                                      weight_decay=discriminator_wd)
-        self.optimizerG = bnb.optim.Adam8bit(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
+        self.optimizerG = gan_optimizer(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
                                      weight_decay=generator_wd)
-
+        # self.optimizerD = bnb.optim.Adam8bit(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
+        #                              weight_decay=discriminator_wd)
+        # self.optimizerG = bnb.optim.Adam8bit(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
+        #                              weight_decay=generator_wd)
+        self.criterion, self.fake_label, self.real_label = supported_loss_functions(train_config['loss_function'])
         discriminator.zero_grad()
         generator.zero_grad()
 
@@ -144,6 +145,7 @@ class GanModel:
 
                 total_discrim_error += discrim_on_real_error + discrim_on_fake_error
         self.optimizerD.step()
+        self.optimizerD.zero_grad(set_to_none=True)
         return total_discrim_error.item(), accum_labels
 
     def generator_step(self, accum_labels):
@@ -174,6 +176,7 @@ class GanModel:
                     total_generator_error += generator_error
                 self.accelerator.backward(generator_error)
         self.optimizerG.step()
+        self.optimizerG.zero_grad(set_to_none=True)
         return total_generator_error.item()
 
     # Accelerate Models should be done after loading the models
