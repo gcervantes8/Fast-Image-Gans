@@ -1,5 +1,5 @@
-torch >= 1.9
-torchvision >= 0.9
+torch >= 2.0
+torchvision >= 0.15
 torchinfo
 torch-ema
 Pillow
@@ -8,3 +8,5 @@ scipy >= 1.7
 tqdm
 tensorboard
 six
+bitsandbytes
+accelerate

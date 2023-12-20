@@ -9,7 +9,7 @@ Purpose: This metric takes images and returns the inception score (IS)
 import torch
 from torchmetrics.image.inception import InceptionScore
 from torchmetrics.image.fid import FrechetInceptionDistance
-from src.data_load import get_data_batch
+from src.data.data_load import get_data_batch
 from tqdm import tqdm
 import logging
 
@@ -40,7 +40,7 @@ class Metrics:
     # Aggregate images for FID or Inception Score with a data loader
     def aggregate_data_loader_images(self, data_loader, eval_bs, device, real=True):
         def get_data_load_images():
-            return get_data_batch(data_loader, device)
+            return get_data_batch(data_loader, device, unnormalize_batch=True)
         self.aggregate_images_from_fn(get_data_load_images, eval_bs, real=real)
 
     def aggregate_images_from_fn(self, fn_for_images, eval_bs, real=True):

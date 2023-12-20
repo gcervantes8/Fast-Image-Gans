@@ -9,8 +9,8 @@ Purpose: Functions that are used to create/init the GAN model
 
 import torch
 import torch.nn as nn
-from src import data_load
-from src.gan_model import GanModel
+from src.data import data_load
+from src.models.gan_model import GanModel
 
 from src.models.dcgan.dcgan_generator import DcganGenerator
 from src.models.biggan.biggan_generator import BigganGenerator
@@ -53,7 +53,7 @@ def get_device(n_gpus):
 
 
 # Creates the generator and discriminator using the configuration file
-def create_gan_instances(model_arch_config, data_config, device, n_gpus=0):
+def create_gan_instances(model_arch_config, data_config):
 
     model_type = model_arch_config['model_type']
     num_channels = int(data_config['num_channels'])
@@ -71,28 +71,17 @@ def create_gan_instances(model_arch_config, data_config, device, n_gpus=0):
     generator, discriminator = create_gen_and_discrim(model_type)
     # Create the generator and discriminator
     generator = generator(base_width, base_height, upsample_layers, latent_vector_size, ngf, num_channels,
-                          num_classes).to(device)
+                          num_classes)
     discriminator = discriminator(base_width, base_height, upsample_layers, ndf, num_channels,
-                                  num_classes, output_size=output_size, project_labels=project_labels).to(device)
+                                  num_classes, output_size=output_size, project_labels=project_labels)
 
-    generator = _handle_multiple_gpus(generator, n_gpus, device)
-    discriminator = _handle_multiple_gpus(discriminator, n_gpus, device)
     return generator, discriminator
 
 
-def create_gan_model(model_arch_config, data_config, train_config, device, n_gpus):
-    generator, discriminator = create_gan_instances(model_arch_config, data_config, device, n_gpus=n_gpus)
+def create_gan_model(model_arch_config, data_config, train_config, accelerator, torch_dtype):
+    generator, discriminator = create_gan_instances(model_arch_config, data_config)
     num_classes = data_load.get_num_classes(data_config)
-    return GanModel(generator, discriminator, num_classes, device, model_arch_config, train_config=train_config)
-
-
-# Handle multi-gpu if desired, returns the new instance that is multi-gpu capable
-def _handle_multiple_gpus(torch_obj, num_gpu, device):
-    if (device.type == 'cuda') and (num_gpu > 1):
-        return nn.DataParallel(torch_obj, list(range(num_gpu)))
-    else:
-        return torch_obj
-
+    return GanModel(generator, discriminator, num_classes, accelerator, torch_dtype, model_arch_config, train_config)
 
 # custom weights initialization, used by the generator and discriminator
 def weights_init(m):

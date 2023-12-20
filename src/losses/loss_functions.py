@@ -27,7 +27,7 @@ def supported_losses():
 # Given a loss function returns a 3-tuple
 # The loss function, the fake label, and the real label
 # Returns 3-tuple of None if the loss function is not supported
-def supported_loss_functions(loss_name: str, device=None):
+def supported_loss_functions(loss_name: str):
     loss_functions = _losses()
     if loss_name in loss_functions:
         loss_fn, fake_label, real_label = loss_functions[loss_name.lower()]

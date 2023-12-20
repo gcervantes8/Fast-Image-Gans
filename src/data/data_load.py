@@ -10,8 +10,8 @@ Purpose: Functions that are used to generate and transform image data
 import torch
 import PIL
 import torchvision.datasets as torch_data_set
-import torchvision.transforms as transforms
-from src import os_helper
+import torchvision.transforms.v2 as transforms
+from src.utils import os_helper
 
 
 def normalize(images, norm_mean=torch.tensor([0.5, 0.5, 0.5], dtype=torch.float32),
@@ -38,13 +38,13 @@ def color_transform(images, brightness=0.1, contrast=0.05, saturation=0.1, hue=0
     return train_transform_augment(images)
 
 
-def data_loader_from_config(data_config, data_dtype=torch.float32, using_gpu=False):
+def data_loader_from_config(data_config, using_gpu=False):
     data_dir = data_config['train_dir']
     os_helper.is_valid_dir(data_dir, 'Invalid training data directory\nPath is an invalid directory: ' + data_dir)
     image_height, image_width = get_image_height_and_width(data_config)
     batch_size = int(data_config['batch_size'])
     n_workers = int(data_config['workers'])
-    return create_data_loader(data_dir, image_height, image_width, dtype=data_dtype, using_gpu=using_gpu,
+    return create_data_loader(data_dir, image_height, image_width, using_gpu=using_gpu,
                               batch_size=batch_size, n_workers=n_workers)
 
 
@@ -69,28 +69,34 @@ def get_num_classes(data_config):
     data_loader = data_loader_from_config(data_config)
     return len(data_loader.dataset.classes)
 
+def to_int16(label):
+    return torch.tensor(label, dtype=torch.int16)
 
-def create_data_loader(data_dir: str, image_height: int, image_width: int, dtype=torch.float32, using_gpu=False,
+def create_data_loader(data_dir: str, image_height: int, image_width: int, image_dtype=torch.float16, using_gpu=False,
                        batch_size=1, n_workers=1):
 
     data_transform = transforms.Compose([transforms.Resize((image_height, image_width)),
-                                         transforms.ToTensor(),
-                                         transforms.ConvertImageDtype(dtype)
+                                         transforms.ToImage(),
+                                         transforms.ToDtype(image_dtype, scale=True), # Float16 is tiny bit faster, and bit more VRAM. Strange.
+                                         transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5]),
                                          ])
+    label_transform = to_int16
     try:
-        data_set = torch_data_set.ImageFolder(root=data_dir, transform=data_transform)
+        data_set = torch_data_set.ImageFolder(root=data_dir, transform=data_transform, target_transform=label_transform)
     except FileNotFoundError:
         raise FileNotFoundError('Data directory provided should contain directories that have images in them, '
                                 'directory provided: ' + data_dir)
 
     # Create the data-loader
-    torch_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size,
-                                               shuffle=True, num_workers=n_workers, pin_memory=using_gpu)
+    torch_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True, 
+                                               num_workers=n_workers, pin_memory=using_gpu, drop_last=True)
     return torch_loader
 
 
 # Returns images of size: (batch_size, num_channels, height, width)
-def get_data_batch(data_loader, device):
+def get_data_batch(data_loader, device, unnormalize_batch=False):
+    if unnormalize_batch:
+        return unnormalize(next(iter(data_loader))[0]).to(device)
     return next(iter(data_loader))[0].to(device)
 
 

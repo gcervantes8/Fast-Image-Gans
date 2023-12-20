@@ -1,5 +1,6 @@
 ![Fast Image Gans with a picture of a fig to the left of it](logo/FigsName.png) 
-[![Python](https://img.shields.io/badge/Python-3.7--3.11-blue)](https://www.python.org/downloads/) [![License](https://img.shields.io/badge/License-GPL--3.0-yellow)](https://github.com/gcervantes8/Game-Image-Generator/blob/master/LICENSE) [![Python package](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml/badge.svg)](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml)
+
+[![Python](https://img.shields.io/badge/Python-3.8--3.11-blue)](https://www.python.org/downloads/) [![License](https://img.shields.io/badge/License-GPL--3.0-yellow)](https://github.com/gcervantes8/Game-Image-Generator/blob/master/LICENSE) [![Python package](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml/badge.svg)](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml)
 
 
 With this project, you can train Generative Adversarial Networks (GANs).  While you can train with any type of image, 
@@ -7,9 +8,11 @@ this repository focuses on generating images from games.
 
 ## Features
 
- - PyTorch 2.0 Compile
- - Mixed Precision training
+ - PyTorch 2 Compile 
+ - Mixed Precision training (fp16 or bf16)
+ - Gradient Accumulation
  - Inception Score and FID evaluation
+ - HF🤗 Accelerate - Adds Multi-GPU, and TPU support
  - Easy to start training
  - Testing
 
@@ -26,8 +29,8 @@ Provided in the code is a sample of the coil-100 dataset, which is used for test
 
 ## Requirements
 The following are the Python packages needed.
-- [Pytorch](https://pytorch.org/get-started/locally/), 1.9+
-- [torchvision](https://pypi.org/project/torchvision/) 0.9+
+- [Pytorch](https://pytorch.org/get-started/locally/), 2.0+
+- [torchvision](https://pypi.org/project/torchvision/) 1.5+
 - [SciPy](https://scipy.org/install/) 1.7+
 - [TorchMetrics](https://torchmetrics.readthedocs.io/en/stable/)
 - [torchinfo](https://github.com/TylerYep/torchinfo)

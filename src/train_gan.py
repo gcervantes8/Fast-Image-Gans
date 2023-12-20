@@ -10,12 +10,15 @@ Purpose: Train the GAN (Generative Adversarial Network) model
 import torch
 from torch.profiler import profile, ProfilerActivity
 from torch.utils.tensorboard import SummaryWriter
-from src import saver_and_loader, create_model
+
+from src.models import create_model
+from src.utils import saver_and_loader
 from src.configs import ini_parser
-from src.data_load import data_loader_from_config, color_transform, normalize, \
+from src.data.data_load import data_loader_from_config, \
     create_latent_vector, get_num_classes
-from src.metrics import Metrics
+from src.metrics.metrics import Metrics
 from PIL import ImageFile
+from accelerate import Accelerator
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 import argparse
@@ -24,7 +27,7 @@ import logging
 import os
 import time
 
-
+TORCH_LOGS="dynamo"
 def train(config_file_path: str):
     if not os.path.exists(config_file_path):
         raise OSError('Configuration file path doesn\'t exist:' + config_file_path)
@@ -57,26 +60,35 @@ def train(config_file_path: str):
         logging.info('Directory ' + run_dir + ' loaded, training output will be saved here')
 
     # Set device
-    n_gpus = int(config['MACHINE']['ngpu'])
-    device = create_model.get_device(n_gpus)
-    logging.info('Running on: ' + str(device))
-    running_on_cpu = str(device) == 'cpu'
+    train_config = config['TRAIN']
+    precision = train_config['precision'].lower()
+    precision = 'no' if precision == 'fp32' else precision
+    dynamo_backend = 'no'
+    if train_config.getboolean('compile'):
+        dynamo_backend = 'INDUCTOR'
+        
+    torch_dtype = torch.float32
+    # There is no Torch dtype that is fp8, so cast to float16
+    if precision == 'fp16' or precision == 'fp8':
+        torch_dtype = torch.float16
+    elif precision == 'bf16':
+        torch_dtype = torch.bfloat16
 
+    accelerator = Accelerator(mixed_precision=precision, dynamo_backend=dynamo_backend)
+    device = accelerator.device
+    running_on_cpu = device.type != 'cuda'
+    
     # Creates data-loader
     data_config = config['DATA']
-    train_config = config['TRAIN']
     data_config['image_height'] = str(int(data_config['base_height']) * (2 ** int(data_config['upsample_layers'])))
     data_config['image_width'] = str(int(data_config['base_width']) * (2 ** int(data_config['upsample_layers'])))
-    is_mixed_precision = train_config.getboolean('mixed_precision')
-    data_dtype = torch.float32
-    if is_mixed_precision and not running_on_cpu:
-        # Avoid if running on CPU since we would need to use bfloat16. Image processing is not supported for bfloat16
-        data_dtype = torch.float16
-    data_loader = data_loader_from_config(data_config, data_dtype=data_dtype, using_gpu=not running_on_cpu)
+
+    data_loader = data_loader_from_config(data_config, using_gpu=not running_on_cpu)
     # Eval data loader is done to keep the same label distribution when evaluating
-    eval_data_loader = data_loader_from_config(data_config, data_dtype=data_dtype, using_gpu=not running_on_cpu)
+    eval_data_loader = data_loader_from_config(data_config, using_gpu=not running_on_cpu)
     logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
 
+    data_loader, eval_data_loader = accelerator.prepare(data_loader, eval_data_loader)
     # Save training images
     saver_and_loader.save_train_batch(data_loader, os.path.join(img_dir, 'train_batch.png'))
     num_classes = get_num_classes(data_config)
@@ -85,7 +97,8 @@ def train(config_file_path: str):
 
     logging.info('Creating model...')
 
-    gan_model = create_model.create_gan_model(model_arch_config, data_config, train_config, device, n_gpus)
+    device = accelerator.device
+    gan_model = create_model.create_gan_model(model_arch_config, data_config, train_config, accelerator, torch_dtype)
     gan_model.save_architecture(run_dir, data_config)
 
     logging.info('Created GAN model')
@@ -94,6 +107,7 @@ def train(config_file_path: str):
         loaded_step_num = saver_and_loader.load_model(gan_model, model_dir)
         logging.info('Restored model from step ' + str(loaded_step_num))
 
+    gan_model.accelerate_models()
     logging.info('Is GPU available? ' + str(torch.cuda.is_available()) + ' - Running on device:' + str(device))
 
     metrics_config = config['METRICS']
@@ -120,7 +134,7 @@ def train(config_file_path: str):
             labels = labels.to(device)
         else:
             labels = torch.arange(start=0, end=int(data_config['batch_size']), device=device,
-                                    dtype=torch.int64) % num_classes
+                                    dtype=torch.int16) % num_classes
         return noise, labels
     fixed_noise, fixed_labels = create_noise_and_labels()
 
@@ -149,105 +163,97 @@ def train(config_file_path: str):
     if profiler:
         profiler.start()
 
-    if train_config.getboolean('compile'):
-        logging.info('Compiling model with PyTorch 2.0')
-        compile_time = time.time()
-        gan_model.optimize_models()
-        logging.info('Compile Time: {:.2f}s'.format(time.time() - compile_time))
-
     n_steps = 0
-    steps_in_epoch = len(data_loader)
+    accumulation_iterations = int(train_config['accumulation_iterations'])
+    is_channel_last = train_config.getboolean('channels_last')
+    steps_in_epoch = int(len(data_loader) / accumulation_iterations)
     total_g_error, total_d_error = 0.0, 0.0
     g_steps, d_steps = 0, 0
     data_time, model_time = 0.0, 0.0
     data_start_time = time.time()
     train_seq_start_time = time.time()
+    logging.info('Started Training Loop')
+    batches_accumulated = []
     for epoch in range(n_epochs):
         for i, batch in enumerate(data_loader, 0):
+            
+            if is_channel_last:
+                real_data, _ = batch
+                real_data = real_data.to(memory_format=torch.channels_last)  # Replace with your input
 
-            n_steps += 1
-            real_data, labels = batch
-
-            # Normalization can't be done on bloat16 operators
-            is_bfloat16_dtype = running_on_cpu and is_mixed_precision
-            if is_bfloat16_dtype:
-                real_data = normalize(color_transform(real_data))
-                real_data = real_data.to(torch.bfloat16)
-
-            real_data = real_data.to(device)  # Moving to GPU is a slow operation
-            labels = labels.to(device)  # Moving to GPU is a slow operation
-            if not is_bfloat16_dtype:
-                real_data = normalize(color_transform(real_data))
+            batches_accumulated.append(batch)
 
             data_time += time.time() - data_start_time
             model_start_time = time.time()
-            if train_config.getboolean('channels_last'):
-                real_data = real_data.to(memory_format=torch.channels_last)  # Replace with your input
-            err_discriminator, err_generator = gan_model.update_minimax(real_data, labels)
+            if i % accumulation_iterations == accumulation_iterations-1:
+                err_discriminator, err_generator = gan_model.train_step(batches_accumulated)
+                n_steps += 1
+                # Reset amount of batches accumulated
+                batches_accumulated = []
 
-            if err_generator:
-                total_g_error += err_generator
-                g_steps += 1
+                if err_discriminator:
+                    total_d_error += err_discriminator
+                    d_steps += 1
 
-            if err_discriminator:
-                total_d_error += err_discriminator
-                d_steps += 1
+                if err_generator:
+                    total_g_error += err_generator
+                    g_steps += 1
 
-            model_time += time.time() - model_start_time
-            total_step_num = loaded_step_num + n_steps
-            # Output training stats
-            if n_steps % log_steps == 0:
-                d_loss_num = (total_d_error / d_steps) if d_steps else 0
-                g_loss_num = (total_g_error / g_steps) if g_steps else 0
-                d_loss = '{:.4f}'.format(d_loss_num) if d_loss_num else '0 steps'
-                g_loss = '{:.4f}'.format(g_loss_num) if g_loss_num else '0 steps'
+                model_time += time.time() - model_start_time
+                total_step_num = loaded_step_num + n_steps
+                # Output training stats
+                if n_steps % log_steps == 0:
+                    d_loss_num = (total_d_error / d_steps) if d_steps else 0
+                    g_loss_num = (total_g_error / g_steps) if g_steps else 0
+                    d_loss = '{:.4f}'.format(d_loss_num) if d_loss_num else '0 steps'
+                    g_loss = '{:.4f}'.format(g_loss_num) if g_loss_num else '0 steps'
 
-                if eval_writer:
-                    eval_writer.add_scalar('Loss/Disciminator/train', d_loss_num, total_step_num)
-                    eval_writer.add_scalar('Loss/Generator/train', g_loss_num, total_step_num)
-                logging.info('[{}/{}][{}/{}]\t Loss_D: {}\t Loss_G: {}\t Time: {:.2f}s'.format(
-                    epoch, n_epochs, n_steps % steps_in_epoch, steps_in_epoch, d_loss, g_loss,
-                    time.time() - train_seq_start_time))
-                
-                logging.info(
-                    'Data retrieve time: %.2fs Model updating time: %.2fs' % (data_time, model_time))
-
-                data_time, model_time = 0, 0
-                total_g_error, total_d_error = 0.0, 0.0
-                g_steps, d_steps = 0, 0
-                train_seq_start_time = time.time()
-
-            # Save every save_steps or every epoch if save_steps is None
-            if n_steps % save_steps == 0:
-                save_start_time = time.time()
-                
-                fake_img_output_path = os.path.join(img_dir, 'generated_image_' + str(total_step_num) + '.png')
-                logging.info('Saving fake images: ' + fake_img_output_path)
-                with torch.no_grad():
-                    fake_images = gan_model.generate_images(fixed_noise, fixed_labels).cpu()
-                    saver_and_loader.save_images(fake_images.to(torch.float32), fake_img_output_path)
-                    del fake_images
-                gan_model.save(model_dir, total_step_num, compiled=train_config.getboolean('compile'))
-                logging.info('Time to save images and model: %.2fs ' % (time.time() - save_start_time))
-
-            if n_steps % eval_steps == 0:
-                if metrics_scorer:
-                    metric_start_time = time.time()
-                    logging.info('Computing metrics ...')
-
-                    metrics_scorer.aggregate_images_from_fn(generate_images, n_images_to_eval, real=False)
-                    is_score, fid_score = metrics_scorer.score_metrics(compute_is, compute_fid)
-                    metrics_scorer.reset_metrics()
-                    metrics_scorer.log_scores(is_score, fid_score)
-                    is_score_avg, is_score_std = is_score
                     if eval_writer:
-                        eval_writer.add_scalar('Inception Score', is_score_avg, total_step_num)
-                        eval_writer.add_scalar('FID', fid_score, total_step_num)
+                        eval_writer.add_scalar('Loss/Disciminator/train', d_loss_num, total_step_num)
+                        eval_writer.add_scalar('Loss/Generator/train', g_loss_num, total_step_num)
+                    logging.info('[{}/{}][{}/{}]\t Loss_D: {}\t Loss_G: {}\t Time: {:.2f}s'.format(
+                        epoch, n_epochs, n_steps % steps_in_epoch, steps_in_epoch, d_loss, g_loss,
+                        time.time() - train_seq_start_time))
+                    
+                    logging.info(
+                        'Data retrieve time: %.2fs Model updating time: %.2fs' % (data_time, model_time))
 
-                    logging.info('Time to compute metrics: %.2fs ' % (time.time() - metric_start_time))
-            data_start_time = time.time()
-            if profiler:
-                profiler.step()
+                    data_time, model_time = 0, 0
+                    total_g_error, total_d_error = 0.0, 0.0
+                    g_steps, d_steps = 0, 0
+                    train_seq_start_time = time.time()
+
+                # Save every save_steps or every epoch if save_steps is None
+                if n_steps % save_steps == 0:
+                    save_start_time = time.time()
+                    
+                    fake_img_output_path = os.path.join(img_dir, 'generated_image_' + str(total_step_num) + '.png')
+                    logging.info('Saving fake images: ' + fake_img_output_path)
+                    with torch.no_grad():
+                        fake_images = gan_model.generate_images(fixed_noise, fixed_labels).cpu()
+                        saver_and_loader.save_images(fake_images.to(torch.float32), fake_img_output_path)
+                        del fake_images
+                    gan_model.save(model_dir, total_step_num, compiled=train_config.getboolean('compile'))
+                    logging.info('Time to save images and model: %.2fs ' % (time.time() - save_start_time))
+
+                if n_steps % eval_steps == 0:
+                    if metrics_scorer:
+                        metric_start_time = time.time()
+                        logging.info('Computing metrics ...')
+
+                        metrics_scorer.aggregate_images_from_fn(generate_images, n_images_to_eval, real=False)
+                        is_score, fid_score = metrics_scorer.score_metrics(compute_is, compute_fid)
+                        metrics_scorer.reset_metrics()
+                        metrics_scorer.log_scores(is_score, fid_score)
+                        is_score_avg, is_score_std = is_score
+                        if eval_writer:
+                            eval_writer.add_scalar('Inception Score', is_score_avg, total_step_num)
+                            eval_writer.add_scalar('FID', fid_score, total_step_num)
+
+                        logging.info('Time to compute metrics: %.2fs ' % (time.time() - metric_start_time))
+                data_start_time = time.time()
+                if profiler:
+                    profiler.step()
     profiler.stop()
     logging.info('Training complete! Models and output saved in the output directory:')
     logging.info(run_dir)
