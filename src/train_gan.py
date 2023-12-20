@@ -83,9 +83,9 @@ def train(config_file_path: str):
     data_config['image_height'] = str(int(data_config['base_height']) * (2 ** int(data_config['upsample_layers'])))
     data_config['image_width'] = str(int(data_config['base_width']) * (2 ** int(data_config['upsample_layers'])))
 
-    data_loader = data_loader_from_config(data_config, using_gpu=not running_on_cpu)
+    data_loader = data_loader_from_config(data_config, image_dtype=torch_dtype, using_gpu=not running_on_cpu)
     # Eval data loader is done to keep the same label distribution when evaluating
-    eval_data_loader = data_loader_from_config(data_config, using_gpu=not running_on_cpu)
+    eval_data_loader = data_loader_from_config(data_config, image_dtype=torch_dtype, using_gpu=not running_on_cpu)
     logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
 
     data_loader, eval_data_loader = accelerator.prepare(data_loader, eval_data_loader)
