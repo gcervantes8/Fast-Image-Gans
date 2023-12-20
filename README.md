@@ -8,7 +8,7 @@ this repository focuses on generating images from games.
 
 ## Features
 
- - PyTorch 2.0 Compile 
+ - PyTorch 2 Compile 
  - Mixed Precision training (fp16 or bf16)
  - Gradient Accumulation
  - Inception Score and FID evaluation
@@ -29,8 +29,8 @@ Provided in the code is a sample of the coil-100 dataset, which is used for test
 
 ## Requirements
 The following are the Python packages needed.
-- [Pytorch](https://pytorch.org/get-started/locally/), 1.9+
-- [torchvision](https://pypi.org/project/torchvision/) 0.9+
+- [Pytorch](https://pytorch.org/get-started/locally/), 2.0+
+- [torchvision](https://pypi.org/project/torchvision/) 1.5+
 - [SciPy](https://scipy.org/install/) 1.7+
 - [TorchMetrics](https://torchmetrics.readthedocs.io/en/stable/)
 - [torchinfo](https://github.com/TylerYep/torchinfo)
