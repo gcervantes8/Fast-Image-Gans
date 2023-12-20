@@ -14,7 +14,7 @@ from torch.utils.tensorboard import SummaryWriter
 from src.models import create_model
 from src.utils import saver_and_loader
 from src.configs import ini_parser
-from src.data.data_load import data_loader_from_config, color_transform, normalize, \
+from src.data.data_load import data_loader_from_config, \
     create_latent_vector, get_num_classes
 from src.metrics.metrics import Metrics
 from PIL import ImageFile

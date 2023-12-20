@@ -9,8 +9,7 @@ Purpose: This will handle having both the generator and discriminator, as well a
 
 import torch
 from src.data import data_load
-from src.losses.loss_functions import supported_loss_functions
-from src.losses.loss_functions import supported_losses
+from src.losses.loss_functions import supported_loss_functions, supported_losses
 from src.optimizers.optim_functions import supported_optimizer_list, optimizer_factory
 from torch_ema import ExponentialMovingAverage
 from torchinfo import summary
@@ -47,18 +46,17 @@ class GanModel:
         
         self.criterion, self.fake_label, self.real_label = supported_loss_functions(train_config['loss_function'])
         if self.criterion is None:
-            raise ValueError("Loss values options: " + str(supported_losses()))
-        gan_optimizer = optimizer_factory('Adam8')
+            raise ValueError("Loss given not found: " + train_config['loss_function'] + 
+                             "\nPossible options are: " + str(supported_losses()))
+        gan_optimizer = optimizer_factory(train_config['optimizer'])
+        if not gan_optimizer:
+            raise ValueError("Optimizer given not found: " + train_config['optimizer'] + 
+                             "\nPossible options are: " + str(supported_optimizer_list()))
         # Setup Adam optimizers for both G and D
         self.optimizerD = gan_optimizer(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
                                      weight_decay=discriminator_wd)
         self.optimizerG = gan_optimizer(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
                                      weight_decay=generator_wd)
-        # self.optimizerD = bnb.optim.Adam8bit(discriminator.parameters(), lr=discriminator_lr, betas=(beta1, beta2),
-        #                              weight_decay=discriminator_wd)
-        # self.optimizerG = bnb.optim.Adam8bit(generator.parameters(), lr=generator_lr, betas=(beta1, beta2),
-        #                              weight_decay=generator_wd)
-        self.criterion, self.fake_label, self.real_label = supported_loss_functions(train_config['loss_function'])
         discriminator.zero_grad()
         generator.zero_grad()
 
@@ -67,9 +65,6 @@ class GanModel:
         ema_decay = model_arch_config['ema_decay']
         self.ema = ExponentialMovingAverage(generator.parameters(),
                                             decay=float(ema_decay)) if ema_enabled else None
-    
-        # if self.ema:
-        #     self.ema = accelerator.prepare(self.ema)
 
         self.netD, self.netG = discriminator, generator
         self.accelerator = accelerator
