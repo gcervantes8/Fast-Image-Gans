@@ -76,8 +76,8 @@ def train(config_file_path: str):
 
     accelerator = Accelerator(mixed_precision=precision, dynamo_backend=dynamo_backend)
     device = accelerator.device
-    if device.type == 'cuda':
-        running_on_cpu = False
+    running_on_cpu = device.type != 'cuda'
+    
     # Creates data-loader
     data_config = config['DATA']
     data_config['image_height'] = str(int(data_config['base_height']) * (2 ** int(data_config['upsample_layers'])))

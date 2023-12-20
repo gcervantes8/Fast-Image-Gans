@@ -1,6 +1,6 @@
 ![Fast Image Gans with a picture of a fig to the left of it](logo/FigsName.png) 
 
-[![Python](https://img.shields.io/badge/Python-3.7--3.11-blue)](https://www.python.org/downloads/) [![License](https://img.shields.io/badge/License-GPL--3.0-yellow)](https://github.com/gcervantes8/Game-Image-Generator/blob/master/LICENSE) [![Python package](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml/badge.svg)](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml)
+[![Python](https://img.shields.io/badge/Python-3.8--3.11-blue)](https://www.python.org/downloads/) [![License](https://img.shields.io/badge/License-GPL--3.0-yellow)](https://github.com/gcervantes8/Game-Image-Generator/blob/master/LICENSE) [![Python package](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml/badge.svg)](https://github.com/gcervantes8/Game-Image-Generator/actions/workflows/python-package.yml)
 
 
 With this project, you can train Generative Adversarial Networks (GANs).  While you can train with any type of image, 
