@@ -11,6 +11,7 @@ import torch
 import PIL
 import torchvision.datasets as torch_data_set
 import torchvision.transforms.v2 as transforms
+from datasets import load_dataset
 from src.utils import os_helper
 
 
@@ -85,16 +86,29 @@ def create_data_loader(data_dir: str, image_height: int, image_width: int, image
                                 'directory provided: ' + data_dir)
 
     # Create the data-loader
-    torch_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True, 
-                                               num_workers=n_workers, pin_memory=using_gpu, drop_last=True)
-    return torch_loader
+    # torch_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True, 
+    #                                            num_workers=n_workers, pin_memory=using_gpu, drop_last=True)
+    dataset = load_dataset('cifar10', name='plain_text', split='train', streaming=False)
+
+    print(dataset)
+
+    def _preprocess(examples):
+        examples['img'] = torch.stack(data_transform(examples['img']))
+        return examples
+    
+    dataset = dataset.map(_preprocess, batched=True, batch_size=batch_size)
+
+    return dataset
 
 
 # Returns images of size: (batch_size, num_channels, height, width)
 def get_data_batch(data_loader, device, unnormalize_batch=False):
     if unnormalize_batch:
         return unnormalize(next(iter(data_loader))[0]).to(device)
-    return next(iter(data_loader))[0].to(device)
+    # abc = data_loader.iter(batch_size=3)
+    abc2 = next(data_loader)
+    # item_a = next(iter(data_loader))
+    return next(data_loader)['img']
 
 
 # Resize images so width and height are both greater than min_size. Keep images the same if they already are bigger

@@ -84,7 +84,9 @@ def _get_model_dir(config):
 def save_train_batch(data_loader, save_path: str, device=torch.device('cpu')):
     # Save training images
     batch_images = get_data_batch(data_loader, device)
-    batch_images = unnormalize(batch_images).to(torch.float32)
+    batch_images = unnormalize(batch_images)
+    # Convert list of tensors to a tensor
+    batch_images = torch.stack(batch_images).to(torch.float32)
     # batch_images = color_transform(batch_images.to(torch.float32))
     save_images(batch_images, save_path)
 

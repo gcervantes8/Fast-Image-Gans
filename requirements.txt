@@ -10,3 +10,4 @@ tensorboard
 six
 bitsandbytes
 accelerate
+datasets

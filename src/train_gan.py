@@ -86,11 +86,13 @@ def train(config_file_path: str):
     data_loader = data_loader_from_config(data_config, image_dtype=torch_dtype, using_gpu=not running_on_cpu)
     # Eval data loader is done to keep the same label distribution when evaluating
     eval_data_loader = data_loader_from_config(data_config, image_dtype=torch_dtype, using_gpu=not running_on_cpu)
-    logging.info('Data size is ' + str(len(data_loader.dataset)) + ' images')
+    # logging.info('Data size is ' + str(len(data_loader)) + ' images')
+    logging.info('Data size is ' + str(data_loader.info.splits['train'].num_examples) + ' images')
 
     data_loader, eval_data_loader = accelerator.prepare(data_loader, eval_data_loader)
     # Save training images
-    saver_and_loader.save_train_batch(data_loader, os.path.join(img_dir, 'train_batch.png'))
+    batched_dataset = data_loader.iter(batch_size=int(data_config['batch_size']))
+    saver_and_loader.save_train_batch(batched_dataset, os.path.join(img_dir, 'train_batch.png'))
     num_classes = get_num_classes(data_config)
     logging.info('Number of different image labels: ' + str(num_classes))
     model_arch_config = config['MODEL ARCHITECTURE']

@@ -12,6 +12,7 @@ With this project, you can train Generative Adversarial Networks (GANs).  While 
  - Gradient Accumulation
  - Inception Score and FID evaluation
  - HF🤗 Accelerate - Adds Multi-GPU, TPU, and distributed support
+ - HF🤗 Datasets - Adds Image HuggingFace datasets
  - Easy to start training
  - Testing
 
