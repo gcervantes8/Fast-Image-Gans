@@ -89,11 +89,11 @@ def train(config_file_path: str):
     # logging.info('Data size is ' + str(len(data_loader)) + ' images')
     logging.info('Data size is ' + str(data_loader.info.splits['train'].num_examples) + ' images')
 
-    data_loader, eval_data_loader = accelerator.prepare(data_loader, eval_data_loader)
     # Save training images
     batched_dataset = data_loader.iter(batch_size=int(data_config['batch_size']))
+    batched_dataset, eval_data_loader = accelerator.prepare(batched_dataset, eval_data_loader)
     saver_and_loader.save_train_batch(batched_dataset, os.path.join(img_dir, 'train_batch.png'))
-    num_classes = get_num_classes(data_config)
+    num_classes = int(data_config['num_classes'])
     logging.info('Number of different image labels: ' + str(num_classes))
     model_arch_config = config['MODEL ARCHITECTURE']
 

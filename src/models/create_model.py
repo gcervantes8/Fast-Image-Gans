@@ -65,7 +65,7 @@ def create_gan_instances(model_arch_config, data_config):
     base_width = int(data_config['base_width'])
     base_height = int(data_config['base_height'])
     upsample_layers = int(data_config['upsample_layers'])
-    num_classes = data_load.get_num_classes(data_config)
+    num_classes = int(data_config['num_classes'])
 
     project_labels, output_size = get_omni_loss(loss_type, num_classes)
     generator, discriminator = create_gen_and_discrim(model_type)
@@ -80,7 +80,7 @@ def create_gan_instances(model_arch_config, data_config):
 
 def create_gan_model(model_arch_config, data_config, train_config, accelerator, torch_dtype):
     generator, discriminator = create_gan_instances(model_arch_config, data_config)
-    num_classes = data_load.get_num_classes(data_config)
+    num_classes = int(data_config['num_classes'])
     return GanModel(generator, discriminator, num_classes, accelerator, torch_dtype, model_arch_config, train_config)
 
 # custom weights initialization, used by the generator and discriminator

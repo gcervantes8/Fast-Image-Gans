@@ -75,7 +75,6 @@ def create_data_loader(data_dir: str, image_height: int, image_width: int, image
                        batch_size=1, n_workers=1):
 
     data_transform = transforms.Compose([transforms.Resize((image_height, image_width)),
-                                         transforms.ToImage(),
                                          transforms.ToDtype(image_dtype, scale=True), # Float16 is tiny bit faster, and bit more VRAM. Strange.
                                          transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5]),
                                          ])
@@ -88,16 +87,20 @@ def create_data_loader(data_dir: str, image_height: int, image_width: int, image
     # Create the data-loader
     # torch_loader = torch.utils.data.DataLoader(data_set, batch_size=batch_size, shuffle=True, 
     #                                            num_workers=n_workers, pin_memory=using_gpu, drop_last=True)
-    dataset = load_dataset('cifar10', name='plain_text', split='train', streaming=False)
-
+    dataset = load_dataset('cifar10', split='test', streaming=False) # name='plain_text',
+    dataset = dataset.with_format("torch")
+    
     print(dataset)
 
     def _preprocess(examples):
-        examples['img'] = torch.stack(data_transform(examples['img']))
+        # Permutes from (BS x H x W x C) to (BS x C x H x W)
+        images = torch.permute(examples['img'], (0, 3, 2, 1))
+        examples['img'] = data_transform(images)
         return examples
     
+    # TODO broken with bfloat16, since it converts to numpy and tries save to cache file.
     dataset = dataset.map(_preprocess, batched=True, batch_size=batch_size)
-
+    
     return dataset
 
 
@@ -108,7 +111,7 @@ def get_data_batch(data_loader, device, unnormalize_batch=False):
     # abc = data_loader.iter(batch_size=3)
     abc2 = next(data_loader)
     # item_a = next(iter(data_loader))
-    return next(data_loader)['img']
+    return torch.Tensor(next(data_loader)['img'])
 
 
 # Resize images so width and height are both greater than min_size. Keep images the same if they already are bigger

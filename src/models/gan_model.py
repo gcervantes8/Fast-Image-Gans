@@ -111,7 +111,7 @@ class GanModel:
         for batch in batches_accumulated:
             with self.accelerator.no_sync(self.netD):
                 
-                real_data, labels = batch
+                real_data, labels = torch.Tensor(batch['img']), torch.Tensor(batch['label'])
                 b_size = real_data.size(dim=0)
                 accum_labels.append(labels)
                 
